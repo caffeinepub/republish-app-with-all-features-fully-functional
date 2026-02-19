@@ -61,13 +61,13 @@ export function DoctorPortal() {
   // Show registration form for authenticated users without doctor profile
   if (isAuthenticated && isFetched && (!userProfile || userProfile.role !== 'doctor')) {
     return (
-      <div className="container mx-auto px-6 py-16">
-        <Card className="max-w-lg mx-auto border-2 border-primary/20">
-          <CardHeader className="text-center space-y-4 pb-6">
-            <div className="mx-auto mb-2 h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
-              <Stethoscope className="h-10 w-10 text-primary" />
+      <div className="container mx-auto px-6 py-16 animate-in fade-in duration-500">
+        <Card className="max-w-lg mx-auto border-4 border-primary/30 shadow-2xl shadow-primary/20">
+          <CardHeader className="text-center space-y-4 pb-8 pt-10">
+            <div className="mx-auto mb-2 h-24 w-24 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shadow-lg">
+              <Stethoscope className="h-12 w-12 text-primary" />
             </div>
-            <CardTitle className="text-2xl">Register as Doctor</CardTitle>
+            <CardTitle className="text-3xl font-bold">Register as Doctor</CardTitle>
             <CardDescription className="text-base">
               Complete your doctor registration to access the doctor portal
             </CardDescription>
@@ -82,13 +82,13 @@ export function DoctorPortal() {
                   value={doctorName}
                   onChange={(e) => setDoctorName(e.target.value)}
                   required
-                  className="h-11"
+                  className="h-12 transition-all focus:ring-2 focus:ring-primary"
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="department" className="text-sm font-medium">Department</Label>
                 <Select value={selectedDepartment} onValueChange={(value) => setSelectedDepartment(value as Department)}>
-                  <SelectTrigger id="department" className="h-11">
+                  <SelectTrigger id="department" className="h-12 transition-all focus:ring-2 focus:ring-primary">
                     <SelectValue placeholder="Select department" />
                   </SelectTrigger>
                   <SelectContent>
@@ -102,7 +102,7 @@ export function DoctorPortal() {
               </div>
               <Button
                 type="submit"
-                className="w-full h-12 text-base"
+                className="w-full h-14 text-base font-semibold transition-all hover:scale-105 shadow-lg hover:shadow-xl"
                 disabled={registerDoctor.isPending || !doctorName.trim() || !selectedDepartment}
               >
                 {registerDoctor.isPending ? (
@@ -121,28 +121,35 @@ export function DoctorPortal() {
     );
   }
 
-  // Doctor portal for registered doctors
   return (
-    <div className="container mx-auto px-6 py-10">
+    <div className="container mx-auto px-6 py-10 animate-in fade-in duration-500">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold tracking-tight mb-2">Doctor Portal</h2>
-          <p className="text-muted-foreground text-base">
-            View assigned cases and analyze medical reports
+          <h2 className="text-4xl font-bold tracking-tight mb-3 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+            Doctor Portal
+          </h2>
+          <p className="text-muted-foreground text-lg">
+            Manage assigned cases and analyze medical reports
           </p>
         </div>
 
         <Tabs defaultValue="cases" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-2 max-w-md h-12">
-            <TabsTrigger value="cases" className="text-base">My Cases</TabsTrigger>
-            <TabsTrigger value="analysis" className="text-base">Report Analysis</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 max-w-md h-14 bg-muted/50 border-2 border-primary/20">
+            <TabsTrigger value="cases" className="text-base font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all">
+              Assigned Cases
+            </TabsTrigger>
+            <TabsTrigger value="analysis" className="text-base font-medium data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all">
+              Report Analysis
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="cases">
-            <Card className="border-2 border-primary/20">
-              <CardHeader className="space-y-2 pb-6">
-                <CardTitle className="text-2xl">Emergency Cases</CardTitle>
-                <CardDescription className="text-base">View all emergency cases in the system</CardDescription>
+          <TabsContent value="cases" className="animate-in fade-in slide-in-from-bottom duration-500">
+            <Card className="border-4 border-primary/30 shadow-xl">
+              <CardHeader>
+                <CardTitle className="text-2xl">Assigned Emergency Cases</CardTitle>
+                <CardDescription className="text-base">
+                  View and manage cases assigned to you
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {emergenciesLoading ? (
@@ -152,34 +159,37 @@ export function DoctorPortal() {
                 ) : emergencies && emergencies.length > 0 ? (
                   <div className="space-y-4">
                     {emergencies.map((emergency) => (
-                      <Card key={emergency.id} className="border-2 border-primary/10">
-                        <CardContent className="pt-6">
-                          <div className="flex items-start justify-between gap-4">
-                            <div className="flex-1 space-y-3">
-                              <div className="flex items-center gap-3">
-                                <Badge variant="outline" className="text-sm">{departmentLabels[emergency.department]}</Badge>
-                                <Badge variant={emergency.status === 'created' ? 'secondary' : 'default'} className="text-sm">
-                                  {emergency.status}
-                                </Badge>
-                              </div>
-                              <p className="text-sm font-medium">Patient ID: {emergency.patientId.slice(0, 30)}...</p>
-                              <p className="text-sm text-muted-foreground">{emergency.description}</p>
-                            </div>
+                      <Card key={emergency.id} className="border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 hover:shadow-lg">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center justify-between">
+                            <CardTitle className="text-lg">Case #{emergency.id.slice(-8)}</CardTitle>
+                            <Badge variant="outline" className="font-medium">
+                              {departmentLabels[emergency.department]}
+                            </Badge>
                           </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-sm text-muted-foreground mb-2">
+                            <strong>Patient ID:</strong> {emergency.patientId}
+                          </p>
+                          <p className="text-sm text-muted-foreground mb-2">
+                            <strong>Description:</strong> {emergency.description}
+                          </p>
+                          <Badge variant={emergency.status === 'created' ? 'default' : 'secondary'}>
+                            {emergency.status}
+                          </Badge>
                         </CardContent>
                       </Card>
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-12 text-muted-foreground">
-                    No emergency cases found
-                  </div>
+                  <p className="text-center text-muted-foreground py-12">No cases assigned yet</p>
                 )}
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="analysis">
+          <TabsContent value="analysis" className="animate-in fade-in slide-in-from-bottom duration-500">
             <MedicalReportAnalysis />
           </TabsContent>
         </Tabs>

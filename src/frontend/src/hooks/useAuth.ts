@@ -8,13 +8,21 @@ export function useIsCallerAdmin() {
   const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
 
   const query = useQuery<boolean>({
-    queryKey: ['isAdmin'],
+    queryKey: ['isAdmin', identity?.getPrincipal().toString()],
     queryFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      return actor.isCallerAdmin();
+      try {
+        const result = await actor.isCallerAdmin();
+        return result;
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        return false;
+      }
     },
     enabled: !!actor && !actorFetching && isAuthenticated,
-    retry: false,
+    retry: 1,
+    staleTime: 0, // Always refetch to get latest admin status
+    refetchOnMount: true,
   });
 
   return {

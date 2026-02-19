@@ -66,18 +66,18 @@ export function EmergencySOS() {
   ];
 
   return (
-    <Card className="border-2 border-primary/20">
+    <Card className="border-4 border-primary/30 shadow-xl hover:shadow-2xl hover:shadow-primary/20 transition-all duration-300">
       <CardHeader className="space-y-2 pb-6">
-        <CardTitle className="text-2xl">Emergency SOS</CardTitle>
+        <CardTitle className="text-3xl font-bold">Emergency SOS</CardTitle>
         <CardDescription className="text-base">
           Submit your emergency case for immediate medical assistance
         </CardDescription>
       </CardHeader>
       <CardContent>
         {submitted && (
-          <Alert className="mb-6 bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800">
+          <Alert className="mb-6 bg-green-50 dark:bg-green-950 border-2 border-green-200 dark:border-green-800 animate-in slide-in-from-top duration-300">
             <AlertCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-            <AlertDescription className="text-sm text-green-800 dark:text-green-200">
+            <AlertDescription className="text-sm text-green-800 dark:text-green-200 font-medium">
               Emergency case submitted successfully! Our team has been notified.
             </AlertDescription>
           </Alert>
@@ -92,7 +92,7 @@ export function EmergencySOS() {
               onChange={(e) => setPatientName(e.target.value)}
               placeholder="Enter patient's full name"
               required
-              className="h-11"
+              className="h-12 transition-all focus:ring-2 focus:ring-primary focus:scale-[1.01]"
             />
           </div>
 
@@ -105,7 +105,7 @@ export function EmergencySOS() {
                 onChange={(e) => setStreet(e.target.value)}
                 placeholder="123 Main St"
                 required
-                className="h-11"
+                className="h-12 transition-all focus:ring-2 focus:ring-primary focus:scale-[1.01]"
               />
             </div>
             <div className="space-y-2">
@@ -116,7 +116,7 @@ export function EmergencySOS() {
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="City name"
                 required
-                className="h-11"
+                className="h-12 transition-all focus:ring-2 focus:ring-primary focus:scale-[1.01]"
               />
             </div>
           </div>
@@ -129,14 +129,14 @@ export function EmergencySOS() {
               onChange={(e) => setZip(e.target.value)}
               placeholder="12345"
               required
-              className="h-11"
+              className="h-12 transition-all focus:ring-2 focus:ring-primary focus:scale-[1.01]"
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="department" className="text-sm font-medium">Department *</Label>
             <Select value={department} onValueChange={(value) => setDepartment(value as Department)}>
-              <SelectTrigger id="department" className="h-11">
+              <SelectTrigger id="department" className="h-12 transition-all focus:ring-2 focus:ring-primary">
                 <SelectValue placeholder="Select medical department" />
               </SelectTrigger>
               <SelectContent>
@@ -158,12 +158,13 @@ export function EmergencySOS() {
               placeholder="Describe the emergency situation in detail..."
               rows={5}
               required
+              className="transition-all focus:ring-2 focus:ring-primary focus:scale-[1.01]"
             />
           </div>
 
           <Button
             type="submit"
-            className="w-full h-12 text-base"
+            className="w-full h-14 text-base font-semibold transition-all hover:scale-105 shadow-lg hover:shadow-xl"
             disabled={createEmergency.isPending || !patientName || !street || !city || !zip || !description || !department}
           >
             {createEmergency.isPending ? (

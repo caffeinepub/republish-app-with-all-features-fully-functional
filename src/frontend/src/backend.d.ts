@@ -23,11 +23,6 @@ export interface EmergencyData {
     description: string;
     department: Department;
 }
-export interface DoctorData {
-    id: string;
-    name: string;
-    department: Department;
-}
 export interface PersistentEmergency {
     id: string;
     status: string;
@@ -76,7 +71,5 @@ export interface backendInterface {
     getPatient(id: string): Promise<Patient>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
-    registerAdmin(adminProfile: UserProfile): Promise<void>;
-    registerDoctor(doctorData: DoctorData): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
 }

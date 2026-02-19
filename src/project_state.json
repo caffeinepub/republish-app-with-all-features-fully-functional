@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 11,
-  "summary": "Complete hospital management application with role-based access (Patient/Doctor/Admin), AI-powered medical report analysis and symptom assessment (Vitals AI), doctor allocation system, emergency SOS, and minimalistic Flipkart-inspired UI design. Includes registration systems for doctors and admins.",
+  "projectStateVersion": 23,
+  "summary": "Complete hospital management application with role-based access (Patient/Doctor/Admin), AI-powered medical report analysis and symptom assessment (Vitals AI), doctor allocation system, emergency SOS, Flipkart-inspired UI design, and customer support contact system. Home page should only display a 'Get Started' button, leading to role selection (Patient/Doctor/Admin). Admin verification uses Internet Identity with principal-based authentication instead of email verification. A circular customer support button displaying satyamjha2553@gmail.com is fixed to the right bottom corner of every page. All features (triage, doctor allocation, etc.) should be displayed in flashcards throughout the interface.",
   "architectural_notes": [
     "App must be production-ready, not a prototype",
     "All features must work without requiring repeated republishing",
@@ -9,15 +9,15 @@
     "Admin dashboard must display all processing cases with addresses and user data",
     "Emergency SOS must route to specific medical departments based on user selection",
     "UI design should be minimalistic and clean like Flipkart - avoid large images, use normal-sized elements",
-    "Home page must provide clear role selection (Patient/Doctor/Admin) before accessing specific portals",
     "Integrate AI capabilities for medical report analysis and symptom assessment",
     "All three user roles (Patient, Doctor, Admin) must work simultaneously without conflicts",
-    "Platform AI system is branded as 'Vitals AI'"
+    "Platform AI system is branded as 'Vitals AI'",
+    "Home page should display only 'Get Started' button; role selection (Patient/Doctor/Admin) appears after clicking"
   ],
   "known_issues": [
-    "Current app features not working properly",
     "Toggle features not working in original application",
-    "Sign-in functionality not working in original application"
+    "Sign-in functionality not working in original application",
+    "Admin authentication showing 'unauthorized access' error - resolved by implementing code-based authentication system"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -196,6 +196,174 @@
         "REQ-27"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-redesign-the-home-page-to-display-only-the-vitals-ai-branding-and-a-prominent-get-started-button-initially-without-showing-role-selection-cards-when-the-user-clicks-get-started-reveal-the-role-selection-interface-with-patient-doctor-and-admin-options-in-flashy-card-format",
+      "title": "Redesign the home page to display only the Vitals AI branding and a prominent 'Get Started' button initially, without showing role selection cards. When the user clicks 'Get Started', reveal the role selection interface with Patient, Doctor, and Admin options in flashy card format.",
+      "reqIds": [
+        "REQ-28"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-feature-showcase-cards-on-the-home-page-after-get-started-is-clicked-or-on-a-separate-section-that-display-key-system-features-including-triage-management-doctor-allocation-emergency-sos-ai-symptom-checker-and-medical-report-analysis-each-feature-should-be-presented-in-an-attractive-flashcard-format-with-teal-borders-icons-and-brief-descriptions",
+      "title": "Create feature showcase cards on the home page (after 'Get Started' is clicked or on a separate section) that display key system features including triage management, doctor allocation, emergency SOS, AI symptom checker, and medical report analysis. Each feature should be presented in an attractive flashcard format with teal borders, icons, and brief descriptions.",
+      "reqIds": [
+        "REQ-29"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-the-overall-ui-visual-appeal-by-making-cards-more-prominent-with-stronger-border-styling-adding-subtle-shadows-or-glow-effects-and-using-gradient-backgrounds-or-accent-colors-that-align-with-the-flipkart-inspired-minimalistic-aesthetic-apply-these-enhancements-consistently-across-all-portal-interfaces-patient-doctor-admin",
+      "title": "Enhance the overall UI visual appeal by making cards more prominent with stronger border styling, adding subtle shadows or glow effects, and using gradient backgrounds or accent colors that align with the Flipkart-inspired minimalistic aesthetic. Apply these enhancements consistently across all portal interfaces (patient, doctor, admin).",
+      "reqIds": [
+        "REQ-30"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-email-based-admin-verification-system-that-requires-a-verification-code-sent-to-satyamjha2553-gmail-com-for-admin-access-set-satyamjha2553-gmail-com-as-the-default-admin-account-in-the-backend",
+      "title": "Implement email-based admin verification system that requires a verification code sent to satyamjha2553@gmail.com for admin access. Set satyamjha2553@gmail.com as the default admin account in the backend.",
+      "reqIds": [
+        "REQ-31"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-visual-indicators-and-micro-interactions-throughout-the-interface-including-hover-states-transition-animations-and-loading-indicators-that-make-the-application-feel-more-feature-rich-and-responsive-ensure-these-additions-maintain-the-clean-minimalistic-flipkart-inspired-aesthetic",
+      "title": "Add visual indicators and micro-interactions throughout the interface including hover states, transition animations, and loading indicators that make the application feel more feature-rich and responsive. Ensure these additions maintain the clean, minimalistic Flipkart-inspired aesthetic.",
+      "reqIds": [
+        "REQ-32"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-debug-and-fix-the-admin-authentication-flow-in-adminportal-tsx-to-resolve-the-unauthorized-access-error-that-prevents-admin-login-verify-that-the-email-verification-process-correctly-authenticates-users-with-satyamjha2553-gmail-com-and-grants-them-admin-access-to-the-dashboard",
+      "title": "Debug and fix the admin authentication flow in AdminPortal.tsx to resolve the 'unauthorized access' error that prevents admin login. Verify that the email verification process correctly authenticates users with satyamjha2553@gmail.com and grants them admin access to the dashboard.",
+      "reqIds": [
+        "REQ-33"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-expand-the-home-page-feature-showcase-section-in-roleselector-tsx-by-adding-more-detailed-feature-cards-that-describe-the-vitals-ai-platform-s-capabilities-include-cards-for-patient-portal-emergency-sos-symptom-checker-doctor-portal-case-management-medical-report-analysis-admin-dashboard-hospital-management-doctor-allocation-real-time-triage-system-and-ai-powered-diagnostics-each-card-should-have-an-icon-title-description-and-teal-border-styling-consistent-with-the-flipkart-inspired-design-aesthetic",
+      "title": "Expand the home page feature showcase section in RoleSelector.tsx by adding more detailed feature cards that describe the Vitals AI platform's capabilities. Include cards for: Patient Portal (Emergency SOS, Symptom Checker), Doctor Portal (Case Management, Medical Report Analysis), Admin Dashboard (Hospital Management, Doctor Allocation), Real-time Triage System, and AI-Powered Diagnostics. Each card should have an icon, title, description, and teal border styling consistent with the Flipkart-inspired design aesthetic.",
+      "reqIds": [
+        "REQ-35"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-an-informational-section-on-the-home-page-that-provides-more-context-about-vitals-ai-s-hospital-management-capabilities-including-statistics-or-highlights-e-g-ai-powered-medical-analysis-24-7-emergency-response-multi-department-support-position-this-content-to-create-a-smooth-flow-from-the-get-started-button-to-the-role-selection-interface",
+      "title": "Add an informational section on the home page that provides more context about Vitals AI's hospital management capabilities, including statistics or highlights (e.g., 'AI-Powered Medical Analysis', '24/7 Emergency Response', 'Multi-Department Support'). Position this content to create a smooth flow from the 'Get Started' button to the role selection interface.",
+      "reqIds": [
+        "REQ-36"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-adminportal-tsx-to-remove-the-email-verification-flow-and-instead-check-admin-authorization-directly-using-the-iscalleradmin-backend-method-after-internet-identity-authentication",
+      "title": "Update AdminPortal.tsx to remove the email verification flow and instead check admin authorization directly using the isCallerAdmin backend method after Internet Identity authentication",
+      "reqIds": [
+        "REQ-38"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-move-the-role-selection-flashcards-patient-doctor-admin-to-the-top-of-the-second-page-in-roleselector-tsx-positioning-them-prominently-above-the-feature-showcase-cards",
+      "title": "Move the role selection flashcards (Patient, Doctor, Admin) to the top of the second page in RoleSelector.tsx, positioning them prominently above the feature showcase cards",
+      "reqIds": [
+        "REQ-39"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-circular-customer-support-contact-button-component-that-displays-the-organization-email-satyamjha2553-gmail-com-when-clicked-using-the-flipkart-inspired-teal-color-scheme-with-hover-animations-and-a-professional-appearance",
+      "title": "Create a circular customer support contact button component that displays the organization email 'satyamjha2553@gmail.com' when clicked, using the Flipkart-inspired teal color scheme with hover animations and a professional appearance",
+      "reqIds": [
+        "REQ-41"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-position-the-customer-support-contact-button-fixed-to-the-right-bottom-corner-of-the-viewport-with-appropriate-z-index-to-ensure-it-appears-above-other-page-content-and-remains-accessible-on-all-pages",
+      "title": "Position the customer support contact button fixed to the right bottom corner of the viewport with appropriate z-index to ensure it appears above other page content and remains accessible on all pages",
+      "reqIds": [
+        "REQ-42"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-integrate-the-customer-support-contact-button-into-app-tsx-or-create-a-layout-wrapper-component-so-it-appears-persistently-across-all-pages-including-the-home-page-roleselector-patient-portal-doctor-portal-and-admin-portal",
+      "title": "Integrate the customer support contact button into App.tsx or create a layout wrapper component so it appears persistently across all pages including the home page (RoleSelector), Patient Portal, Doctor Portal, and Admin Portal",
+      "reqIds": [
+        "REQ-43"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-the-customer-support-contact-button-is-fully-responsive-and-maintains-visibility-and-functionality-on-mobile-devices-and-tablets-while-adhering-to-the-minimalistic-flipkart-inspired-design-aesthetic",
+      "title": "Ensure the customer support contact button is fully responsive and maintains visibility and functionality on mobile devices and tablets while adhering to the minimalistic Flipkart-inspired design aesthetic",
+      "reqIds": [
+        "REQ-44"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-all-internet-identity-authentication-checks-for-admin-access-in-adminportal-tsx-and-replace-with-a-simple-code-input-field-that-grants-admin-access-when-the-user-enters-the-code-2011",
+      "title": "Remove all Internet Identity authentication checks for admin access in AdminPortal.tsx and replace with a simple code input field that grants admin access when the user enters the code '2011'",
+      "reqIds": [
+        "REQ-45"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-remove-the-iscalleradmin-backend-method-check-from-adminportal-tsx-and-replace-with-client-side-code-verification-logic",
+      "title": "Remove the isCallerAdmin backend method check from AdminPortal.tsx and replace with client-side code verification logic",
+      "reqIds": [
+        "REQ-46"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-admin-login-ui-to-display-a-clean-minimalistic-code-entry-form-with-a-single-input-field-for-the-access-code-and-a-submit-button-styled-consistently-with-the-flipkart-inspired-teal-design-aesthetic",
+      "title": "Update the admin login UI to display a clean, minimalistic code entry form with a single input field for the access code and a submit button, styled consistently with the Flipkart-inspired teal design aesthetic",
+      "reqIds": [
+        "REQ-47"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-progressive-web-app-pwa-manifest-json-file-in-the-frontend-public-directory-with-appropriate-app-metadata-including-app-name-vitals-ai-short-name-description-theme-color-using-the-teal-color-scheme-14b8a6-background-color-display-mode-set-to-standalone-and-icons-array-with-appropriate-sizes-for-mobile-installation",
+      "title": "Create a Progressive Web App (PWA) manifest.json file in the frontend/public directory with appropriate app metadata including app name 'Vitals AI', short_name, description, theme_color using the teal color scheme (#14b8a6), background_color, display mode set to 'standalone', and icons array with appropriate sizes for mobile installation",
+      "reqIds": [
+        "REQ-48"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-frontend-index-html-to-include-a-link-tag-referencing-the-manifest-json-file-in-the-head-section-to-enable-pwa-installation-prompts-on-mobile-devices",
+      "title": "Update frontend/index.html to include a link tag referencing the manifest.json file in the <head> section to enable PWA installation prompts on mobile devices",
+      "reqIds": [
+        "REQ-49"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-a-qrcodegenerator-component-in-frontend-src-components-that-generates-a-qr-code-pointing-to-the-url-https-vitals-ai-featuringsmarthospitals-jrg-caffeine-xyz-caffeineadmintoken-caf86f15a219649b9883aca3e42d0418f6e4682726fd4227e005e7f46af65497-with-both-display-and-download-functionality-styled-consistently-with-the-flipkart-inspired-teal-design-aesthetic",
+      "title": "Create a QRCodeGenerator component in frontend/src/components that generates a QR code pointing to the URL 'https://vitals-ai-featuringsmarthospitals-jrg.caffeine.xyz/#caffeineAdminToken=caf86f15a219649b9883aca3e42d0418f6e4682726fd4227e005e7f46af65497' with both display and download functionality, styled consistently with the Flipkart-inspired teal design aesthetic",
+      "reqIds": [
+        "REQ-50"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-integrate-the-qrcodegenerator-component-into-the-admindashboard-component-frontend-src-components-admindashboard-tsx-by-adding-it-as-a-new-section-or-card-within-the-admin-interface-positioned-prominently-for-easy-access",
+      "title": "Integrate the QRCodeGenerator component into the AdminDashboard component (frontend/src/components/AdminDashboard.tsx) by adding it as a new section or card within the admin interface, positioned prominently for easy access",
+      "reqIds": [
+        "REQ-51"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -296,6 +464,54 @@
     {
       "id": "AR-23",
       "summary": "Change UI color scheme from blue to greenish-blue teal with matching card borders, ensure professional minimalistic look with proper spacing",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-24",
+      "summary": "Redesign home page to show only 'Get Started' button without immediate role selection; role selection appears after clicking button",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Display all features (triage, doctor allocation, etc.) in flashcard/card format throughout the interface",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Make UI more attractive and feature-rich following Flipkart design principles",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "Add more details and flashcards to the home page to maintain app flow and engagement",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-37",
+      "summary": "Add a circular customer support contact button fixed to the right bottom corner of every page that displays the organization email (satyamjha2553@gmail.com) and allows users to reach out",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-38",
+      "summary": "Replace Internet Identity-based admin authentication with simple code-based system - entering code '2011' grants admin access",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-39",
+      "summary": "Add Progressive Web App (PWA) capabilities including manifest.json and service worker to make the web application installable on mobile devices like a native app",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-40",
+      "summary": "Add QR code feature to admin portal that displays a QR code pointing to https://vitals-ai-featuringsmarthospitals-jrg.caffeine.xyz/#caffeineAdminToken=caf86f15a219649b9883aca3e42d0418f6e4682726fd4227e005e7f46af65497 with both display and download capabilities",
       "reqIds": [],
       "status": "pending"
     }

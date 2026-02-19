@@ -1,12 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Update the UI color scheme to greenish-blue teal and refine spacing for a professional, minimalistic appearance.
+**Goal:** Add Progressive Web App (PWA) capabilities and an admin-only QR code generator for sharing admin portal access.
 
 **Planned changes:**
-- Change primary UI colors from light blue to greenish-blue teal throughout the application
-- Update card borders to use the new teal color with prominent/flashy styling
-- Refine spacing (padding, margins, whitespace) across all components for a clean, professional look
-- Ensure all existing functionality continues to work after UI updates
+- Create manifest.json file with PWA metadata (app name, teal theme colors, standalone display mode, icons)
+- Link manifest.json in index.html to enable mobile installation prompts
+- Build QRCodeGenerator component that displays and allows downloading a QR code pointing to the admin portal URL with authentication token
+- Integrate QRCodeGenerator into AdminDashboard as a new section visible only to authenticated admin users
 
-**User-visible outcome:** The application displays a refreshed greenish-blue teal color scheme with improved spacing and visual polish while maintaining all existing features.
+**User-visible outcome:** Admins can install Vitals AI as a mobile app from their browser and generate/download a QR code to share admin portal access with the embedded authentication token.

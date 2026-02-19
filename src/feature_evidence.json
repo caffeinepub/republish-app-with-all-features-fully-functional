@@ -2,11 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-change-the-primary-ui-color-scheme-from-light-blue-to-a-greenish-blue-teal-color-similar-to-the-reference-link-previously-provided-updating-all-color-variables-in-the-tailwind-configuration-and-css-files-to-use-the-new-color-palette-throughout-the-application",
-      "featureTitle": "Change the primary UI color scheme from light blue to a greenish-blue teal color (similar to the reference link previously provided), updating all color variables in the Tailwind configuration and CSS files to use the new color palette throughout the application",
+      "featureId": "feature-create-a-progressive-web-app-pwa-manifest-json-file-in-the-frontend-public-directory-with-appropriate-app-metadata-including-app-name-vitals-ai-short-name-description-theme-color-using-the-teal-color-scheme-14b8a6-background-color-display-mode-set-to-standalone-and-icons-array-with-appropriate-sizes-for-mobile-installation",
+      "featureTitle": "Create a Progressive Web App (PWA) manifest.json file in the frontend/public directory with appropriate app metadata including app name 'Vitals AI', short_name, description, theme_color using the teal color scheme (#14b8a6), background_color, display mode set to 'standalone', and icons array with appropriate sizes for mobile installation",
       "files": [
-        "frontend/src/index.css",
-        "frontend/tailwind.config.js"
+        "frontend/public/manifest.json"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -14,24 +13,20 @@
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
         "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
+        "authorization@4.0.0",
+        "qr-code@1.0.0",
+        "camera@1.0.0"
       ],
       "testIds": [
-        "REQ-24"
+        "REQ-48"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-update-the-card-component-borders-to-use-the-new-greenish-blue-teal-color-with-a-flashy-prominent-appearance-ensuring-the-border-styling-is-applied-to-all-card-elements-including-role-selector-cards-dashboard-cards-and-portal-interface-cards",
-      "featureTitle": "Update the card component borders to use the new greenish-blue teal color with a flashy/prominent appearance, ensuring the border styling is applied to all card elements including role selector cards, dashboard cards, and portal interface cards",
+      "featureId": "feature-update-frontend-index-html-to-include-a-link-tag-referencing-the-manifest-json-file-in-the-head-section-to-enable-pwa-installation-prompts-on-mobile-devices",
+      "featureTitle": "Update frontend/index.html to include a link tag referencing the manifest.json file in the <head> section to enable PWA installation prompts on mobile devices",
       "files": [
-        "frontend/src/components/AdminDashboard.tsx",
-        "frontend/src/components/AdminPortal.tsx",
-        "frontend/src/components/CaseManagement.tsx",
-        "frontend/src/components/DoctorManagement.tsx",
-        "frontend/src/components/DoctorPortal.tsx",
-        "frontend/src/components/PatientPortal.tsx",
-        "frontend/src/components/RoleSelector.tsx"
+        "frontend/index.html"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -39,26 +34,20 @@
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
         "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
+        "authorization@4.0.0",
+        "qr-code@1.0.0",
+        "camera@1.0.0"
       ],
       "testIds": [
-        "REQ-25"
+        "REQ-49"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-refine-the-ui-spacing-and-layout-throughout-the-application-to-create-a-professional-minimalistic-and-attractive-appearance-with-proper-padding-margins-and-whitespace-between-elements",
-      "featureTitle": "Refine the UI spacing and layout throughout the application to create a professional, minimalistic, and attractive appearance with proper padding, margins, and whitespace between elements",
+      "featureId": "feature-create-a-qrcodegenerator-component-in-frontend-src-components-that-generates-a-qr-code-pointing-to-the-url-https-vitals-ai-featuringsmarthospitals-jrg-caffeine-xyz-caffeineadmintoken-caf86f15a219649b9883aca3e42d0418f6e4682726fd4227e005e7f46af65497-with-both-display-and-download-functionality-styled-consistently-with-the-flipkart-inspired-teal-design-aesthetic",
+      "featureTitle": "Create a QRCodeGenerator component in frontend/src/components that generates a QR code pointing to the URL 'https://vitals-ai-featuringsmarthospitals-jrg.caffeine.xyz/#caffeineAdminToken=caf86f15a219649b9883aca3e42d0418f6e4682726fd4227e005e7f46af65497' with both display and download functionality, styled consistently with the Flipkart-inspired teal design aesthetic",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/AccessDeniedScreen.tsx",
-        "frontend/src/components/EmergencySOS.tsx",
-        "frontend/src/components/Footer.tsx",
-        "frontend/src/components/Header.tsx",
-        "frontend/src/components/MedicalReportAnalysis.tsx",
-        "frontend/src/components/ProfileSetupModal.tsx",
-        "frontend/src/components/RoleSelector.tsx",
-        "frontend/src/components/SymptomChecker.tsx"
+        "frontend/src/components/QRCodeGenerator.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -66,26 +55,20 @@
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
         "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
+        "authorization@4.0.0",
+        "qr-code@1.0.0",
+        "camera@1.0.0"
       ],
       "testIds": [
-        "REQ-26"
+        "REQ-50"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-verify-that-all-existing-functionality-authentication-portal-navigation-emergency-sos-symptom-checker-medical-report-analysis-admin-doctor-dashboards-case-management-and-doctor-management-continues-to-work-correctly-after-the-ui-color-and-spacing-changes",
-      "featureTitle": "Verify that all existing functionality (authentication, portal navigation, emergency SOS, symptom checker, medical report analysis, admin/doctor dashboards, case management, and doctor management) continues to work correctly after the UI color and spacing changes",
+      "featureId": "feature-integrate-the-qrcodegenerator-component-into-the-admindashboard-component-frontend-src-components-admindashboard-tsx-by-adding-it-as-a-new-section-or-card-within-the-admin-interface-positioned-prominently-for-easy-access",
+      "featureTitle": "Integrate the QRCodeGenerator component into the AdminDashboard component (frontend/src/components/AdminDashboard.tsx) by adding it as a new section or card within the admin interface, positioned prominently for easy access",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/AdminDashboard.tsx",
-        "frontend/src/components/CaseManagement.tsx",
-        "frontend/src/components/DoctorManagement.tsx",
-        "frontend/src/components/EmergencySOS.tsx",
-        "frontend/src/components/Header.tsx",
-        "frontend/src/components/MedicalReportAnalysis.tsx",
-        "frontend/src/components/RoleSelector.tsx",
-        "frontend/src/components/SymptomChecker.tsx"
+        "frontend/src/components/AdminDashboard.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -93,10 +76,12 @@
         "build-template-react@1.0.0",
         "initial-app@1.0.0",
         "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
+        "authorization@4.0.0",
+        "qr-code@1.0.0",
+        "camera@1.0.0"
       ],
       "testIds": [
-        "REQ-27"
+        "REQ-51"
       ],
       "confidence": "high"
     }

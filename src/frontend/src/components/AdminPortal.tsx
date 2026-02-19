@@ -1,119 +1,93 @@
-import { AdminDashboard } from './AdminDashboard';
-import { useIsCallerAdmin } from '../hooks/useAuth';
-import { Loader2, Shield } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useState } from 'react';
-import { useRegisterAdmin, useGetCallerUserProfile } from '../hooks/useQueries';
-import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { AdminDashboard } from './AdminDashboard';
+import { Shield, Lock } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export function AdminPortal() {
-  const { isAdmin, isLoading: adminCheckLoading } = useIsCallerAdmin();
-  const { identity } = useInternetIdentity();
-  const isAuthenticated = !!identity && !identity.getPrincipal().isAnonymous();
-  const { data: userProfile, isLoading: profileLoading, isFetched } = useGetCallerUserProfile();
-  const registerAdmin = useRegisterAdmin();
-  const [adminName, setAdminName] = useState('');
+  const [codeInput, setCodeInput] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleRegisterAdmin = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!adminName.trim()) return;
+    setIsSubmitting(true);
+    setError('');
 
-    await registerAdmin.mutateAsync({
-      name: adminName.trim(),
-      role: 'admin',
-    });
+    // Simulate a brief verification delay for better UX
+    setTimeout(() => {
+      if (codeInput === '2011') {
+        setIsAuthenticated(true);
+        setError('');
+      } else {
+        setError('Invalid code. Please try again.');
+      }
+      setIsSubmitting(false);
+    }, 300);
   };
 
-  // Loading state
-  if (adminCheckLoading || profileLoading) {
+  // Show admin dashboard if authenticated
+  if (isAuthenticated) {
     return (
-      <div className="container mx-auto px-6 py-16">
-        <div className="flex items-center justify-center">
-          <div className="text-center">
-            <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto mb-4" />
-            <p className="text-base text-muted-foreground">Verifying admin access...</p>
-          </div>
+      <div className="container mx-auto px-6 py-10">
+        <div className="max-w-7xl mx-auto">
+          <AdminDashboard />
         </div>
       </div>
     );
   }
 
-  // Not authenticated
-  if (!isAuthenticated) {
-    return (
-      <div className="container mx-auto px-6 py-16">
-        <Card className="max-w-lg mx-auto border-2 border-destructive/20">
-          <CardHeader className="text-center space-y-4">
-            <div className="mx-auto mb-2 h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center">
-              <Shield className="h-10 w-10 text-destructive" />
-            </div>
-            <CardTitle className="text-2xl">Authentication Required</CardTitle>
-            <CardDescription className="text-base">
-              Please log in to access the admin portal
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
-    );
-  }
-
-  // Show registration form for authenticated users without admin role
-  if (!isAdmin && isFetched) {
-    return (
-      <div className="container mx-auto px-6 py-16">
-        <Card className="max-w-lg mx-auto border-2 border-primary/20">
-          <CardHeader className="text-center space-y-4 pb-6">
-            <div className="mx-auto mb-2 h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center">
-              <Shield className="h-10 w-10 text-primary" />
-            </div>
-            <CardTitle className="text-2xl">Register as Admin</CardTitle>
-            <CardDescription className="text-base">
-              Complete your admin registration to access the admin portal
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleRegisterAdmin} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="adminName" className="text-sm font-medium">Full Name</Label>
+  // Show code entry form
+  return (
+    <div className="container mx-auto px-6 py-16">
+      <Card className="max-w-lg mx-auto border-2 border-primary/20 shadow-2xl shadow-primary/10 animate-in fade-in slide-in-from-bottom duration-500">
+        <CardHeader className="text-center space-y-4 pb-8 pt-10">
+          <div className="mx-auto mb-2 h-24 w-24 rounded-full bg-gradient-to-br from-teal-500/20 to-teal-600/10 flex items-center justify-center shadow-lg">
+            <Shield className="h-12 w-12 text-teal-600" />
+          </div>
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-teal-700 bg-clip-text text-transparent">
+            Admin Portal
+          </CardTitle>
+          <CardDescription className="text-base">
+            Enter the admin code to access the dashboard
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="pb-10">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
-                  id="adminName"
-                  placeholder="Enter your full name"
-                  value={adminName}
-                  onChange={(e) => setAdminName(e.target.value)}
-                  required
-                  className="h-11"
+                  type="password"
+                  placeholder="Enter Admin Code"
+                  value={codeInput}
+                  onChange={(e) => {
+                    setCodeInput(e.target.value);
+                    setError('');
+                  }}
+                  className="pl-10 h-12 text-base border-teal-500/30 focus:border-teal-500 focus:ring-teal-500"
+                  disabled={isSubmitting}
+                  autoFocus
                 />
               </div>
-              <Button
-                type="submit"
-                className="w-full h-12 text-base"
-                disabled={registerAdmin.isPending || !adminName.trim()}
-              >
-                {registerAdmin.isPending ? (
-                  <>
-                    <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                    Registering...
-                  </>
-                ) : (
-                  'Register as Admin'
-                )}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  // Admin dashboard for registered admins
-  return (
-    <div className="container mx-auto px-6 py-10">
-      <div className="max-w-7xl mx-auto">
-        <AdminDashboard />
-      </div>
+              {error && (
+                <p className="text-sm text-destructive animate-in fade-in slide-in-from-top duration-300">
+                  {error}
+                </p>
+              )}
+            </div>
+            <Button
+              type="submit"
+              className="w-full h-12 text-base bg-teal-600 hover:bg-teal-700 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02]"
+              disabled={isSubmitting || !codeInput}
+            >
+              {isSubmitting ? 'Verifying...' : 'Access Admin Portal'}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

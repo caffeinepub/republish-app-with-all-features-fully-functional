@@ -105,11 +105,6 @@ export interface EmergencyData {
     description: string;
     department: Department;
 }
-export interface DoctorData {
-    id: string;
-    name: string;
-    department: Department;
-}
 export interface PersistentEmergency {
     id: string;
     status: string;
@@ -159,11 +154,9 @@ export interface backendInterface {
     getPatient(id: string): Promise<Patient>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
-    registerAdmin(adminProfile: UserProfile): Promise<void>;
-    registerDoctor(doctorData: DoctorData): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
 }
-import type { Department as _Department, DoctorData as _DoctorData, EmergencyData as _EmergencyData, PersistentDoctor as _PersistentDoctor, PersistentEmergency as _PersistentEmergency, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { Department as _Department, EmergencyData as _EmergencyData, PersistentDoctor as _PersistentDoctor, PersistentEmergency as _PersistentEmergency, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
@@ -376,34 +369,6 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async registerAdmin(arg0: UserProfile): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.registerAdmin(arg0);
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.registerAdmin(arg0);
-            return result;
-        }
-    }
-    async registerDoctor(arg0: DoctorData): Promise<void> {
-        if (this.processError) {
-            try {
-                const result = await this.actor.registerDoctor(to_candid_DoctorData_n18(this._uploadFile, this._downloadFile, arg0));
-                return result;
-            } catch (e) {
-                this.processError(e);
-                throw new Error("unreachable");
-            }
-        } else {
-            const result = await this.actor.registerDoctor(to_candid_DoctorData_n18(this._uploadFile, this._downloadFile, arg0));
-            return result;
-        }
-    }
     async saveCallerUserProfile(arg0: UserProfile): Promise<void> {
         if (this.processError) {
             try {
@@ -503,29 +468,11 @@ function from_candid_vec_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Ar
 function to_candid_Department_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Department): _Department {
     return to_candid_variant_n6(_uploadFile, _downloadFile, value);
 }
-function to_candid_DoctorData_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: DoctorData): _DoctorData {
-    return to_candid_record_n19(_uploadFile, _downloadFile, value);
-}
 function to_candid_EmergencyData_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: EmergencyData): _EmergencyData {
     return to_candid_record_n4(_uploadFile, _downloadFile, value);
 }
 function to_candid_UserRole_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
     return to_candid_variant_n2(_uploadFile, _downloadFile, value);
-}
-function to_candid_record_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
-    id: string;
-    name: string;
-    department: Department;
-}): {
-    id: string;
-    name: string;
-    department: _Department;
-} {
-    return {
-        id: value.id,
-        name: value.name,
-        department: to_candid_Department_n5(_uploadFile, _downloadFile, value.department)
-    };
 }
 function to_candid_record_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     id: string;

@@ -1,104 +1,99 @@
 {
   "kind": "build_request",
-  "title": "Update UI color scheme to greenish-blue teal with professional spacing",
+  "title": "Add PWA capabilities and QR code feature to admin portal",
   "projectName": "Vitals AI",
   "priority": "normal",
   "requirements": [
     {
-      "id": "REQ-24",
-      "text": "Change the primary UI color scheme from light blue to a greenish-blue teal color (similar to the reference link previously provided), updating all color variables in the Tailwind configuration and CSS files to use the new color palette throughout the application",
+      "id": "REQ-48",
+      "text": "Create a Progressive Web App (PWA) manifest.json file in the frontend/public directory with appropriate app metadata including app name 'Vitals AI', short_name, description, theme_color using the teal color scheme (#14b8a6), background_color, display mode set to 'standalone', and icons array with appropriate sizes for mobile installation",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-last"
         ],
         "quotes": [
-          "change the colour of the ui from blue light to greenish blue type you understand like the one in the earlier link"
+          "PWA Capabilities: Adding manifest.json and service worker to make your web app installable on mobile devices like a native app"
         ]
       },
       "acceptanceCriteria": [
-        "Primary UI colors are changed to greenish-blue teal across all components",
-        "Color changes are applied consistently in both light and dark themes",
-        "All interactive elements (buttons, links, focus states) use the new color palette",
-        "The color scheme maintains proper contrast ratios for accessibility"
+        "manifest.json file exists in frontend/public directory",
+        "Manifest includes all required PWA fields (name, short_name, description, theme_color, background_color, display, icons)",
+        "Theme color uses the teal color from the existing design (#14b8a6 or similar)",
+        "Display mode is set to 'standalone' for app-like experience"
       ]
     },
     {
-      "id": "REQ-25",
-      "text": "Update the card component borders to use the new greenish-blue teal color with a flashy/prominent appearance, ensuring the border styling is applied to all card elements including role selector cards, dashboard cards, and portal interface cards",
+      "id": "REQ-49",
+      "text": "Update frontend/index.html to include a link tag referencing the manifest.json file in the <head> section to enable PWA installation prompts on mobile devices",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-last"
         ],
         "quotes": [
-          "flashy cards border should also be from the same color"
+          "PWA Capabilities: Adding manifest.json and service worker to make your web app installable on mobile devices like a native app"
         ]
       },
       "acceptanceCriteria": [
-        "All card borders use the greenish-blue teal color",
-        "Border styling is prominent and visually appealing",
-        "Border styling is consistent across all card components (RoleSelector, dashboard cards, portal cards)",
-        "The flashy appearance is achieved through appropriate border width, opacity, or glow effects"
+        "index.html includes <link rel='manifest' href='/manifest.json'> in the head section",
+        "Mobile browsers can detect and prompt users to install the app"
       ]
     },
     {
-      "id": "REQ-26",
-      "text": "Refine the UI spacing and layout throughout the application to create a professional, minimalistic, and attractive appearance with proper padding, margins, and whitespace between elements",
+      "id": "REQ-50",
+      "text": "Create a QRCodeGenerator component in frontend/src/components that generates a QR code pointing to the URL 'https://vitals-ai-featuringsmarthospitals-jrg.caffeine.xyz/#caffeineAdminToken=caf86f15a219649b9883aca3e42d0418f6e4682726fd4227e005e7f46af65497' with both display and download functionality, styled consistently with the Flipkart-inspired teal design aesthetic",
       "target": "frontend",
       "source": {
         "messageIds": [
           "msg-last"
         ],
         "quotes": [
-          "taking proper spaces making it look very attractive",
-          "make it professional and minimalistic and very good"
+          "QR Code Target: Points to https://vitals-ai-featuringsmarthospitals-jrg.caffeine.xyz/#caffeineAdminToken=caf86f15a219649b9883aca3e42d0418f6e4682726fd4227e005e7f46af65497",
+          "QR Code Features: Both viewable on screen AND downloadable as an image file"
         ]
       },
       "acceptanceCriteria": [
-        "All components have consistent and appropriate spacing (padding and margins)",
-        "Whitespace is used effectively to create visual hierarchy and breathing room",
-        "Layout feels clean, professional, and minimalistic",
-        "Spacing follows a consistent scale throughout the application",
-        "The overall visual appearance is attractive and polished"
+        "QRCodeGenerator component displays a QR code that encodes the exact URL provided",
+        "Component includes a download button that saves the QR code as a PNG image file",
+        "QR code is displayed in a card with teal borders matching the existing design theme",
+        "Download functionality works correctly in all modern browsers",
+        "Component styling is consistent with other admin portal components"
       ]
     },
     {
-      "id": "REQ-27",
-      "text": "Verify that all existing functionality (authentication, portal navigation, emergency SOS, symptom checker, medical report analysis, admin/doctor dashboards, case management, and doctor management) continues to work correctly after the UI color and spacing changes",
-      "target": "both",
+      "id": "REQ-51",
+      "text": "Integrate the QRCodeGenerator component into the AdminDashboard component (frontend/src/components/AdminDashboard.tsx) by adding it as a new section or card within the admin interface, positioned prominently for easy access",
+      "target": "frontend",
       "source": {
         "messageIds": [
           "msg-last"
         ],
         "quotes": [
-          "please ensure that everything works properly"
+          "QR Code Location: Admin portal only (not visible to patients or doctors)",
+          "Display QR code on screen within admin dashboard"
         ]
       },
       "acceptanceCriteria": [
-        "All authentication flows work without errors",
-        "Portal navigation and role-based access control functions correctly",
-        "Emergency SOS form submission works properly",
-        "Symptom checker and medical report analysis features are functional",
-        "Admin and doctor dashboards display data correctly",
-        "Case management and doctor assignment features work as expected",
-        "No regression issues introduced by color or spacing changes"
+        "QRCodeGenerator component is imported and rendered within AdminDashboard",
+        "QR code section is clearly labeled (e.g., 'Admin Access QR Code' or 'Share Admin Portal')",
+        "QR code is only visible to users who have successfully authenticated to the admin portal",
+        "Layout integrates smoothly with existing admin dashboard sections without breaking the UI"
       ]
     }
   ],
   "constraints": [
-    "Do not modify backend/main.mo unless absolutely necessary",
-    "Preserve all existing functionality while updating colors and spacing",
-    "Maintain accessibility standards (contrast ratios) with the new color scheme",
-    "Keep the Flipkart-inspired minimalistic design aesthetic",
-    "Do not change frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui components"
+    "Do not modify the authentication logic in AdminPortal.tsx - the code '2011' verification must remain unchanged",
+    "Do not change the existing teal color scheme or Flipkart-inspired design aesthetic",
+    "QR code feature must only be accessible in the admin portal, not in patient or doctor portals",
+    "The QR code must encode the exact URL provided: https://vitals-ai-featuringsmarthospitals-jrg.caffeine.xyz/#caffeineAdminToken=caf86f15a219649b9883aca3e42d0418f6e4682726fd4227e005e7f46af65497"
   ],
   "nonGoals": [
-    "Adding new features or functionality beyond color and spacing updates",
-    "Changing the overall layout structure or component hierarchy",
-    "Modifying backend logic or data models",
-    "Implementing new authentication mechanisms",
-    "Creating new portal sections or dashboards"
+    "Creating native iOS or Android applications for app store distribution",
+    "Implementing service worker for offline functionality (manifest.json only for PWA installation)",
+    "Adding QR code scanning functionality",
+    "Creating multiple QR codes for different user roles",
+    "Modifying the admin authentication system or access code"
   ],
   "imageRequirements": {
     "required": [],

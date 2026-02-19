@@ -6,13 +6,49 @@ import Order "mo:core/Order";
 import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
 import Array "mo:core/Array";
-
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
 
-// Specify the data migration function in with-clause
 
-actor {
+/**
+ * ADMIN CONFIGURATION
+ *
+ * To configure the admin principal ID for your Internet Identity:
+ *
+ * 1. Deploy your canister and start the frontend application
+ * 2. Navigate to your frontend URL with the backend canister ID parameter:
+ *    Example: https://your-frontend.ic0.app/?canisterId=<backend-canister-id>
+ * 3. Click "Login" and authenticate with your Internet Identity
+ * 4. After successful authentication, open the browser's developer console (F12)
+ * 5. Your principal ID will be displayed in the console output
+ * 6. Copy the principal ID (format: xxxxx-xxxxx-xxxxx-xxxxx-xxx)
+ * 7. Replace the principal text below with your copied principal ID
+ * 8. Redeploy the canister
+ *
+ * SECURITY WARNING: Only the person with access to this specific Internet Identity
+ * will have admin privileges. Keep your Internet Identity credentials secure!
+ *
+ * Current admin principal (replace with your own):
+ */
+ actor {
+  let ADMIN_PRINCIPAL_ID : Text = "lm7cd-boz46-i3ikn-y6jpd-rpqsz-hnpfq-3vfkw-ocuun-x2wl7-vv3sh-tqe";
+
+  // Initialize the access control system
+  let accessControlState = AccessControl.initState();
+  include MixinAuthorization(accessControlState);
+
+  // Initialize admin on first call
+  private var adminInitialized : Bool = false;
+
+  private func ensureAdminInitialized(caller : Principal) {
+    if (not adminInitialized) {
+      let adminPrincipal = Principal.fromText(ADMIN_PRINCIPAL_ID);
+      if (caller == adminPrincipal) {
+        adminInitialized := true;
+      };
+    };
+  };
+
   public type Department = {
     #emergency;
     #cardiology;
@@ -96,11 +132,7 @@ actor {
   let persistentCreatedCasesCount : Map.Map<Text, Nat> = Map.empty<Text, Nat>();
   let userProfiles : Map.Map<Principal, UserProfile> = Map.empty<Principal, UserProfile>();
 
-  // Initialize the access control system
-  let accessControlState = AccessControl.initState();
-  include MixinAuthorization(accessControlState);
-
-  // User Profile Management
+  // User Profile Management - Users can manage their own profiles
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can access profiles");
@@ -130,7 +162,7 @@ actor {
     };
   };
 
-  // Patient Management
+  // Patient Management - Requires user authentication
   public shared ({ caller }) func addPatient(patient : Patient) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can add patients");
@@ -148,7 +180,7 @@ actor {
     };
   };
 
-  // Emergency Case Management
+  // Emergency Case Management - Requires user authentication
   public shared ({ caller }) func createEmergency(emergencyData : EmergencyData) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can create emergency cases");
@@ -190,8 +222,7 @@ actor {
     filtered.sort();
   };
 
-  // Deprecated Doctor Management in favor of self-registration
-  // Case Assignments
+  // Case Assignments - Admin only
   public shared ({ caller }) func assignCaseToDoctor(caseId : Text, doctorId : Text) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can assign cases to doctors");
@@ -213,7 +244,7 @@ actor {
     filtered;
   };
 
-  // Department Coordination
+  // Department Coordination - Admin only
   public shared ({ caller }) func departmentTransfer(caseId : Text, newDepartment : Department) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
       Runtime.trap("Unauthorized: Only admins can transfer cases between departments");
@@ -232,29 +263,6 @@ actor {
 
     persistentEmergencyMap.add(caseId, { emergency with department = newDepartment });
     Runtime.trap("Case " # caseId # " is now handled by department " # departmentToString(newDepartment));
-  };
-
-  public shared ({ caller }) func registerAdmin(adminProfile : UserProfile) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can register as admin");
-    };
-    let profileWithRole = {
-      name = adminProfile.name;
-      role = "admin";
-    };
-    userProfiles.add(caller, profileWithRole);
-  };
-
-  public shared ({ caller }) func registerDoctor(doctorData : DoctorData) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can register as doctor");
-    };
-    persistentDoctorMap.add(doctorData.id, doctorData);
-    let profileWithRole = {
-      name = doctorData.name;
-      role = "doctor";
-    };
-    userProfiles.add(caller, profileWithRole);
   };
 
   // Helper functions

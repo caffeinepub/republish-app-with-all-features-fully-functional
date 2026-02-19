@@ -54,11 +54,6 @@ export const PersistentDoctor = IDL.Record({
   'name' : IDL.Text,
   'department' : Department,
 });
-export const DoctorData = IDL.Record({
-  'id' : IDL.Text,
-  'name' : IDL.Text,
-  'department' : Department,
-});
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
@@ -92,8 +87,6 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-  'registerAdmin' : IDL.Func([UserProfile], [], []),
-  'registerDoctor' : IDL.Func([DoctorData], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
 });
 
@@ -146,11 +139,6 @@ export const idlFactory = ({ IDL }) => {
     'name' : IDL.Text,
     'department' : Department,
   });
-  const DoctorData = IDL.Record({
-    'id' : IDL.Text,
-    'name' : IDL.Text,
-    'department' : Department,
-  });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
@@ -188,8 +176,6 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-    'registerAdmin' : IDL.Func([UserProfile], [], []),
-    'registerDoctor' : IDL.Func([DoctorData], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   });
 };

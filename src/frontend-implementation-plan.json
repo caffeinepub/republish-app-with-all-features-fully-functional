@@ -1,192 +1,72 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Update UI color scheme to greenish-blue teal with professional spacing",
+  "title": "Add PWA capabilities and QR code feature to admin portal",
   "requirements": [
     {
-      "id": "REQ-24",
-      "summary": "Change the primary UI color scheme from light blue to a greenish-blue teal color, updating all color variables in the Tailwind configuration and CSS files to use the new color palette throughout the application",
+      "id": "REQ-48",
+      "summary": "Create PWA manifest.json with app metadata and teal theme",
       "acceptanceCriteria": [
-        "Primary UI colors are changed to greenish-blue teal across all components",
-        "Color changes are applied consistently in both light and dark themes",
-        "All interactive elements (buttons, links, focus states) use the new color palette",
-        "The color scheme maintains proper contrast ratios for accessibility"
+        "manifest.json file exists in frontend/public directory",
+        "Manifest includes all required PWA fields (name, short_name, description, theme_color, background_color, display, icons)",
+        "Theme color uses the teal color from the existing design (#14b8a6 or similar)",
+        "Display mode is set to 'standalone' for app-like experience"
       ],
       "file_operations": [
         {
-          "path": "frontend/tailwind.config.js",
-          "operation": "modify",
-          "description": "Update the primary color palette to use greenish-blue teal OKLCH values. Replace existing blue primary color definitions with teal equivalents (e.g., oklch(0.7 0.15 180) for base teal). Ensure the color scale includes appropriate lightness variations for hover states, active states, and backgrounds while maintaining accessibility contrast ratios."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Update CSS custom properties for both light and dark themes to use the new greenish-blue teal color scheme. Replace --primary, --primary-foreground, and related color variables with teal OKLCH values. Update accent colors, focus ring colors, and interactive state colors to maintain visual consistency with the new palette."
+          "path": "frontend/public/manifest.json",
+          "operation": "create",
+          "description": "Create PWA manifest file with app name 'Vitals AI', short_name 'Vitals AI', description for healthcare management, theme_color '#14b8a6' (teal), background_color '#ffffff', display 'standalone', and icons array referencing the generated admin-icon.dim_48x48.png, doctor-avatar.dim_128x128.png, and emergency-icon.dim_64x64.png from frontend/public/assets/generated/ with appropriate sizes (48x48, 128x128, 192x192, 512x512). Include start_url and scope fields for proper PWA functionality."
         }
       ]
     },
     {
-      "id": "REQ-25",
-      "summary": "Update the card component borders to use the new greenish-blue teal color with a flashy/prominent appearance, ensuring the border styling is applied to all card elements including role selector cards, dashboard cards, and portal interface cards",
+      "id": "REQ-49",
+      "summary": "Add manifest link tag to index.html for PWA installation",
       "acceptanceCriteria": [
-        "All card borders use the greenish-blue teal color",
-        "Border styling is prominent and visually appealing",
-        "Border styling is consistent across all card components (RoleSelector, dashboard cards, portal cards)",
-        "The flashy appearance is achieved through appropriate border width, opacity, or glow effects"
+        "index.html includes <link rel='manifest' href='/manifest.json'> in the head section",
+        "Mobile browsers can detect and prompt users to install the app"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/RoleSelector.tsx",
+          "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Update the role selection cards to use prominent teal borders. Apply border classes using the new teal color (e.g., border-2 border-primary with shadow-lg and hover effects) to create a flashy appearance. Ensure the cards maintain their interactive hover states with enhanced teal glow effects."
-        },
+          "description": "Add <link rel='manifest' href='/manifest.json'> tag inside the <head> section to enable PWA installation prompts on mobile devices. Also add theme-color meta tag with value '#14b8a6' for browser chrome theming."
+        }
+      ]
+    },
+    {
+      "id": "REQ-50",
+      "summary": "Create QRCodeGenerator component with display and download functionality",
+      "acceptanceCriteria": [
+        "QRCodeGenerator component displays a QR code that encodes the exact URL provided",
+        "Component includes a download button that saves the QR code as a PNG image file",
+        "QR code is displayed in a card with teal borders matching the existing design theme",
+        "Download functionality works correctly in all modern browsers",
+        "Component styling is consistent with other admin portal components"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/QRCodeGenerator.tsx",
+          "operation": "create",
+          "description": "Create a React component that generates a QR code for the exact URL 'https://vitals-ai-featuringsmarthospitals-jrg.caffeine.xyz/#caffeineAdminToken=caf86f15a219649b9883aca3e42d0418f6e4682726fd4227e005e7f46af65497'. Use a QR code library (e.g., qrcode.react or react-qr-code) to generate the code. Display it in a card with teal border styling (border-primary) matching the Flipkart-inspired design. Include a download button that converts the QR code to a PNG image using canvas.toDataURL() and triggers a download with a descriptive filename like 'vitals-ai-admin-qr.png'. Add a clear section title like 'Admin Access QR Code' and optional description text. Use shadcn/ui Card, Button components for consistent styling with the rest of the admin portal."
+        }
+      ]
+    },
+    {
+      "id": "REQ-51",
+      "summary": "Integrate QRCodeGenerator into AdminDashboard component",
+      "acceptanceCriteria": [
+        "QRCodeGenerator component is imported and rendered within AdminDashboard",
+        "QR code section is clearly labeled (e.g., 'Admin Access QR Code' or 'Share Admin Portal')",
+        "QR code is only visible to users who have successfully authenticated to the admin portal",
+        "Layout integrates smoothly with existing admin dashboard sections without breaking the UI"
+      ],
+      "file_operations": [
         {
           "path": "frontend/src/components/AdminDashboard.tsx",
           "operation": "modify",
-          "description": "Update dashboard card borders to use the new teal color scheme with prominent styling. Apply consistent border classes across all card elements in the tabbed interface to create visual cohesion with the flashy teal appearance."
-        },
-        {
-          "path": "frontend/src/components/DoctorPortal.tsx",
-          "operation": "modify",
-          "description": "Update portal interface cards (registration form, tabs) to use teal borders with flashy styling. Ensure border consistency across all card-like elements in the doctor portal view."
-        },
-        {
-          "path": "frontend/src/components/PatientPortal.tsx",
-          "operation": "modify",
-          "description": "Update patient portal card borders to use the new teal color scheme with prominent border styling, maintaining visual consistency with other portal interfaces."
-        },
-        {
-          "path": "frontend/src/components/AdminPortal.tsx",
-          "operation": "modify",
-          "description": "Update admin portal card elements (registration form, dashboard container) to use flashy teal borders, ensuring consistency with the overall design language."
-        },
-        {
-          "path": "frontend/src/components/CaseManagement.tsx",
-          "operation": "modify",
-          "description": "Update card and table container borders to use the new teal color with prominent styling. Apply consistent border classes to maintain the flashy appearance across case management interface elements."
-        },
-        {
-          "path": "frontend/src/components/DoctorManagement.tsx",
-          "operation": "modify",
-          "description": "Update accordion and card borders in the doctor management interface to use flashy teal styling, ensuring visual consistency across all management components."
-        }
-      ]
-    },
-    {
-      "id": "REQ-26",
-      "summary": "Refine the UI spacing and layout throughout the application to create a professional, minimalistic, and attractive appearance with proper padding, margins, and whitespace between elements",
-      "acceptanceCriteria": [
-        "All components have consistent and appropriate spacing (padding and margins)",
-        "Whitespace is used effectively to create visual hierarchy and breathing room",
-        "Layout feels clean, professional, and minimalistic",
-        "Spacing follows a consistent scale throughout the application",
-        "The overall visual appearance is attractive and polished"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Review and refine the overall application layout spacing. Ensure consistent padding around main content areas and proper margins between major sections. Apply a consistent spacing scale (e.g., px-6 py-8 for containers) to create breathing room and professional appearance."
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "modify",
-          "description": "Refine header spacing with appropriate padding and margins. Ensure proper spacing between logo, navigation elements, authentication controls, and theme toggle. Create visual balance with consistent gap classes between flex items."
-        },
-        {
-          "path": "frontend/src/components/Footer.tsx",
-          "operation": "modify",
-          "description": "Update footer spacing to be consistent with the overall minimalistic design. Apply appropriate padding and margins to create a clean, professional appearance."
-        },
-        {
-          "path": "frontend/src/components/RoleSelector.tsx",
-          "operation": "modify",
-          "description": "Refine spacing in the role selector landing page. Ensure proper padding around the title, description text, and role cards. Apply consistent gap classes between cards and appropriate margins for visual hierarchy. Create breathing room with whitespace to enhance the minimalistic aesthetic."
-        },
-        {
-          "path": "frontend/src/components/EmergencySOS.tsx",
-          "operation": "modify",
-          "description": "Refine form spacing with consistent padding between form fields, labels, and sections. Apply appropriate margins around the form container and spacing between input groups to create a clean, professional form layout."
-        },
-        {
-          "path": "frontend/src/components/SymptomChecker.tsx",
-          "operation": "modify",
-          "description": "Update spacing in the symptom checker interface. Ensure proper padding around input areas, consistent spacing between results, and appropriate margins for readability and visual hierarchy."
-        },
-        {
-          "path": "frontend/src/components/MedicalReportAnalysis.tsx",
-          "operation": "modify",
-          "description": "Refine spacing in the medical report analysis component. Apply consistent padding to content sections, appropriate gaps between analysis results, and margins that enhance readability while maintaining a minimalistic appearance."
-        },
-        {
-          "path": "frontend/src/components/ProfileSetupModal.tsx",
-          "operation": "modify",
-          "description": "Update modal spacing with appropriate padding around content areas, consistent spacing between form fields, and proper margins for buttons to create a polished, professional modal interface."
-        },
-        {
-          "path": "frontend/src/components/AccessDeniedScreen.tsx",
-          "operation": "modify",
-          "description": "Refine spacing in the access denied screen. Ensure appropriate padding around the icon and message text, with proper vertical spacing to create a clean, centered, professional error state."
-        }
-      ]
-    },
-    {
-      "id": "REQ-27",
-      "summary": "Verify that all existing functionality (authentication, portal navigation, emergency SOS, symptom checker, medical report analysis, admin/doctor dashboards, case management, and doctor management) continues to work correctly after the UI color and spacing changes",
-      "acceptanceCriteria": [
-        "All authentication flows work without errors",
-        "Portal navigation and role-based access control functions correctly",
-        "Emergency SOS form submission works properly",
-        "Symptom checker and medical report analysis features are functional",
-        "Admin and doctor dashboards display data correctly",
-        "Case management and doctor assignment features work as expected",
-        "No regression issues introduced by color or spacing changes"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "After applying color and spacing changes, verify that authentication state management, role-based routing, profile setup modal, and theme provider continue to function correctly. Ensure no class name conflicts or styling regressions affect the application logic."
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "modify",
-          "description": "Verify that login/logout functionality, theme toggle, role badges, and navigation continue to work after color and spacing updates. Ensure all interactive elements maintain proper event handlers and state management."
-        },
-        {
-          "path": "frontend/src/components/RoleSelector.tsx",
-          "operation": "modify",
-          "description": "Test role selection navigation and authentication checks after applying teal color scheme and spacing refinements. Verify that portal routing continues to function correctly."
-        },
-        {
-          "path": "frontend/src/components/EmergencySOS.tsx",
-          "operation": "modify",
-          "description": "Verify emergency case submission functionality after form spacing and color updates. Ensure form validation, submission handlers, and success alerts continue to work correctly."
-        },
-        {
-          "path": "frontend/src/components/SymptomChecker.tsx",
-          "operation": "modify",
-          "description": "Test symptom analysis functionality after applying color and spacing changes. Verify that AI analysis requests, results display, and interactive elements function properly."
-        },
-        {
-          "path": "frontend/src/components/MedicalReportAnalysis.tsx",
-          "operation": "modify",
-          "description": "Verify medical report analysis functionality continues to work after color scheme and spacing updates. Test AI analysis features and results rendering."
-        },
-        {
-          "path": "frontend/src/components/AdminDashboard.tsx",
-          "operation": "modify",
-          "description": "Test admin dashboard functionality after applying teal colors and spacing refinements. Verify tab navigation, case management, and doctor management features continue to function correctly."
-        },
-        {
-          "path": "frontend/src/components/CaseManagement.tsx",
-          "operation": "modify",
-          "description": "Verify case filtering, doctor assignment, and status management functionality after color and spacing updates. Ensure all interactive elements and data fetching continue to work properly."
-        },
-        {
-          "path": "frontend/src/components/DoctorManagement.tsx",
-          "operation": "modify",
-          "description": "Test doctor registration, department organization, and case assignment display after applying color scheme and spacing changes. Verify accordion functionality and data management work correctly."
+          "description": "Import and add the QRCodeGenerator component to the AdminDashboard. Position it prominently, either as a new tab in the existing Tabs interface alongside 'Emergency Cases' and 'Doctors', or as a dedicated card section above or below the tabbed content. Ensure it's clearly labeled and visually consistent with the existing teal-themed admin interface. The QR code will only be accessible to authenticated admin users since AdminDashboard is already protected by the AdminPortal authentication flow."
         }
       ]
     }

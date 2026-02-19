@@ -8,6 +8,7 @@ import { PatientPortal } from './components/PatientPortal';
 import { DoctorPortal } from './components/DoctorPortal';
 import { AdminPortal } from './components/AdminPortal';
 import { ProfileSetupModal } from './components/ProfileSetupModal';
+import { SupportButton } from './components/SupportButton';
 import { useInternetIdentity } from './hooks/useInternetIdentity';
 import { useGetCallerUserProfile } from './hooks/useQueries';
 import { Toaster } from './components/ui/sonner';
@@ -59,6 +60,7 @@ function AppContent() {
       </main>
       <Footer />
       <ProfileSetupModal open={showProfileSetup} />
+      <SupportButton />
       <Toaster />
     </div>
   );

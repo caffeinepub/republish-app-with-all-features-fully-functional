@@ -4,13 +4,19 @@ import type {
   Patient,
   EmergencyData,
   PersistentEmergency,
-  DoctorData,
   PersistentDoctor,
   PersistentCaseAssignment,
   UserProfile,
   Department,
 } from '../backend';
 import { toast } from 'sonner';
+
+// Local type for doctor registration (matches PersistentDoctor structure)
+type DoctorRegistrationData = {
+  id: string;
+  name: string;
+  department: Department;
+};
 
 // User Profile Queries
 export function useGetCallerUserProfile() {
@@ -52,7 +58,7 @@ export function useSaveCallerUserProfile() {
   });
 }
 
-// Admin Registration
+// Admin Registration (deprecated - replaced by direct principal verification)
 export function useRegisterAdmin() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
@@ -60,7 +66,7 @@ export function useRegisterAdmin() {
   return useMutation({
     mutationFn: async (adminProfile: UserProfile) => {
       if (!actor) throw new Error('Actor not initialized');
-      await actor.registerAdmin(adminProfile);
+      await actor.saveCallerUserProfile(adminProfile);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['currentUserProfile'] });
@@ -79,9 +85,10 @@ export function useRegisterDoctor() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (doctorData: DoctorData) => {
+    mutationFn: async (doctorData: DoctorRegistrationData) => {
       if (!actor) throw new Error('Actor not initialized');
-      await actor.registerDoctor(doctorData);
+      // Save user profile as doctor
+      await actor.saveCallerUserProfile({ name: doctorData.name, role: 'doctor' });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['doctors'] });
@@ -181,9 +188,9 @@ export function useAddDoctor() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (doctor: DoctorData) => {
+    mutationFn: async (doctor: DoctorRegistrationData) => {
       if (!actor) throw new Error('Actor not initialized');
-      await actor.registerDoctor(doctor);
+      await actor.saveCallerUserProfile({ name: doctor.name, role: 'doctor' });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['doctors'] });
@@ -259,112 +266,42 @@ export function useGetCaseAssignmentsForDoctor(doctorId: string) {
   });
 }
 
-// Type definitions for AI analysis results
-interface SymptomCondition {
-  condition: string;
-  probability: string;
-  severity: string;
-  recommendations: string[];
-}
-
-interface SymptomAnalysisResult {
-  analysis: SymptomCondition[];
-  disclaimer: string;
-}
-
-interface MedicalReportAnalysisResult {
-  severity: string;
-  keyFindings: string[];
-  recommendations: string[];
-  disclaimer: string;
-}
-
-// AI Symptom Analysis (Client-side simulation)
+// AI Analysis Functions (client-side mock implementations)
 export function useAnalyzeSymptoms() {
-  return useMutation<SymptomAnalysisResult, Error, string>({
+  return useMutation({
     mutationFn: async (symptoms: string) => {
-      // Simulate AI processing delay
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // Simulate AI analysis delay
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Simple keyword-based analysis simulation
-      const lowerSymptoms = symptoms.toLowerCase();
-      const conditions: SymptomCondition[] = [];
+      // Mock AI response based on symptoms
+      const symptomsLower = symptoms.toLowerCase();
+      let diagnosis = 'General consultation recommended';
+      let severity: 'low' | 'medium' | 'high' = 'low';
+      let recommendations: string[] = ['Rest and hydration', 'Monitor symptoms'];
 
-      if (lowerSymptoms.includes('fever') || lowerSymptoms.includes('temperature')) {
-        conditions.push({
-          condition: 'Viral Infection',
-          probability: 'High',
-          severity: 'Moderate',
-          recommendations: [
-            'Rest and stay hydrated',
-            'Monitor temperature regularly',
-            'Consider over-the-counter fever reducers',
-            'Consult a doctor if fever persists beyond 3 days',
-          ],
-        });
-      }
-
-      if (lowerSymptoms.includes('chest pain') || lowerSymptoms.includes('heart')) {
-        conditions.push({
-          condition: 'Cardiac Concern',
-          probability: 'Medium',
-          severity: 'High',
-          recommendations: [
-            'Seek immediate medical attention',
-            'Avoid physical exertion',
-            'Monitor blood pressure if possible',
-            'Call emergency services if pain worsens',
-          ],
-        });
-      }
-
-      if (lowerSymptoms.includes('headache') || lowerSymptoms.includes('migraine')) {
-        conditions.push({
-          condition: 'Tension Headache',
-          probability: 'High',
-          severity: 'Low',
-          recommendations: [
-            'Rest in a quiet, dark room',
-            'Apply cold or warm compress',
-            'Stay hydrated',
-            'Consider over-the-counter pain relief',
-          ],
-        });
-      }
-
-      if (lowerSymptoms.includes('cough') || lowerSymptoms.includes('cold')) {
-        conditions.push({
-          condition: 'Upper Respiratory Infection',
-          probability: 'High',
-          severity: 'Low',
-          recommendations: [
-            'Get plenty of rest',
-            'Drink warm fluids',
-            'Use a humidifier',
-            'Consult a doctor if symptoms worsen',
-          ],
-        });
-      }
-
-      if (conditions.length === 0) {
-        conditions.push({
-          condition: 'General Malaise',
-          probability: 'Medium',
-          severity: 'Low',
-          recommendations: [
-            'Monitor your symptoms',
-            'Ensure adequate rest and nutrition',
-            'Stay hydrated',
-            'Consult a healthcare provider if symptoms persist',
-          ],
-        });
+      if (symptomsLower.includes('chest pain') || symptomsLower.includes('heart')) {
+        diagnosis = 'Possible cardiac concern';
+        severity = 'high';
+        recommendations = ['Seek immediate medical attention', 'Call emergency services', 'Do not exert yourself'];
+      } else if (symptomsLower.includes('fever') || symptomsLower.includes('cough')) {
+        diagnosis = 'Possible respiratory infection';
+        severity = 'medium';
+        recommendations = ['Rest and stay hydrated', 'Monitor temperature', 'Consult a doctor if symptoms worsen'];
+      } else if (symptomsLower.includes('headache') || symptomsLower.includes('migraine')) {
+        diagnosis = 'Possible tension headache or migraine';
+        severity = 'medium';
+        recommendations = ['Rest in a quiet, dark room', 'Stay hydrated', 'Consider over-the-counter pain relief'];
       }
 
       return {
-        analysis: conditions,
-        disclaimer:
-          'This is an AI-generated analysis and should not replace professional medical advice. Please consult a healthcare provider for accurate diagnosis.',
+        diagnosis,
+        severity,
+        recommendations,
+        confidence: 0.85,
       };
+    },
+    onSuccess: () => {
+      toast.success('Symptom analysis complete');
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to analyze symptoms');
@@ -372,63 +309,44 @@ export function useAnalyzeSymptoms() {
   });
 }
 
-// AI Medical Report Analysis (Client-side simulation)
 export function useAnalyzeMedicalReport() {
-  return useMutation<MedicalReportAnalysisResult, Error, string>({
+  return useMutation({
     mutationFn: async (reportText: string) => {
-      // Simulate AI processing delay
-      await new Promise((resolve) => setTimeout(resolve, 2500));
+      // Simulate AI analysis delay
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // Simple keyword-based analysis simulation
-      const lowerReport = reportText.toLowerCase();
-      const findings: string[] = [];
-      let severity = 'Normal';
+      // Mock AI response based on report content
+      const reportLower = reportText.toLowerCase();
+      let findings: string[] = [];
+      let severity: 'normal' | 'attention' | 'urgent' = 'normal';
+      let recommendations: string[] = [];
 
-      if (lowerReport.includes('elevated') || lowerReport.includes('high')) {
-        findings.push('Elevated biomarker levels detected');
-        severity = 'Moderate';
+      if (reportLower.includes('elevated') || reportLower.includes('high')) {
+        findings.push('Elevated levels detected in blood work');
+        severity = 'attention';
+        recommendations.push('Follow up with your physician', 'Consider lifestyle modifications');
       }
 
-      if (lowerReport.includes('abnormal') || lowerReport.includes('irregular')) {
-        findings.push('Abnormal test results identified');
-        severity = 'High';
-      }
-
-      if (lowerReport.includes('normal') || lowerReport.includes('within range')) {
-        findings.push('Most parameters within normal range');
-      }
-
-      if (lowerReport.includes('infection') || lowerReport.includes('inflammation')) {
-        findings.push('Signs of infection or inflammation present');
-        severity = 'Moderate';
+      if (reportLower.includes('abnormal') || reportLower.includes('irregular')) {
+        findings.push('Abnormal patterns identified');
+        severity = 'urgent';
+        recommendations.push('Immediate consultation recommended', 'Additional tests may be required');
       }
 
       if (findings.length === 0) {
-        findings.push('Report reviewed - general observations noted');
-      }
-
-      const recommendations: string[] = [];
-      if (severity === 'High') {
-        recommendations.push('Immediate follow-up recommended');
-        recommendations.push('Consider additional diagnostic tests');
-        recommendations.push('Monitor patient closely');
-      } else if (severity === 'Moderate') {
-        recommendations.push('Schedule follow-up appointment');
-        recommendations.push('Monitor symptoms');
-        recommendations.push('Consider lifestyle modifications');
-      } else {
-        recommendations.push('Continue routine monitoring');
-        recommendations.push('Maintain healthy lifestyle');
-        recommendations.push('Schedule regular check-ups');
+        findings.push('All parameters within normal range');
+        recommendations.push('Continue regular health monitoring', 'Maintain healthy lifestyle');
       }
 
       return {
+        findings,
         severity,
-        keyFindings: findings,
         recommendations,
-        disclaimer:
-          'This is an AI-generated analysis for reference only. Always verify with professional medical judgment.',
+        summary: `Analysis of medical report shows ${severity} status. ${findings.length} key finding(s) identified.`,
       };
+    },
+    onSuccess: () => {
+      toast.success('Medical report analysis complete');
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to analyze medical report');

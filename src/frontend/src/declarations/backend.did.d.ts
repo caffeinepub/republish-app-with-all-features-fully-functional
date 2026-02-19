@@ -17,11 +17,6 @@ export type Department = { 'emergency' : null } |
   { 'orthopedics' : null } |
   { 'pediatrics' : null } |
   { 'neurology' : null };
-export interface DoctorData {
-  'id' : string,
-  'name' : string,
-  'department' : Department,
-}
 export interface EmergencyData {
   'id' : string,
   'patientId' : string,
@@ -71,8 +66,6 @@ export interface _SERVICE {
   'getPatient' : ActorMethod<[string], Patient>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
-  'registerAdmin' : ActorMethod<[UserProfile], undefined>,
-  'registerDoctor' : ActorMethod<[DoctorData], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
