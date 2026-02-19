@@ -1,192 +1,192 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Hospital Management System - Frontend Implementation",
+  "title": "Update UI color scheme to greenish-blue teal with professional spacing",
   "requirements": [
     {
-      "id": "REQ-6",
-      "summary": "Implement comprehensive admin authentication system with Internet Identity integration and admin dashboard access controls",
+      "id": "REQ-24",
+      "summary": "Change the primary UI color scheme from light blue to a greenish-blue teal color, updating all color variables in the Tailwind configuration and CSS files to use the new color palette throughout the application",
       "acceptanceCriteria": [
-        "Admin can authenticate using Internet Identity",
-        "System maintains a list of authorized admin principals",
-        "Non-admin users cannot access admin-only features",
-        "Admin session persists across page refreshes",
-        "Clear indication of admin status in the UI"
+        "Primary UI colors are changed to greenish-blue teal across all components",
+        "Color changes are applied consistently in both light and dark themes",
+        "All interactive elements (buttons, links, focus states) use the new color palette",
+        "The color scheme maintains proper contrast ratios for accessibility"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Update the primary color palette to use greenish-blue teal OKLCH values. Replace existing blue primary color definitions with teal equivalents (e.g., oklch(0.7 0.15 180) for base teal). Ensure the color scale includes appropriate lightness variations for hover states, active states, and backgrounds while maintaining accessibility contrast ratios."
+        },
+        {
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Update CSS custom properties for both light and dark themes to use the new greenish-blue teal color scheme. Replace --primary, --primary-foreground, and related color variables with teal OKLCH values. Update accent colors, focus ring colors, and interactive state colors to maintain visual consistency with the new palette."
+        }
+      ]
+    },
+    {
+      "id": "REQ-25",
+      "summary": "Update the card component borders to use the new greenish-blue teal color with a flashy/prominent appearance, ensuring the border styling is applied to all card elements including role selector cards, dashboard cards, and portal interface cards",
+      "acceptanceCriteria": [
+        "All card borders use the greenish-blue teal color",
+        "Border styling is prominent and visually appealing",
+        "Border styling is consistent across all card components (RoleSelector, dashboard cards, portal cards)",
+        "The flashy appearance is achieved through appropriate border width, opacity, or glow effects"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/RoleSelector.tsx",
+          "operation": "modify",
+          "description": "Update the role selection cards to use prominent teal borders. Apply border classes using the new teal color (e.g., border-2 border-primary with shadow-lg and hover effects) to create a flashy appearance. Ensure the cards maintain their interactive hover states with enhanced teal glow effects."
+        },
+        {
+          "path": "frontend/src/components/AdminDashboard.tsx",
+          "operation": "modify",
+          "description": "Update dashboard card borders to use the new teal color scheme with prominent styling. Apply consistent border classes across all card elements in the tabbed interface to create visual cohesion with the flashy teal appearance."
+        },
+        {
+          "path": "frontend/src/components/DoctorPortal.tsx",
+          "operation": "modify",
+          "description": "Update portal interface cards (registration form, tabs) to use teal borders with flashy styling. Ensure border consistency across all card-like elements in the doctor portal view."
+        },
+        {
+          "path": "frontend/src/components/PatientPortal.tsx",
+          "operation": "modify",
+          "description": "Update patient portal card borders to use the new teal color scheme with prominent border styling, maintaining visual consistency with other portal interfaces."
+        },
+        {
+          "path": "frontend/src/components/AdminPortal.tsx",
+          "operation": "modify",
+          "description": "Update admin portal card elements (registration form, dashboard container) to use flashy teal borders, ensuring consistency with the overall design language."
+        },
+        {
+          "path": "frontend/src/components/CaseManagement.tsx",
+          "operation": "modify",
+          "description": "Update card and table container borders to use the new teal color with prominent styling. Apply consistent border classes to maintain the flashy appearance across case management interface elements."
+        },
+        {
+          "path": "frontend/src/components/DoctorManagement.tsx",
+          "operation": "modify",
+          "description": "Update accordion and card borders in the doctor management interface to use flashy teal styling, ensuring visual consistency across all management components."
+        }
+      ]
+    },
+    {
+      "id": "REQ-26",
+      "summary": "Refine the UI spacing and layout throughout the application to create a professional, minimalistic, and attractive appearance with proper padding, margins, and whitespace between elements",
+      "acceptanceCriteria": [
+        "All components have consistent and appropriate spacing (padding and margins)",
+        "Whitespace is used effectively to create visual hierarchy and breathing room",
+        "Layout feels clean, professional, and minimalistic",
+        "Spacing follows a consistent scale throughout the application",
+        "The overall visual appearance is attractive and polished"
       ],
       "file_operations": [
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Replace blockchain-focused tabbed interface with hospital management navigation. Use the authorization component to implement role-based access control, showing public emergency submission for all users and admin dashboard only for authenticated admins. Verify the authorization component's usage instructions before implementing. Wire the public emergency SOS form and admin dashboard routes into the router."
+          "description": "Review and refine the overall application layout spacing. Ensure consistent padding around main content areas and proper margins between major sections. Apply a consistent spacing scale (e.g., px-6 py-8 for containers) to create breathing room and professional appearance."
         },
         {
           "path": "frontend/src/components/Header.tsx",
           "operation": "modify",
-          "description": "Update header to display hospital branding with clear admin status indicator when user is authenticated as admin. Show user role badge and navigation links appropriate to their role (admin vs regular user)."
+          "description": "Refine header spacing with appropriate padding and margins. Ensure proper spacing between logo, navigation elements, authentication controls, and theme toggle. Create visual balance with consistent gap classes between flex items."
+        },
+        {
+          "path": "frontend/src/components/Footer.tsx",
+          "operation": "modify",
+          "description": "Update footer spacing to be consistent with the overall minimalistic design. Apply appropriate padding and margins to create a clean, professional appearance."
+        },
+        {
+          "path": "frontend/src/components/RoleSelector.tsx",
+          "operation": "modify",
+          "description": "Refine spacing in the role selector landing page. Ensure proper padding around the title, description text, and role cards. Apply consistent gap classes between cards and appropriate margins for visual hierarchy. Create breathing room with whitespace to enhance the minimalistic aesthetic."
+        },
+        {
+          "path": "frontend/src/components/EmergencySOS.tsx",
+          "operation": "modify",
+          "description": "Refine form spacing with consistent padding between form fields, labels, and sections. Apply appropriate margins around the form container and spacing between input groups to create a clean, professional form layout."
+        },
+        {
+          "path": "frontend/src/components/SymptomChecker.tsx",
+          "operation": "modify",
+          "description": "Update spacing in the symptom checker interface. Ensure proper padding around input areas, consistent spacing between results, and appropriate margins for readability and visual hierarchy."
+        },
+        {
+          "path": "frontend/src/components/MedicalReportAnalysis.tsx",
+          "operation": "modify",
+          "description": "Refine spacing in the medical report analysis component. Apply consistent padding to content sections, appropriate gaps between analysis results, and margins that enhance readability while maintaining a minimalistic appearance."
+        },
+        {
+          "path": "frontend/src/components/ProfileSetupModal.tsx",
+          "operation": "modify",
+          "description": "Update modal spacing with appropriate padding around content areas, consistent spacing between form fields, and proper margins for buttons to create a polished, professional modal interface."
         },
         {
           "path": "frontend/src/components/AccessDeniedScreen.tsx",
-          "operation": "create",
-          "description": "Create component to display when non-admin users attempt to access admin-only features. Use the authorization component to check user permissions. Include helpful messaging directing users to the public emergency submission form."
-        },
-        {
-          "path": "frontend/src/hooks/useAuth.ts",
-          "operation": "create",
-          "description": "Create custom hook that wraps useInternetIdentity and queries backend isCallerAdmin() to determine if current user has admin privileges. Return authentication state, admin status, and loading states. Cache admin status using React Query."
+          "operation": "modify",
+          "description": "Refine spacing in the access denied screen. Ensure appropriate padding around the icon and message text, with proper vertical spacing to create a clean, centered, professional error state."
         }
       ]
     },
     {
-      "id": "REQ-7",
-      "summary": "Create admin dashboard displaying all processing cases with complete patient information, addresses, assigned doctors, case status, department assignments, and timestamps",
+      "id": "REQ-27",
+      "summary": "Verify that all existing functionality (authentication, portal navigation, emergency SOS, symptom checker, medical report analysis, admin/doctor dashboards, case management, and doctor management) continues to work correctly after the UI color and spacing changes",
       "acceptanceCriteria": [
-        "Dashboard displays all emergency cases in a sortable, filterable table",
-        "Each case shows patient name, address, case type, department, assigned doctor, and current status",
-        "Admin can filter cases by status (pending/processing/completed)",
-        "Admin can filter cases by department",
-        "Case details include timestamps for submission and last update",
-        "Dashboard updates in real-time when new cases are added"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/AdminDashboard.tsx",
-          "operation": "create",
-          "description": "Create comprehensive admin dashboard component with tabs for managing cases and doctors. Display all emergency cases in a filterable table showing patient information, address, department, assigned doctor, and status. Include filters for status and department. Use shadcn/ui Table, Select, and Badge components. Fetch data using getAllEmergencies() backend method."
-        },
-        {
-          "path": "frontend/src/components/CaseManagement.tsx",
-          "operation": "create",
-          "description": "Create component for displaying and managing emergency cases in a table format. Include columns for case ID, patient name, address, department, assigned doctor, status, and timestamps. Implement sorting and filtering by status and department using shadcn/ui components. Include action buttons for assigning doctors and updating case status."
-        },
-        {
-          "path": "frontend/src/hooks/useEmergencies.ts",
-          "operation": "create",
-          "description": "Create React Query hooks for fetching all emergencies (getAllEmergencies), filtering by department (getEmergenciesByDepartment), and mutations for assigning cases and updating status. Include proper error handling and toast notifications. Enable automatic refetching on success."
-        }
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "summary": "Create admin view for managing doctors organized by department with case assignments and workload visibility",
-      "acceptanceCriteria": [
-        "Doctors are displayed grouped by their department/specialty",
-        "Each doctor entry shows name, department, and number of active cases",
-        "Admin can view which specific cases are assigned to each doctor",
-        "Interface allows admin to reassign cases to different doctors",
-        "Department groupings include all major medical specialties"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/DoctorManagement.tsx",
-          "operation": "create",
-          "description": "Create component displaying doctors grouped by department using shadcn/ui Accordion or Tabs. Each department section shows doctors with their names, active case counts, and assigned cases. Include interface for reassigning cases to different doctors. Fetch data using getDoctorsByDepartment() and getCaseAssignmentsForDoctor() backend methods."
-        },
-        {
-          "path": "frontend/src/hooks/useDoctors.ts",
-          "operation": "create",
-          "description": "Create React Query hooks for fetching doctors by department (getDoctorsByDepartment) and case assignments (getCaseAssignmentsForDoctor). Include mutations for adding doctors and reassigning cases. Provide proper loading states and error handling with toast notifications."
-        }
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "summary": "Enhance Emergency SOS feature with department selection dropdown for routing cases to appropriate medical departments",
-      "acceptanceCriteria": [
-        "Emergency SOS form includes a department selection dropdown",
-        "Dropdown includes all major hospital departments",
-        "Selected department is stored with the emergency case",
-        "Cases are automatically categorized by department for admin routing",
-        "Form validates that a department is selected before submission"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/EmergencySOS.tsx",
-          "operation": "create",
-          "description": "Create public-facing emergency submission form with fields for patient name, address (street, city, zip), description, and department selection dropdown. Include all major departments: Emergency, Cardiology, Neurology, Pediatrics, Orthopedics, General Medicine. Use shadcn/ui Form, Input, Textarea, and Select components. Validate all required fields including department selection before submission. Reference generated emergency icon at frontend/public/assets/generated/emergency-icon.dim_64x64.png. Submit using createEmergency() backend method."
-        },
-        {
-          "path": "frontend/src/components/PatientRegistration.tsx",
-          "operation": "create",
-          "description": "Create patient registration form component with fields for name and address details. This form is used within EmergencySOS or as standalone patient intake. Use shadcn/ui Form components with proper validation. Submit using addPatient() backend method."
-        },
-        {
-          "path": "frontend/src/hooks/usePatients.ts",
-          "operation": "create",
-          "description": "Create React Query hooks for patient operations including addPatient mutation and getPatient query. Include proper error handling and success notifications using toast."
-        }
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "summary": "Replace blockchain-focused UI with hospital management interface including emergency submission, patient registration, case tracking, and admin dashboard",
-      "acceptanceCriteria": [
-        "Clean, hospital-appropriate UI design with clear navigation",
-        "Emergency SOS form is prominently accessible to all users",
-        "Patient can submit emergency cases with personal information, location, and department selection",
-        "All forms include proper validation and error handling",
-        "UI is responsive and works on mobile devices",
-        "Admin sections are clearly separated from public-facing features"
+        "All authentication flows work without errors",
+        "Portal navigation and role-based access control functions correctly",
+        "Emergency SOS form submission works properly",
+        "Symptom checker and medical report analysis features are functional",
+        "Admin and doctor dashboards display data correctly",
+        "Case management and doctor assignment features work as expected",
+        "No regression issues introduced by color or spacing changes"
       ],
       "file_operations": [
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Replace blockchain-focused routing with hospital management routes. Create main layout with public emergency submission page and admin-only dashboard section. Use authorization component to guard admin routes. Wire EmergencySOS component as default public page and AdminDashboard for authenticated admins. Reference generated hospital hero image at frontend/public/assets/generated/hospital-hero.dim_1920x600.png in the main layout or hero section."
+          "description": "After applying color and spacing changes, verify that authentication state management, role-based routing, profile setup modal, and theme provider continue to function correctly. Ensure no class name conflicts or styling regressions affect the application logic."
         },
         {
-          "path": "frontend/src/components/HospitalLayout.tsx",
-          "operation": "create",
-          "description": "Create main layout component with hospital branding, navigation menu, and content area. Include hero section using generated image at frontend/public/assets/generated/hospital-hero.dim_1920x600.png. Provide navigation to emergency SOS (public) and admin dashboard (admin-only). Use responsive design with mobile menu support."
-        },
-        {
-          "path": "frontend/src/components/CaseStatusTracker.tsx",
-          "operation": "create",
-          "description": "Create component for users to view their submitted emergency case status. Display case information including department, assigned doctor (if any), and current status with visual status indicators using shadcn/ui Badge components."
-        },
-        {
-          "path": "frontend/index.css",
+          "path": "frontend/src/components/Header.tsx",
           "operation": "modify",
-          "description": "Update global styles to use hospital-appropriate color scheme replacing blockchain theme. Maintain OKLCH color system but adjust hue values to medical/healthcare palette (blues, greens, whites). Keep existing Tailwind CSS structure."
-        }
-      ]
-    },
-    {
-      "id": "REQ-12",
-      "summary": "Ensure all UI components are fully functional with working toggle features, sign-in functionality, form submissions, and proper loading/error states",
-      "acceptanceCriteria": [
-        "All toggle switches respond correctly to user interaction",
-        "Sign-in functionality works without errors",
-        "All forms submit successfully and show confirmation",
-        "Data loads from backend without errors",
-        "Error messages display clearly when operations fail",
-        "Loading states are shown during async operations",
-        "No console errors appear during normal usage"
-      ],
-      "file_operations": [
+          "description": "Verify that login/logout functionality, theme toggle, role badges, and navigation continue to work after color and spacing updates. Ensure all interactive elements maintain proper event handlers and state management."
+        },
         {
-          "path": "frontend/src/hooks/useQueries.ts",
+          "path": "frontend/src/components/RoleSelector.tsx",
           "operation": "modify",
-          "description": "Replace blockchain-focused query hooks with hospital management queries and mutations. Include queries for emergencies, doctors, patients, and case assignments. Add mutations for creating emergencies, assigning cases, updating status, and adding doctors/patients. Implement proper loading states, error handling, and optimistic updates with toast notifications."
+          "description": "Test role selection navigation and authentication checks after applying teal color scheme and spacing refinements. Verify that portal routing continues to function correctly."
         },
         {
-          "path": "frontend/src/components/LoadingSpinner.tsx",
-          "operation": "create",
-          "description": "Create reusable loading spinner component using shadcn/ui styling for consistent loading states across the application. Include size variants and optional loading text."
-        },
-        {
-          "path": "frontend/src/components/ErrorDisplay.tsx",
-          "operation": "create",
-          "description": "Create error display component for showing user-friendly error messages with retry functionality. Handle authorization errors from backend traps gracefully. Use shadcn/ui Alert component."
-        },
-        {
-          "path": "frontend/src/hooks/useInternetIdentity.ts",
+          "path": "frontend/src/components/EmergencySOS.tsx",
           "operation": "modify",
-          "description": "Verify Internet Identity hook properly handles login/logout flows without errors. Ensure identity persistence across page refreshes and proper delegation validation. Add error handling for edge cases like duplicate login attempts."
+          "description": "Verify emergency case submission functionality after form spacing and color updates. Ensure form validation, submission handlers, and success alerts continue to work correctly."
         },
         {
-          "path": "frontend/src/components/ProfileSetupModal.tsx",
-          "operation": "create",
-          "description": "Create modal for first-time user profile setup (name and role) that appears after Internet Identity login when user has no profile. Use the authorization component's getCallerUserProfile() and saveCallerUserProfile() methods. Implement proper loading state handling to prevent modal flash as shown in authorization component usage instructions. Reference generated doctor avatar at frontend/public/assets/generated/doctor-avatar.dim_128x128.png as placeholder."
+          "path": "frontend/src/components/SymptomChecker.tsx",
+          "operation": "modify",
+          "description": "Test symptom analysis functionality after applying color and spacing changes. Verify that AI analysis requests, results display, and interactive elements function properly."
+        },
+        {
+          "path": "frontend/src/components/MedicalReportAnalysis.tsx",
+          "operation": "modify",
+          "description": "Verify medical report analysis functionality continues to work after color scheme and spacing updates. Test AI analysis features and results rendering."
+        },
+        {
+          "path": "frontend/src/components/AdminDashboard.tsx",
+          "operation": "modify",
+          "description": "Test admin dashboard functionality after applying teal colors and spacing refinements. Verify tab navigation, case management, and doctor management features continue to function correctly."
+        },
+        {
+          "path": "frontend/src/components/CaseManagement.tsx",
+          "operation": "modify",
+          "description": "Verify case filtering, doctor assignment, and status management functionality after color and spacing updates. Ensure all interactive elements and data fetching continue to work properly."
+        },
+        {
+          "path": "frontend/src/components/DoctorManagement.tsx",
+          "operation": "modify",
+          "description": "Test doctor registration, department organization, and case assignment display after applying color scheme and spacing changes. Verify accordion functionality and data management work correctly."
         }
       ]
     }

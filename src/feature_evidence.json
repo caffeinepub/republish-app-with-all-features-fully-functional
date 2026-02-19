@@ -2,110 +2,63 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-implement-comprehensive-admin-authentication-system-that-allows-authorized-admins-to-log-in-using-internet-identity-and-access-administrative-dashboard-features",
-      "featureTitle": "Implement comprehensive admin authentication system that allows authorized admins to log in using Internet Identity and access administrative dashboard features",
+      "featureId": "feature-change-the-primary-ui-color-scheme-from-light-blue-to-a-greenish-blue-teal-color-similar-to-the-reference-link-previously-provided-updating-all-color-variables-in-the-tailwind-configuration-and-css-files-to-use-the-new-color-palette-throughout-the-application",
+      "featureTitle": "Change the primary UI color scheme from light blue to a greenish-blue teal color (similar to the reference link previously provided), updating all color variables in the Tailwind configuration and CSS files to use the new color palette throughout the application",
+      "files": [
+        "frontend/src/index.css",
+        "frontend/tailwind.config.js"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-24"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-card-component-borders-to-use-the-new-greenish-blue-teal-color-with-a-flashy-prominent-appearance-ensuring-the-border-styling-is-applied-to-all-card-elements-including-role-selector-cards-dashboard-cards-and-portal-interface-cards",
+      "featureTitle": "Update the card component borders to use the new greenish-blue teal color with a flashy/prominent appearance, ensuring the border styling is applied to all card elements including role selector cards, dashboard cards, and portal interface cards",
+      "files": [
+        "frontend/src/components/AdminDashboard.tsx",
+        "frontend/src/components/AdminPortal.tsx",
+        "frontend/src/components/CaseManagement.tsx",
+        "frontend/src/components/DoctorManagement.tsx",
+        "frontend/src/components/DoctorPortal.tsx",
+        "frontend/src/components/PatientPortal.tsx",
+        "frontend/src/components/RoleSelector.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-25"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-refine-the-ui-spacing-and-layout-throughout-the-application-to-create-a-professional-minimalistic-and-attractive-appearance-with-proper-padding-margins-and-whitespace-between-elements",
+      "featureTitle": "Refine the UI spacing and layout throughout the application to create a professional, minimalistic, and attractive appearance with proper padding, margins, and whitespace between elements",
       "files": [
         "frontend/src/App.tsx",
         "frontend/src/components/AccessDeniedScreen.tsx",
+        "frontend/src/components/EmergencySOS.tsx",
+        "frontend/src/components/Footer.tsx",
         "frontend/src/components/Header.tsx",
-        "frontend/src/hooks/useAuth.ts"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-6"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-admin-dashboard-that-displays-all-processing-cases-with-complete-details-including-patient-information-addresses-assigned-doctors-case-status-department-assignments-and-timestamps-for-case-creation-and-updates",
-      "featureTitle": "Create admin dashboard that displays all processing cases with complete details including patient information, addresses, assigned doctors, case status, department assignments, and timestamps for case creation and updates",
-      "files": [
-        "frontend/src/components/AdminDashboard.tsx",
-        "frontend/src/components/CaseManagement.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-7"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-create-admin-view-for-managing-doctors-organized-by-department-showing-which-doctors-are-assigned-to-which-cases-their-department-specializations-and-current-case-loads",
-      "featureTitle": "Create admin view for managing doctors organized by department, showing which doctors are assigned to which cases, their department specializations, and current case loads",
-      "files": [
-        "frontend/src/components/DoctorManagement.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-8"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-enhance-emergency-sos-feature-to-include-a-department-selection-dropdown-that-allows-users-to-specify-which-type-of-medical-department-should-handle-their-emergency-case-emergency-cardiology-neurology-pediatrics-orthopedics-general-medicine-etc",
-      "featureTitle": "Enhance Emergency SOS feature to include a department selection dropdown that allows users to specify which type of medical department should handle their emergency case (Emergency, Cardiology, Neurology, Pediatrics, Orthopedics, General Medicine, etc.)",
-      "files": [
-        "frontend/src/components/EmergencySOS.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-9"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-replace-current-blockchain-focused-ui-with-a-hospital-management-interface-that-includes-user-facing-emergency-sos-submission-form-with-department-selection-patient-registration-case-status-tracking-and-admin-dashboard-for-managing-all-cases-and-doctor-assignments",
-      "featureTitle": "Replace current blockchain-focused UI with a hospital management interface that includes: user-facing Emergency SOS submission form with department selection, patient registration, case status tracking, and admin dashboard for managing all cases and doctor assignments",
-      "files": [
-        "frontend/src/App.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-10"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-ensure-all-ui-components-are-fully-functional-with-working-toggle-features-sign-in-functionality-form-submissions-and-data-fetching-with-proper-error-handling-and-loading-states",
-      "featureTitle": "Ensure all UI components are fully functional with working toggle features, sign-in functionality, form submissions, and data fetching with proper error handling and loading states",
-      "files": [
+        "frontend/src/components/MedicalReportAnalysis.tsx",
         "frontend/src/components/ProfileSetupModal.tsx",
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/src/components/RoleSelector.tsx",
+        "frontend/src/components/SymptomChecker.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -116,7 +69,34 @@
         "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-12"
+        "REQ-26"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-verify-that-all-existing-functionality-authentication-portal-navigation-emergency-sos-symptom-checker-medical-report-analysis-admin-doctor-dashboards-case-management-and-doctor-management-continues-to-work-correctly-after-the-ui-color-and-spacing-changes",
+      "featureTitle": "Verify that all existing functionality (authentication, portal navigation, emergency SOS, symptom checker, medical report analysis, admin/doctor dashboards, case management, and doctor management) continues to work correctly after the UI color and spacing changes",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AdminDashboard.tsx",
+        "frontend/src/components/CaseManagement.tsx",
+        "frontend/src/components/DoctorManagement.tsx",
+        "frontend/src/components/EmergencySOS.tsx",
+        "frontend/src/components/Header.tsx",
+        "frontend/src/components/MedicalReportAnalysis.tsx",
+        "frontend/src/components/RoleSelector.tsx",
+        "frontend/src/components/SymptomChecker.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-27"
       ],
       "confidence": "high"
     }

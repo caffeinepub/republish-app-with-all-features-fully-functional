@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
-import { useGetAllDoctors, useAddDoctor, useGetCaseAssignments } from '../hooks/useQueries';
+import { useGetAllDoctors, useAddDoctor, useGetCaseAssignmentsForDoctor } from '../hooks/useQueries';
 import { Department } from '../backend';
 import { Loader2, Plus, UserPlus } from 'lucide-react';
 
@@ -28,12 +28,13 @@ export function DoctorManagement() {
 
   const handleAddDoctor = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!doctorName || !doctorDepartment) return;
+    if (!doctorName.trim() || !doctorDepartment) return;
 
     const doctorId = `doctor-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
     await addDoctor.mutateAsync({
       id: doctorId,
-      name: doctorName,
+      name: doctorName.trim(),
       department: doctorDepartment as Department,
     });
 
@@ -42,7 +43,7 @@ export function DoctorManagement() {
     setShowAddForm(false);
   };
 
-  const groupedDoctors = doctors?.reduce((acc, doctor) => {
+  const doctorsByDepartment = doctors?.reduce((acc, doctor) => {
     const dept = doctor.department;
     if (!acc[dept]) acc[dept] = [];
     acc[dept].push(doctor);
@@ -51,7 +52,7 @@ export function DoctorManagement() {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="border-2 border-primary/20">
         <CardContent className="flex items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </CardContent>
@@ -61,70 +62,72 @@ export function DoctorManagement() {
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
+      <Card className="border-2 border-primary/20">
+        <CardHeader className="space-y-2 pb-6">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Medical Staff</CardTitle>
-              <CardDescription>Manage doctors organized by department</CardDescription>
+              <CardTitle className="text-2xl">Doctor Management</CardTitle>
+              <CardDescription className="text-base mt-1">Add and manage medical staff</CardDescription>
             </div>
             <Button onClick={() => setShowAddForm(!showAddForm)} variant="default" className="gap-2">
-              <Plus className="h-4 w-4" />
+              <Plus className="h-5 w-5" />
               Add Doctor
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {showAddForm && (
-            <Card className="mb-6 bg-muted/50">
-              <CardHeader>
+            <Card className="mb-6 border-2 border-primary/10">
+              <CardHeader className="pb-4">
                 <CardTitle className="text-lg flex items-center gap-2">
                   <UserPlus className="h-5 w-5" />
                   Add New Doctor
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleAddDoctor} className="space-y-4">
-                  <div>
-                    <Label htmlFor="doctorName">Doctor Name *</Label>
+                <form onSubmit={handleAddDoctor} className="space-y-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="doctorName" className="text-sm font-medium">Doctor Name</Label>
                     <Input
                       id="doctorName"
+                      placeholder="Enter doctor's full name"
                       value={doctorName}
                       onChange={(e) => setDoctorName(e.target.value)}
-                      placeholder="Dr. John Smith"
                       required
+                      className="h-11"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="doctorDepartment">Department *</Label>
-                    <Select
-                      value={doctorDepartment}
-                      onValueChange={(value) => setDoctorDepartment(value as Department)}
-                    >
-                      <SelectTrigger id="doctorDepartment">
+                  <div className="space-y-2">
+                    <Label htmlFor="doctorDepartment" className="text-sm font-medium">Department</Label>
+                    <Select value={doctorDepartment} onValueChange={(value) => setDoctorDepartment(value as Department)}>
+                      <SelectTrigger id="doctorDepartment" className="h-11">
                         <SelectValue placeholder="Select department" />
                       </SelectTrigger>
                       <SelectContent>
-                        {Object.entries(departmentLabels).map(([value, label]) => (
-                          <SelectItem key={value} value={value}>
+                        {Object.entries(departmentLabels).map(([key, label]) => (
+                          <SelectItem key={key} value={key}>
                             {label}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="flex gap-2">
-                    <Button type="submit" disabled={addDoctor.isPending || !doctorName || !doctorDepartment}>
+                  <div className="flex gap-3">
+                    <Button
+                      type="submit"
+                      disabled={addDoctor.isPending || !doctorName.trim() || !doctorDepartment}
+                      className="flex-1 h-11"
+                    >
                       {addDoctor.isPending ? (
                         <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
                           Adding...
                         </>
                       ) : (
                         'Add Doctor'
                       )}
                     </Button>
-                    <Button type="button" variant="outline" onClick={() => setShowAddForm(false)}>
+                    <Button type="button" variant="outline" onClick={() => setShowAddForm(false)} className="h-11">
                       Cancel
                     </Button>
                   </div>
@@ -133,22 +136,20 @@ export function DoctorManagement() {
             </Card>
           )}
 
-          {groupedDoctors && Object.keys(groupedDoctors).length > 0 ? (
-            <Accordion type="single" collapsible className="w-full">
-              {Object.entries(groupedDoctors).map(([dept, deptDoctors]) => (
-                <AccordionItem key={dept} value={dept}>
-                  <AccordionTrigger className="hover:no-underline">
+          {doctorsByDepartment && Object.keys(doctorsByDepartment).length > 0 ? (
+            <Accordion type="single" collapsible className="space-y-3">
+              {Object.entries(doctorsByDepartment).map(([dept, deptDoctors]) => (
+                <AccordionItem key={dept} value={dept} className="border-2 border-primary/10 rounded-lg px-4">
+                  <AccordionTrigger className="hover:no-underline py-4">
                     <div className="flex items-center gap-3">
-                      <Badge variant="outline" className="text-base px-3 py-1">
-                        {departmentLabels[dept as Department]}
-                      </Badge>
+                      <Badge variant="outline" className="text-sm">{departmentLabels[dept as Department]}</Badge>
                       <span className="text-sm text-muted-foreground">
                         {deptDoctors.length} {deptDoctors.length === 1 ? 'doctor' : 'doctors'}
                       </span>
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="space-y-3 pt-4">
+                  <AccordionContent className="pt-2 pb-4">
+                    <div className="space-y-3">
                       {deptDoctors.map((doctor) => (
                         <DoctorCard key={doctor.id} doctor={doctor} />
                       ))}
@@ -159,7 +160,7 @@ export function DoctorManagement() {
             </Accordion>
           ) : (
             <div className="text-center py-12 text-muted-foreground">
-              <p>No doctors added yet</p>
+              <p>No doctors registered yet</p>
             </div>
           )}
         </CardContent>
@@ -169,25 +170,24 @@ export function DoctorManagement() {
 }
 
 function DoctorCard({ doctor }: { doctor: { id: string; name: string; department: Department } }) {
-  const { data: assignments } = useGetCaseAssignments(doctor.id);
+  const { data: assignments, isLoading } = useGetCaseAssignmentsForDoctor(doctor.id);
 
   return (
-    <Card>
-      <CardContent className="pt-6">
-        <div className="flex items-start gap-4">
-          <img
-            src="/assets/generated/doctor-avatar.dim_128x128.png"
-            alt={doctor.name}
-            className="h-16 w-16 rounded-full"
-          />
-          <div className="flex-1">
-            <h4 className="font-semibold text-lg">{doctor.name}</h4>
-            <p className="text-sm text-muted-foreground mb-2">ID: {doctor.id.slice(0, 30)}...</p>
-            <div className="flex items-center gap-2">
-              <Badge variant="secondary">
-                {assignments?.length || 0} active {assignments?.length === 1 ? 'case' : 'cases'}
+    <Card className="border border-primary/10">
+      <CardContent className="pt-5 pb-5">
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <p className="font-medium text-base">{doctor.name}</p>
+            <p className="text-sm text-muted-foreground font-mono">{doctor.id.slice(0, 20)}...</p>
+          </div>
+          <div>
+            {isLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            ) : (
+              <Badge variant="secondary" className="text-sm">
+                {assignments?.length || 0} {assignments?.length === 1 ? 'case' : 'cases'}
               </Badge>
-            </div>
+            )}
           </div>
         </div>
       </CardContent>

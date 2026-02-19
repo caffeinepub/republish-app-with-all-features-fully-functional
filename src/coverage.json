@@ -1,156 +1,129 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-19T00:24:18.883Z",
+  "generatedAt": "2026-02-19T01:24:11.673Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 8,
-    "implemented": 6,
+    "total": 4,
+    "implemented": 4,
     "items": [
       {
-        "id": "REQ-10",
-        "summary": "Replace current blockchain-focused UI with a hospital management interface that includes: user-facing Emergency SOS submission form with department selection, patient registration, case status tracking, and admin dashboard for managing all cases and doctor assignments",
+        "id": "REQ-24",
+        "summary": "Change the primary UI color scheme from light blue to a greenish-blue teal color (similar to the reference link previously provided), updating all color variables in the Tailwind configuration and CSS files to use the new color palette throughout the application",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/components/HospitalLayout.tsx",
-          "frontend/src/components/CaseStatusTracker.tsx",
-          "frontend/index.css"
+          "frontend/tailwind.config.js",
+          "frontend/src/index.css"
         ],
         "matchedFiles": [
-          "frontend/src/App.tsx"
+          "frontend/tailwind.config.js",
+          "frontend/src/index.css"
         ]
       },
       {
-        "id": "REQ-11",
-        "summary": "Implement backend API methods for creating emergency cases, assigning doctors to cases, updating case status, retrieving all cases for admin view, and managing doctor-case assignments with proper authentication checks",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-12",
-        "summary": "Ensure all UI components are fully functional with working toggle features, sign-in functionality, form submissions, and data fetching with proper error handling and loading states",
+        "id": "REQ-25",
+        "summary": "Update the card component borders to use the new greenish-blue teal color with a flashy/prominent appearance, ensuring the border styling is applied to all card elements including role selector cards, dashboard cards, and portal interface cards",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/LoadingSpinner.tsx",
-          "frontend/src/components/ErrorDisplay.tsx",
-          "frontend/src/hooks/useInternetIdentity.ts",
-          "frontend/src/components/ProfileSetupModal.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/ProfileSetupModal.tsx"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Replace the current blockchain-focused backend data model with a hospital management data model that includes: Patient records with personal information and addresses, Emergency cases with status tracking (pending/processing/completed), Doctor profiles with assigned department information, Case assignments linking doctors to emergency cases, and Department categorizations for medical specialties",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-6",
-        "summary": "Implement comprehensive admin authentication system that allows authorized admins to log in using Internet Identity and access administrative dashboard features",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/AccessDeniedScreen.tsx",
-          "frontend/src/hooks/useAuth.ts"
-        ],
-        "matchedFiles": [
-          "frontend/src/App.tsx",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/AccessDeniedScreen.tsx",
-          "frontend/src/hooks/useAuth.ts"
-        ]
-      },
-      {
-        "id": "REQ-7",
-        "summary": "Create admin dashboard that displays all processing cases with complete details including patient information, addresses, assigned doctors, case status, department assignments, and timestamps for case creation and updates",
-        "status": "implemented",
-        "plannedFiles": [
+          "frontend/src/components/RoleSelector.tsx",
           "frontend/src/components/AdminDashboard.tsx",
+          "frontend/src/components/DoctorPortal.tsx",
+          "frontend/src/components/PatientPortal.tsx",
+          "frontend/src/components/AdminPortal.tsx",
           "frontend/src/components/CaseManagement.tsx",
-          "frontend/src/hooks/useEmergencies.ts"
+          "frontend/src/components/DoctorManagement.tsx"
         ],
         "matchedFiles": [
+          "frontend/src/components/RoleSelector.tsx",
           "frontend/src/components/AdminDashboard.tsx",
-          "frontend/src/components/CaseManagement.tsx"
-        ]
-      },
-      {
-        "id": "REQ-8",
-        "summary": "Create admin view for managing doctors organized by department, showing which doctors are assigned to which cases, their department specializations, and current case loads",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/DoctorManagement.tsx",
-          "frontend/src/hooks/useDoctors.ts"
-        ],
-        "matchedFiles": [
+          "frontend/src/components/DoctorPortal.tsx",
+          "frontend/src/components/PatientPortal.tsx",
+          "frontend/src/components/AdminPortal.tsx",
+          "frontend/src/components/CaseManagement.tsx",
           "frontend/src/components/DoctorManagement.tsx"
         ]
       },
       {
-        "id": "REQ-9",
-        "summary": "Enhance Emergency SOS feature to include a department selection dropdown that allows users to specify which type of medical department should handle their emergency case (Emergency, Cardiology, Neurology, Pediatrics, Orthopedics, General Medicine, etc.)",
+        "id": "REQ-26",
+        "summary": "Refine the UI spacing and layout throughout the application to create a professional, minimalistic, and attractive appearance with proper padding, margins, and whitespace between elements",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/Footer.tsx",
+          "frontend/src/components/RoleSelector.tsx",
           "frontend/src/components/EmergencySOS.tsx",
-          "frontend/src/components/PatientRegistration.tsx",
-          "frontend/src/hooks/usePatients.ts"
+          "frontend/src/components/SymptomChecker.tsx",
+          "frontend/src/components/MedicalReportAnalysis.tsx",
+          "frontend/src/components/ProfileSetupModal.tsx",
+          "frontend/src/components/AccessDeniedScreen.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/EmergencySOS.tsx"
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/Footer.tsx",
+          "frontend/src/components/RoleSelector.tsx",
+          "frontend/src/components/EmergencySOS.tsx",
+          "frontend/src/components/SymptomChecker.tsx",
+          "frontend/src/components/MedicalReportAnalysis.tsx",
+          "frontend/src/components/ProfileSetupModal.tsx",
+          "frontend/src/components/AccessDeniedScreen.tsx"
+        ]
+      },
+      {
+        "id": "REQ-27",
+        "summary": "Verify that all existing functionality (authentication, portal navigation, emergency SOS, symptom checker, medical report analysis, admin/doctor dashboards, case management, and doctor management) continues to work correctly after the UI color and spacing changes",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/RoleSelector.tsx",
+          "frontend/src/components/EmergencySOS.tsx",
+          "frontend/src/components/SymptomChecker.tsx",
+          "frontend/src/components/MedicalReportAnalysis.tsx",
+          "frontend/src/components/AdminDashboard.tsx",
+          "frontend/src/components/CaseManagement.tsx",
+          "frontend/src/components/DoctorManagement.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/App.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/RoleSelector.tsx",
+          "frontend/src/components/EmergencySOS.tsx",
+          "frontend/src/components/SymptomChecker.tsx",
+          "frontend/src/components/MedicalReportAnalysis.tsx",
+          "frontend/src/components/AdminDashboard.tsx",
+          "frontend/src/components/CaseManagement.tsx",
+          "frontend/src/components/DoctorManagement.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/authorization/MixinAuthorization.mo",
-    "backend/authorization/access-control.mo",
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
-    "build-template/README.md",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/public/assets/generated/admin-icon.dim_48x48.png",
-    "frontend/public/assets/generated/doctor-avatar.dim_128x128.png",
-    "frontend/public/assets/generated/emergency-icon.dim_64x64.png",
-    "frontend/public/assets/generated/hospital-hero.dim_1920x600.png",
     "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
     "frontend/src/components/AccessDeniedScreen.tsx",
     "frontend/src/components/AdminDashboard.tsx",
-    "frontend/src/components/AdminPanel.tsx",
+    "frontend/src/components/AdminPortal.tsx",
     "frontend/src/components/CaseManagement.tsx",
-    "frontend/src/components/DeploymentManagement.tsx",
     "frontend/src/components/DoctorManagement.tsx",
+    "frontend/src/components/DoctorPortal.tsx",
     "frontend/src/components/EmergencySOS.tsx",
-    "frontend/src/components/EntryManagement.tsx",
-    "frontend/src/components/FaucetManagement.tsx",
     "frontend/src/components/Footer.tsx",
     "frontend/src/components/Header.tsx",
+    "frontend/src/components/MedicalReportAnalysis.tsx",
+    "frontend/src/components/PatientPortal.tsx",
     "frontend/src/components/ProfileSetupModal.tsx",
-    "frontend/src/components/TokenManagement.tsx",
-    "frontend/src/components/TransactionList.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useAuth.ts",
-    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/components/RoleSelector.tsx",
+    "frontend/src/components/SymptomChecker.tsx",
     "frontend/src/index.css",
-    "frontend/src/utils/urlParams.ts",
+    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

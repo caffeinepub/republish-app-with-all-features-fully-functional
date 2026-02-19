@@ -3,10 +3,14 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Loader2, User } from 'lucide-react';
 import { useSaveCallerUserProfile } from '../hooks/useQueries';
-import { Loader2 } from 'lucide-react';
 
-export function ProfileSetupModal() {
+interface ProfileSetupModalProps {
+  open: boolean;
+}
+
+export function ProfileSetupModal({ open }: ProfileSetupModalProps) {
   const [name, setName] = useState('');
   const saveProfile = useSaveCallerUserProfile();
 
@@ -21,37 +25,38 @@ export function ProfileSetupModal() {
   };
 
   return (
-    <Dialog open={true}>
-      <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()}>
-        <DialogHeader>
-          <div className="flex justify-center mb-4">
-            <img
-              src="/assets/generated/doctor-avatar.dim_128x128.png"
-              alt="Profile"
-              className="h-20 w-20 rounded-full"
-            />
+    <Dialog open={open}>
+      <DialogContent className="sm:max-w-md border-2 border-primary/20" showCloseButton={false}>
+        <DialogHeader className="space-y-4">
+          <div className="mx-auto h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+            <User className="h-8 w-8 text-primary" />
           </div>
-          <DialogTitle className="text-center text-2xl">Welcome!</DialogTitle>
-          <DialogDescription className="text-center">
+          <DialogTitle className="text-2xl text-center">Welcome to Vitals AI</DialogTitle>
+          <DialogDescription className="text-base text-center">
             Please enter your name to complete your profile setup
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="name">Your Name *</Label>
+        <form onSubmit={handleSubmit} className="space-y-6 mt-4">
+          <div className="space-y-2">
+            <Label htmlFor="name" className="text-sm font-medium">Your Name</Label>
             <Input
               id="name"
+              placeholder="Enter your full name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Enter your full name"
               required
               autoFocus
+              className="h-11"
             />
           </div>
-          <Button type="submit" className="w-full" disabled={saveProfile.isPending || !name.trim()}>
+          <Button
+            type="submit"
+            className="w-full h-12 text-base"
+            disabled={saveProfile.isPending || !name.trim()}
+          >
             {saveProfile.isPending ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="h-5 w-5 animate-spin mr-2" />
                 Saving...
               </>
             ) : (

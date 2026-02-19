@@ -51,7 +51,6 @@ export type UserRole = { 'admin' : null } |
   { 'guest' : null };
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
-  'addDoctor' : ActorMethod<[DoctorData], undefined>,
   'addPatient' : ActorMethod<[Patient], undefined>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'assignCaseToDoctor' : ActorMethod<[string, string], undefined>,
@@ -72,6 +71,8 @@ export interface _SERVICE {
   'getPatient' : ActorMethod<[string], Patient>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'registerAdmin' : ActorMethod<[UserProfile], undefined>,
+  'registerDoctor' : ActorMethod<[DoctorData], undefined>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;

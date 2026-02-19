@@ -8,19 +8,6 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
-export const Department = IDL.Variant({
-  'emergency' : IDL.Null,
-  'cardiology' : IDL.Null,
-  'generalMedicine' : IDL.Null,
-  'orthopedics' : IDL.Null,
-  'pediatrics' : IDL.Null,
-  'neurology' : IDL.Null,
-});
-export const DoctorData = IDL.Record({
-  'id' : IDL.Text,
-  'name' : IDL.Text,
-  'department' : Department,
-});
 export const Address = IDL.Record({
   'zip' : IDL.Text,
   'street' : IDL.Text,
@@ -35,6 +22,14 @@ export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
   'user' : IDL.Null,
   'guest' : IDL.Null,
+});
+export const Department = IDL.Variant({
+  'emergency' : IDL.Null,
+  'cardiology' : IDL.Null,
+  'generalMedicine' : IDL.Null,
+  'orthopedics' : IDL.Null,
+  'pediatrics' : IDL.Null,
+  'neurology' : IDL.Null,
 });
 export const EmergencyData = IDL.Record({
   'id' : IDL.Text,
@@ -59,10 +54,14 @@ export const PersistentDoctor = IDL.Record({
   'name' : IDL.Text,
   'department' : Department,
 });
+export const DoctorData = IDL.Record({
+  'id' : IDL.Text,
+  'name' : IDL.Text,
+  'department' : Department,
+});
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'addDoctor' : IDL.Func([DoctorData], [], []),
   'addPatient' : IDL.Func([Patient], [], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'assignCaseToDoctor' : IDL.Func([IDL.Text, IDL.Text], [], []),
@@ -93,25 +92,14 @@ export const idlService = IDL.Service({
       ['query'],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'registerAdmin' : IDL.Func([UserProfile], [], []),
+  'registerDoctor' : IDL.Func([DoctorData], [], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
-  const Department = IDL.Variant({
-    'emergency' : IDL.Null,
-    'cardiology' : IDL.Null,
-    'generalMedicine' : IDL.Null,
-    'orthopedics' : IDL.Null,
-    'pediatrics' : IDL.Null,
-    'neurology' : IDL.Null,
-  });
-  const DoctorData = IDL.Record({
-    'id' : IDL.Text,
-    'name' : IDL.Text,
-    'department' : Department,
-  });
   const Address = IDL.Record({
     'zip' : IDL.Text,
     'street' : IDL.Text,
@@ -126,6 +114,14 @@ export const idlFactory = ({ IDL }) => {
     'admin' : IDL.Null,
     'user' : IDL.Null,
     'guest' : IDL.Null,
+  });
+  const Department = IDL.Variant({
+    'emergency' : IDL.Null,
+    'cardiology' : IDL.Null,
+    'generalMedicine' : IDL.Null,
+    'orthopedics' : IDL.Null,
+    'pediatrics' : IDL.Null,
+    'neurology' : IDL.Null,
   });
   const EmergencyData = IDL.Record({
     'id' : IDL.Text,
@@ -150,10 +146,14 @@ export const idlFactory = ({ IDL }) => {
     'name' : IDL.Text,
     'department' : Department,
   });
+  const DoctorData = IDL.Record({
+    'id' : IDL.Text,
+    'name' : IDL.Text,
+    'department' : Department,
+  });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-    'addDoctor' : IDL.Func([DoctorData], [], []),
     'addPatient' : IDL.Func([Patient], [], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'assignCaseToDoctor' : IDL.Func([IDL.Text, IDL.Text], [], []),
@@ -188,6 +188,8 @@ export const idlFactory = ({ IDL }) => {
         ['query'],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'registerAdmin' : IDL.Func([UserProfile], [], []),
+    'registerDoctor' : IDL.Func([DoctorData], [], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
   });
 };

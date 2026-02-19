@@ -4,9 +4,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useGetAllEmergencies, useGetAllDoctors } from '../hooks/useQueries';
-import { Department, PersistentEmergency } from '../backend';
+import { Department } from '../backend';
 import { Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useAssignCaseToDoctor } from '../hooks/useQueries';
 
 export function CaseManagement() {
@@ -37,7 +36,7 @@ export function CaseManagement() {
 
   if (isLoading) {
     return (
-      <Card>
+      <Card className="border-2 border-primary/20">
         <CardContent className="flex items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </CardContent>
@@ -46,16 +45,16 @@ export function CaseManagement() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Emergency Cases</CardTitle>
-        <CardDescription>View and manage all emergency cases</CardDescription>
+    <Card className="border-2 border-primary/20">
+      <CardHeader className="space-y-2 pb-6">
+        <CardTitle className="text-2xl">Emergency Cases</CardTitle>
+        <CardDescription className="text-base">View and manage all emergency cases</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex gap-4 mb-6">
           <div className="flex-1">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger>
+              <SelectTrigger className="h-11">
                 <SelectValue placeholder="Filter by status" />
               </SelectTrigger>
               <SelectContent>
@@ -68,7 +67,7 @@ export function CaseManagement() {
           </div>
           <div className="flex-1">
             <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-              <SelectTrigger>
+              <SelectTrigger className="h-11">
                 <SelectValue placeholder="Filter by department" />
               </SelectTrigger>
               <SelectContent>
@@ -84,16 +83,16 @@ export function CaseManagement() {
         </div>
 
         {filteredEmergencies && filteredEmergencies.length > 0 ? (
-          <div className="rounded-md border">
+          <div className="rounded-lg border-2 border-primary/10">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Case ID</TableHead>
-                  <TableHead>Patient ID</TableHead>
-                  <TableHead>Department</TableHead>
-                  <TableHead>Description</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead className="text-sm">Case ID</TableHead>
+                  <TableHead className="text-sm">Patient ID</TableHead>
+                  <TableHead className="text-sm">Department</TableHead>
+                  <TableHead className="text-sm">Description</TableHead>
+                  <TableHead className="text-sm">Status</TableHead>
+                  <TableHead className="text-sm">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -103,12 +102,12 @@ export function CaseManagement() {
                   );
                   return (
                     <TableRow key={emergency.id}>
-                      <TableCell className="font-mono text-xs">{emergency.id.slice(0, 20)}...</TableCell>
-                      <TableCell className="font-mono text-xs">{emergency.patientId.slice(0, 20)}...</TableCell>
+                      <TableCell className="font-mono text-sm">{emergency.id.slice(0, 15)}...</TableCell>
+                      <TableCell className="font-mono text-sm">{emergency.patientId.slice(0, 15)}...</TableCell>
                       <TableCell>
-                        <Badge variant="outline">{departmentLabels[emergency.department]}</Badge>
+                        <Badge variant="outline" className="text-sm">{departmentLabels[emergency.department]}</Badge>
                       </TableCell>
-                      <TableCell className="max-w-xs truncate">{emergency.description}</TableCell>
+                      <TableCell className="max-w-xs truncate text-sm">{emergency.description}</TableCell>
                       <TableCell>
                         <Badge
                           variant={
@@ -118,6 +117,7 @@ export function CaseManagement() {
                               ? 'secondary'
                               : 'outline'
                           }
+                          className="text-sm"
                         >
                           {emergency.status}
                         </Badge>
@@ -128,19 +128,19 @@ export function CaseManagement() {
                             onValueChange={(doctorId) => handleAssignDoctor(emergency.id, doctorId)}
                             disabled={assignCase.isPending}
                           >
-                            <SelectTrigger className="w-[180px]">
+                            <SelectTrigger className="w-[150px] h-10 text-sm">
                               <SelectValue placeholder="Assign doctor" />
                             </SelectTrigger>
                             <SelectContent>
                               {departmentDoctors.map((doctor) => (
-                                <SelectItem key={doctor.id} value={doctor.id}>
+                                <SelectItem key={doctor.id} value={doctor.id} className="text-sm">
                                   {doctor.name}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
                         ) : (
-                          <span className="text-sm text-muted-foreground">No doctors available</span>
+                          <span className="text-sm text-muted-foreground">No doctors</span>
                         )}
                       </TableCell>
                     </TableRow>

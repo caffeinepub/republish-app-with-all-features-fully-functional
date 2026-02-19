@@ -6,12 +6,12 @@ import Order "mo:core/Order";
 import Nat "mo:core/Nat";
 import Principal "mo:core/Principal";
 import Array "mo:core/Array";
-import Migration "migration";
+
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
 
 // Specify the data migration function in with-clause
-(with migration = Migration.run)
+
 actor {
   public type Department = {
     #emergency;
@@ -171,15 +171,15 @@ actor {
   };
 
   public query ({ caller }) func getAllEmergencies() : async [PersistentEmergency] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can view all emergencies");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can view emergencies");
     };
     persistentEmergencyMap.values().toArray().sort();
   };
 
   public query ({ caller }) func getEmergenciesByDepartment(department : Department) : async [PersistentEmergency] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can view emergencies by department");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can view emergencies by department");
     };
     let emergencies = persistentEmergencyMap.values().toArray();
     let filtered = emergencies.filter(
@@ -190,27 +190,7 @@ actor {
     filtered.sort();
   };
 
-  // Doctor Management
-  public shared ({ caller }) func addDoctor(doctor : DoctorData) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can add doctors");
-    };
-    persistentDoctorMap.add(doctor.id, doctor);
-  };
-
-  public query ({ caller }) func getDoctorsByDepartment(department : Department) : async [PersistentDoctor] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can view doctors by department");
-    };
-    let doctors = persistentDoctorMap.values().toArray();
-    let filtered = doctors.filter(
-      func(d) {
-        d.department == department;
-      }
-    );
-    filtered;
-  };
-
+  // Deprecated Doctor Management in favor of self-registration
   // Case Assignments
   public shared ({ caller }) func assignCaseToDoctor(caseId : Text, doctorId : Text) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
@@ -221,8 +201,8 @@ actor {
   };
 
   public query ({ caller }) func getCaseAssignmentsForDoctor(doctorId : Text) : async [PersistentCaseAssignment] {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Runtime.trap("Unauthorized: Only admins can view case assignments");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can view case assignments");
     };
     let assignments = persistentCaseAssignmentMap.values().toArray();
     let filtered = assignments.filter(
@@ -252,6 +232,29 @@ actor {
 
     persistentEmergencyMap.add(caseId, { emergency with department = newDepartment });
     Runtime.trap("Case " # caseId # " is now handled by department " # departmentToString(newDepartment));
+  };
+
+  public shared ({ caller }) func registerAdmin(adminProfile : UserProfile) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can register as admin");
+    };
+    let profileWithRole = {
+      name = adminProfile.name;
+      role = "admin";
+    };
+    userProfiles.add(caller, profileWithRole);
+  };
+
+  public shared ({ caller }) func registerDoctor(doctorData : DoctorData) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can register as doctor");
+    };
+    persistentDoctorMap.add(doctorData.id, doctorData);
+    let profileWithRole = {
+      name = doctorData.name;
+      role = "doctor";
+    };
+    userProfiles.add(caller, profileWithRole);
   };
 
   // Helper functions
@@ -305,5 +308,17 @@ actor {
 
   private func departmentMatches(dept1 : Department, dept2 : Department) : Bool {
     departmentToString(dept1) == departmentToString(dept2);
+  };
+
+  public query ({ caller }) func getDoctorsByDepartment(department : Department) : async [PersistentDoctor] {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only authenticated users can view doctors by department");
+    };
+    let doctors = persistentDoctorMap.values().toArray();
+    doctors.filter(
+      func(d) {
+        d.department == department;
+      }
+    );
   };
 };

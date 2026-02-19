@@ -62,7 +62,6 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
-    addDoctor(doctor: DoctorData): Promise<void>;
     addPatient(patient: Patient): Promise<void>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     assignCaseToDoctor(caseId: string, doctorId: string): Promise<void>;
@@ -77,5 +76,7 @@ export interface backendInterface {
     getPatient(id: string): Promise<Patient>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
+    registerAdmin(adminProfile: UserProfile): Promise<void>;
+    registerDoctor(doctorData: DoctorData): Promise<void>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
 }

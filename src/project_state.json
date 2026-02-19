@@ -1,13 +1,18 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 5,
-  "summary": "Complete hospital management application requiring restoration of original UI/functionality with admin system for managing cases, doctors, and department assignments",
+  "projectStateVersion": 11,
+  "summary": "Complete hospital management application with role-based access (Patient/Doctor/Admin), AI-powered medical report analysis and symptom assessment (Vitals AI), doctor allocation system, emergency SOS, and minimalistic Flipkart-inspired UI design. Includes registration systems for doctors and admins.",
   "architectural_notes": [
     "App must be production-ready, not a prototype",
     "All features must work without requiring repeated republishing",
     "Application is a hospital management system with case tracking and department-based doctor assignment",
     "Admin dashboard must display all processing cases with addresses and user data",
-    "Emergency SOS must route to specific medical departments based on user selection"
+    "Emergency SOS must route to specific medical departments based on user selection",
+    "UI design should be minimalistic and clean like Flipkart - avoid large images, use normal-sized elements",
+    "Home page must provide clear role selection (Patient/Doctor/Admin) before accessing specific portals",
+    "Integrate AI capabilities for medical report analysis and symptom assessment",
+    "All three user roles (Patient, Doctor, Admin) must work simultaneously without conflicts",
+    "Platform AI system is branded as 'Vitals AI'"
   ],
   "known_issues": [
     "Current app features not working properly",
@@ -15,7 +20,6 @@
     "Sign-in functionality not working in original application"
   ],
   "isFixRequest": true,
-  "imageRequirements": "## Required Images\n- Hospital building exterior for hero section background (hospital-hero.dim_1920x600.png)\n- Medical emergency icon for SOS button (emergency-icon.dim_64x64.png)\n- Admin dashboard icon for navigation (admin-icon.dim_48x48.png)\n- Doctor profile placeholder avatar (doctor-avatar.dim_128x128.png)",
   "existing_features": [
     {
       "id": "feature-audit-and-fix-all-non-functional-features-in-the-existing-application-to-ensure-complete-functionality",
@@ -80,6 +84,118 @@
         "REQ-12"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-create-a-home-page-with-role-selection-interface-that-allows-users-to-choose-their-role-patient-doctor-or-admin-before-accessing-their-respective-portal-sections",
+      "title": "Create a home page with role selection interface that allows users to choose their role (Patient, Doctor, or Admin) before accessing their respective portal sections",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-ai-symptom-checker-that-allows-patients-to-write-their-symptoms-in-natural-language-and-receive-suggestions-about-potential-conditions-they-may-be-suffering-from",
+      "title": "Create AI symptom checker that allows patients to write their symptoms in natural language and receive suggestions about potential conditions they may be suffering from",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-redesign-entire-ui-to-follow-flipkart-inspired-minimalistic-design-aesthetic-with-clean-neat-interface-using-normal-sized-elements-instead-of-large-photos-making-it-attractive-yet-efficient",
+      "title": "Redesign entire UI to follow Flipkart-inspired minimalistic design aesthetic with clean, neat interface using normal-sized elements instead of large photos, making it attractive yet efficient",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-all-ai-features-medical-report-analysis-and-symptom-checker-work-simultaneously-without-blocking-or-interfering-with-other-system-operations-including-doctor-allocation-and-emergency-sos",
+      "title": "Ensure all AI features (medical report analysis and symptom checker) work simultaneously without blocking or interfering with other system operations including doctor allocation and Emergency SOS",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-integrate-all-existing-functional-features-doctor-allocation-emergency-sos-case-management-admin-dashboard-with-the-new-ai-capabilities-and-role-based-portal-system",
+      "title": "Integrate all existing functional features (doctor allocation, Emergency SOS, case management, admin dashboard) with the new AI capabilities and role-based portal system",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-registration-functionality-for-admins-to-add-themselves-to-the-platform-allowing-authenticated-users-to-register-as-admins-through-the-admin-portal-interface",
+      "title": "Add registration functionality for admins to add themselves to the platform, allowing authenticated users to register as admins through the admin portal interface",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-registration-functionality-for-doctors-to-add-themselves-to-the-platform-allowing-authenticated-users-to-register-as-doctors-with-department-selection-through-the-doctor-portal-interface",
+      "title": "Add registration functionality for doctors to add themselves to the platform, allowing authenticated users to register as doctors with department selection through the doctor portal interface",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-home-page-role-selector-to-display-vitals-ai-as-the-primary-branding-name-for-the-ai-system-throughout-the-interface",
+      "title": "Update the home page role selector to display 'Vitals AI' as the primary branding name for the AI system throughout the interface",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-get-started-call-to-action-button-below-the-vitals-ai-branding-on-the-home-page-that-guides-users-to-select-their-role",
+      "title": "Add a 'Get Started' call-to-action button below the Vitals AI branding on the home page that guides users to select their role",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-brief-introductory-section-on-the-home-page-that-explains-the-vitals-ai-platform-s-purpose-and-capabilities-positioned-above-or-near-the-role-selection-interface",
+      "title": "Add a brief introductory section on the home page that explains the Vitals AI platform's purpose and capabilities, positioned above or near the role selection interface",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-change-the-primary-ui-color-scheme-from-light-blue-to-a-greenish-blue-teal-color-similar-to-the-reference-link-previously-provided-updating-all-color-variables-in-the-tailwind-configuration-and-css-files-to-use-the-new-color-palette-throughout-the-application",
+      "title": "Change the primary UI color scheme from light blue to a greenish-blue teal color (similar to the reference link previously provided), updating all color variables in the Tailwind configuration and CSS files to use the new color palette throughout the application",
+      "reqIds": [
+        "REQ-24"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-card-component-borders-to-use-the-new-greenish-blue-teal-color-with-a-flashy-prominent-appearance-ensuring-the-border-styling-is-applied-to-all-card-elements-including-role-selector-cards-dashboard-cards-and-portal-interface-cards",
+      "title": "Update the card component borders to use the new greenish-blue teal color with a flashy/prominent appearance, ensuring the border styling is applied to all card elements including role selector cards, dashboard cards, and portal interface cards",
+      "reqIds": [
+        "REQ-25"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-refine-the-ui-spacing-and-layout-throughout-the-application-to-create-a-professional-minimalistic-and-attractive-appearance-with-proper-padding-margins-and-whitespace-between-elements",
+      "title": "Refine the UI spacing and layout throughout the application to create a professional, minimalistic, and attractive appearance with proper padding, margins, and whitespace between elements",
+      "reqIds": [
+        "REQ-26"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-that-all-existing-functionality-authentication-portal-navigation-emergency-sos-symptom-checker-medical-report-analysis-admin-doctor-dashboards-case-management-and-doctor-management-continues-to-work-correctly-after-the-ui-color-and-spacing-changes",
+      "title": "Verify that all existing functionality (authentication, portal navigation, emergency SOS, symptom checker, medical report analysis, admin/doctor dashboards, case management, and doctor management) continues to work correctly after the UI color and spacing changes",
+      "reqIds": [
+        "REQ-27"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -131,6 +247,56 @@
       "reqIds": [
         "REQ-11"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-15",
+      "summary": "Implement AI-powered medical report analysis that can read patient reports and detect severity levels",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-16",
+      "summary": "Create AI symptom checker that allows patients to write their symptoms and receive suggestions about potential conditions",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-17",
+      "summary": "Design minimalistic Flipkart-inspired UI with clean, neat design using normal-sized elements instead of large photos - attractive yet efficient",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-18",
+      "summary": "Create home page with role selection interface allowing users to choose Patient, Doctor, or Admin role before accessing their respective portals",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-20",
+      "summary": "Implement AI-powered medical report analysis feature that can read patient medical reports and automatically detect severity levels of conditions",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-21",
+      "summary": "Add registration system for admins and doctors to add themselves to the platform",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-22",
+      "summary": "Update home page to display 'Vitals AI' as the AI system name with 'Get Started' button and brief introduction about the platform",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-23",
+      "summary": "Change UI color scheme from blue to greenish-blue teal with matching card borders, ensure professional minimalistic look with proper spacing",
+      "reqIds": [],
       "status": "pending"
     }
   ],

@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
-import { LogOut, LogIn, Moon, Sun, Activity } from 'lucide-react';
+import { LogOut, LogIn, Moon, Sun, Activity, Home } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useQueryClient } from '@tanstack/react-query';
 import { useGetCallerUserProfile } from '../hooks/useQueries';
@@ -13,7 +13,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-export function Header() {
+interface HeaderProps {
+  currentRole?: 'patient' | 'doctor' | 'admin' | null;
+  onBackToHome?: () => void;
+}
+
+export function Header({ currentRole, onBackToHome }: HeaderProps) {
   const { identity, clear, login, isLoggingIn } = useInternetIdentity();
   const { setTheme } = useTheme();
   const queryClient = useQueryClient();
@@ -24,27 +29,45 @@ export function Header() {
   const handleLogout = async () => {
     await clear();
     queryClient.clear();
+    if (onBackToHome) onBackToHome();
+  };
+
+  const getRoleLabel = () => {
+    if (!currentRole) return null;
+    return currentRole.charAt(0).toUpperCase() + currentRole.slice(1);
   };
 
   return (
-    <header className="border-b bg-card sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center">
+    <header className="border-b bg-card sticky top-0 z-50 shadow-sm">
+      <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-md">
             <Activity className="h-6 w-6 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="text-xl font-bold">Hospital Emergency System</h1>
+            <h1 className="text-xl font-bold">Vitals AI</h1>
             {isAuthenticated && userProfile && (
-              <p className="text-xs text-muted-foreground">Welcome, {userProfile.name}</p>
+              <p className="text-xs text-muted-foreground">{userProfile.name}</p>
             )}
           </div>
         </div>
 
         <div className="flex items-center gap-3">
+          {currentRole && onBackToHome && (
+            <Button onClick={onBackToHome} variant="ghost" size="sm" className="gap-2">
+              <Home className="h-4 w-4" />
+              Home
+            </Button>
+          )}
+
+          {currentRole && (
+            <Badge variant="outline" className="text-xs px-3 py-1">
+              {getRoleLabel()}
+            </Badge>
+          )}
+
           {isAuthenticated && isAdmin && (
-            <Badge variant="default" className="gap-1">
-              <img src="/assets/generated/admin-icon.dim_48x48.png" alt="" className="h-4 w-4" />
+            <Badge variant="default" className="gap-1 text-xs px-3 py-1">
               Admin
             </Badge>
           )}

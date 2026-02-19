@@ -1,32 +1,19 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { ShieldAlert } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function AccessDeniedScreen() {
   return (
-    <div className="max-w-2xl mx-auto py-12">
-      <Card>
-        <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <ShieldAlert className="h-16 w-16 text-destructive" />
+    <div className="container mx-auto px-6 py-16">
+      <Card className="max-w-lg mx-auto border-2 border-destructive/20">
+        <CardHeader className="text-center space-y-4 pb-6">
+          <div className="mx-auto mb-2 h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center">
+            <ShieldAlert className="h-10 w-10 text-destructive" />
           </div>
           <CardTitle className="text-2xl">Access Denied</CardTitle>
-          <CardDescription>You don't have permission to access the admin dashboard</CardDescription>
+          <CardDescription className="text-base">
+            You do not have permission to access this portal. Please contact an administrator if you believe this is an error.
+          </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <Alert>
-            <AlertDescription>
-              This area is restricted to authorized administrators only. If you need to submit an emergency
-              case, please use the Emergency SOS form available on the main page.
-            </AlertDescription>
-          </Alert>
-          <div className="text-center">
-            <Button onClick={() => window.location.reload()} variant="outline">
-              Return to Emergency SOS
-            </Button>
-          </div>
-        </CardContent>
       </Card>
     </div>
   );
