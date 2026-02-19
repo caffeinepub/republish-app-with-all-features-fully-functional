@@ -1,2 +1,3 @@
-# republish-app-with-all-features-fully-functional
-Exported from Caffeine project: Republish app with all features fully functional
+## 
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`

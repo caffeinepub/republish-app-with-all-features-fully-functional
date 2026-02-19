@@ -1,0 +1,140 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 5,
+  "summary": "Complete hospital management application requiring restoration of original UI/functionality with admin system for managing cases, doctors, and department assignments",
+  "architectural_notes": [
+    "App must be production-ready, not a prototype",
+    "All features must work without requiring repeated republishing",
+    "Application is a hospital management system with case tracking and department-based doctor assignment",
+    "Admin dashboard must display all processing cases with addresses and user data",
+    "Emergency SOS must route to specific medical departments based on user selection"
+  ],
+  "known_issues": [
+    "Current app features not working properly",
+    "Toggle features not working in original application",
+    "Sign-in functionality not working in original application"
+  ],
+  "isFixRequest": true,
+  "imageRequirements": "## Required Images\n- Hospital building exterior for hero section background (hospital-hero.dim_1920x600.png)\n- Medical emergency icon for SOS button (emergency-icon.dim_64x64.png)\n- Admin dashboard icon for navigation (admin-icon.dim_48x48.png)\n- Doctor profile placeholder avatar (doctor-avatar.dim_128x128.png)",
+  "existing_features": [
+    {
+      "id": "feature-audit-and-fix-all-non-functional-features-in-the-existing-application-to-ensure-complete-functionality",
+      "title": "Audit and fix all non-functional features in the existing application to ensure complete functionality",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-frontend-properly-integrates-with-backend-actor-and-handles-all-api-calls-with-appropriate-error-handling",
+      "title": "Ensure frontend properly integrates with backend actor and handles all API calls with appropriate error handling",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-comprehensive-admin-authentication-system-that-allows-authorized-admins-to-log-in-using-internet-identity-and-access-administrative-dashboard-features",
+      "title": "Implement comprehensive admin authentication system that allows authorized admins to log in using Internet Identity and access administrative dashboard features",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-admin-dashboard-that-displays-all-processing-cases-with-complete-details-including-patient-information-addresses-assigned-doctors-case-status-department-assignments-and-timestamps-for-case-creation-and-updates",
+      "title": "Create admin dashboard that displays all processing cases with complete details including patient information, addresses, assigned doctors, case status, department assignments, and timestamps for case creation and updates",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-create-admin-view-for-managing-doctors-organized-by-department-showing-which-doctors-are-assigned-to-which-cases-their-department-specializations-and-current-case-loads",
+      "title": "Create admin view for managing doctors organized by department, showing which doctors are assigned to which cases, their department specializations, and current case loads",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-enhance-emergency-sos-feature-to-include-a-department-selection-dropdown-that-allows-users-to-specify-which-type-of-medical-department-should-handle-their-emergency-case-emergency-cardiology-neurology-pediatrics-orthopedics-general-medicine-etc",
+      "title": "Enhance Emergency SOS feature to include a department selection dropdown that allows users to specify which type of medical department should handle their emergency case (Emergency, Cardiology, Neurology, Pediatrics, Orthopedics, General Medicine, etc.)",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-replace-current-blockchain-focused-ui-with-a-hospital-management-interface-that-includes-user-facing-emergency-sos-submission-form-with-department-selection-patient-registration-case-status-tracking-and-admin-dashboard-for-managing-all-cases-and-doctor-assignments",
+      "title": "Replace current blockchain-focused UI with a hospital management interface that includes: user-facing Emergency SOS submission form with department selection, patient registration, case status tracking, and admin dashboard for managing all cases and doctor assignments",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-ensure-all-ui-components-are-fully-functional-with-working-toggle-features-sign-in-functionality-form-submissions-and-data-fetching-with-proper-error-handling-and-loading-states",
+      "title": "Ensure all UI components are fully functional with working toggle features, sign-in functionality, form submissions, and data fetching with proper error handling and loading states",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-2",
+      "summary": "Verify and fix backend actor methods to ensure they handle all calls correctly and return expected responses",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Test and verify application works correctly after deployment without requiring repeated republishing",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Restore exact UI and functionality from original application (https://similar-beige-1ry-draft.caffeine.xyz/)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Add comprehensive admin login system to view/manage all processing cases, addresses, user data, and doctors organized by department",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Enhanced Emergency SOS feature with department type selection for routing cases to appropriate medical departments",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Replace the current blockchain-focused backend data model with a hospital management data model that includes: Patient records with personal information and addresses, Emergency cases with status tracking (pending/processing/completed), Doctor profiles with assigned department information, Case assignments linking doctors to emergency cases, and Department categorizations for medical specialties",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-14",
+      "summary": "Implement backend API methods for creating emergency cases, assigning doctors to cases, updating case status, retrieving all cases for admin view, and managing doctor-case assignments with proper authentication checks",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "status": "pending"
+    }
+  ],
+  "projectName": "Republish app with all features fully functional",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

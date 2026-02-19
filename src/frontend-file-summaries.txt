@@ -1,0 +1,20 @@
+{
+  "frontend/src/App.tsx": "Main application component with hospital emergency system layout, featuring hero section with hospital image, emergency SOS form for all users, and admin dashboard accessible only to authenticated admins with proper role-based access control.",
+  "frontend/src/hooks/useQueries.ts": "Comprehensive React Query hooks for hospital management operations including user profiles, patients, emergencies, doctors, and case assignments with proper error handling and toast notifications.",
+  "frontend/src/components/Header.tsx": "Application header with hospital branding, admin status badge, theme toggle, and authentication controls showing user profile name and login/logout functionality.",
+  "frontend/src/components/Footer.tsx": "Application footer with copyright information and attribution to caffeine.ai with proper UTM tracking for hospital emergency system.",
+  "frontend/src/components/AdminPanel.tsx": "Admin management interface for creating admins with invitation codes, verifying codes, and displaying all registered admins.",
+  "frontend/src/components/TokenManagement.tsx": "Token management interface for adding new tokens and displaying all registered tokens in a table format.",
+  "frontend/src/components/DeploymentManagement.tsx": "Contract deployment interface for registering new deployments and viewing all contract deployments.",
+  "frontend/src/components/FaucetManagement.tsx": "Faucet management interface for adding new faucets and displaying all registered faucets.",
+  "frontend/src/components/TransactionList.tsx": "Transaction management interface for adding new transactions and viewing all blockchain transactions with status badges.",
+  "frontend/src/components/EntryManagement.tsx": "Entry management interface for adding new entries and displaying all blockchain entries with network and status information.",
+  "frontend/src/index.css": "Global styles with OKLCH color system customized with medical blue theme for both light and dark modes suitable for hospital management interface.",
+  "frontend/src/components/EmergencySOS.tsx": "Public-facing emergency submission form with fields for patient information, address, department selection, and emergency description with real-time validation and success feedback.",
+  "frontend/src/components/AdminDashboard.tsx": "Admin dashboard component with role-based access control, displaying tabs for emergency case management and doctor management with loading states and access denied screen for non-admins.",
+  "frontend/src/components/CaseManagement.tsx": "Emergency case management interface displaying all cases in a filterable table with status and department filters, showing patient details, assigned doctors, and case assignment functionality.",
+  "frontend/src/components/DoctorManagement.tsx": "Doctor management interface with accordion-based department grouping, displaying doctors with their active case counts, and form for adding new doctors to specific departments.",
+  "frontend/src/components/AccessDeniedScreen.tsx": "Access denied screen component displayed when non-admin users attempt to access admin-only features with helpful messaging directing to public emergency form.",
+  "frontend/src/components/ProfileSetupModal.tsx": "Modal dialog for first-time user profile setup after Internet Identity login, collecting user name with proper loading state handling to prevent modal flash.",
+  "frontend/src/hooks/useAuth.ts": "Custom authentication hook that wraps useInternetIdentity and queries backend isCallerAdmin() to determine admin privileges with proper loading states and caching."
+}

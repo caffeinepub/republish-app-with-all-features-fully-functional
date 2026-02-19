@@ -1,0 +1,194 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Hospital Management System - Frontend Implementation",
+  "requirements": [
+    {
+      "id": "REQ-6",
+      "summary": "Implement comprehensive admin authentication system with Internet Identity integration and admin dashboard access controls",
+      "acceptanceCriteria": [
+        "Admin can authenticate using Internet Identity",
+        "System maintains a list of authorized admin principals",
+        "Non-admin users cannot access admin-only features",
+        "Admin session persists across page refreshes",
+        "Clear indication of admin status in the UI"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Replace blockchain-focused tabbed interface with hospital management navigation. Use the authorization component to implement role-based access control, showing public emergency submission for all users and admin dashboard only for authenticated admins. Verify the authorization component's usage instructions before implementing. Wire the public emergency SOS form and admin dashboard routes into the router."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Update header to display hospital branding with clear admin status indicator when user is authenticated as admin. Show user role badge and navigation links appropriate to their role (admin vs regular user)."
+        },
+        {
+          "path": "frontend/src/components/AccessDeniedScreen.tsx",
+          "operation": "create",
+          "description": "Create component to display when non-admin users attempt to access admin-only features. Use the authorization component to check user permissions. Include helpful messaging directing users to the public emergency submission form."
+        },
+        {
+          "path": "frontend/src/hooks/useAuth.ts",
+          "operation": "create",
+          "description": "Create custom hook that wraps useInternetIdentity and queries backend isCallerAdmin() to determine if current user has admin privileges. Return authentication state, admin status, and loading states. Cache admin status using React Query."
+        }
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "summary": "Create admin dashboard displaying all processing cases with complete patient information, addresses, assigned doctors, case status, department assignments, and timestamps",
+      "acceptanceCriteria": [
+        "Dashboard displays all emergency cases in a sortable, filterable table",
+        "Each case shows patient name, address, case type, department, assigned doctor, and current status",
+        "Admin can filter cases by status (pending/processing/completed)",
+        "Admin can filter cases by department",
+        "Case details include timestamps for submission and last update",
+        "Dashboard updates in real-time when new cases are added"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/AdminDashboard.tsx",
+          "operation": "create",
+          "description": "Create comprehensive admin dashboard component with tabs for managing cases and doctors. Display all emergency cases in a filterable table showing patient information, address, department, assigned doctor, and status. Include filters for status and department. Use shadcn/ui Table, Select, and Badge components. Fetch data using getAllEmergencies() backend method."
+        },
+        {
+          "path": "frontend/src/components/CaseManagement.tsx",
+          "operation": "create",
+          "description": "Create component for displaying and managing emergency cases in a table format. Include columns for case ID, patient name, address, department, assigned doctor, status, and timestamps. Implement sorting and filtering by status and department using shadcn/ui components. Include action buttons for assigning doctors and updating case status."
+        },
+        {
+          "path": "frontend/src/hooks/useEmergencies.ts",
+          "operation": "create",
+          "description": "Create React Query hooks for fetching all emergencies (getAllEmergencies), filtering by department (getEmergenciesByDepartment), and mutations for assigning cases and updating status. Include proper error handling and toast notifications. Enable automatic refetching on success."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Create admin view for managing doctors organized by department with case assignments and workload visibility",
+      "acceptanceCriteria": [
+        "Doctors are displayed grouped by their department/specialty",
+        "Each doctor entry shows name, department, and number of active cases",
+        "Admin can view which specific cases are assigned to each doctor",
+        "Interface allows admin to reassign cases to different doctors",
+        "Department groupings include all major medical specialties"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/DoctorManagement.tsx",
+          "operation": "create",
+          "description": "Create component displaying doctors grouped by department using shadcn/ui Accordion or Tabs. Each department section shows doctors with their names, active case counts, and assigned cases. Include interface for reassigning cases to different doctors. Fetch data using getDoctorsByDepartment() and getCaseAssignmentsForDoctor() backend methods."
+        },
+        {
+          "path": "frontend/src/hooks/useDoctors.ts",
+          "operation": "create",
+          "description": "Create React Query hooks for fetching doctors by department (getDoctorsByDepartment) and case assignments (getCaseAssignmentsForDoctor). Include mutations for adding doctors and reassigning cases. Provide proper loading states and error handling with toast notifications."
+        }
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "summary": "Enhance Emergency SOS feature with department selection dropdown for routing cases to appropriate medical departments",
+      "acceptanceCriteria": [
+        "Emergency SOS form includes a department selection dropdown",
+        "Dropdown includes all major hospital departments",
+        "Selected department is stored with the emergency case",
+        "Cases are automatically categorized by department for admin routing",
+        "Form validates that a department is selected before submission"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/EmergencySOS.tsx",
+          "operation": "create",
+          "description": "Create public-facing emergency submission form with fields for patient name, address (street, city, zip), description, and department selection dropdown. Include all major departments: Emergency, Cardiology, Neurology, Pediatrics, Orthopedics, General Medicine. Use shadcn/ui Form, Input, Textarea, and Select components. Validate all required fields including department selection before submission. Reference generated emergency icon at frontend/public/assets/generated/emergency-icon.dim_64x64.png. Submit using createEmergency() backend method."
+        },
+        {
+          "path": "frontend/src/components/PatientRegistration.tsx",
+          "operation": "create",
+          "description": "Create patient registration form component with fields for name and address details. This form is used within EmergencySOS or as standalone patient intake. Use shadcn/ui Form components with proper validation. Submit using addPatient() backend method."
+        },
+        {
+          "path": "frontend/src/hooks/usePatients.ts",
+          "operation": "create",
+          "description": "Create React Query hooks for patient operations including addPatient mutation and getPatient query. Include proper error handling and success notifications using toast."
+        }
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "summary": "Replace blockchain-focused UI with hospital management interface including emergency submission, patient registration, case tracking, and admin dashboard",
+      "acceptanceCriteria": [
+        "Clean, hospital-appropriate UI design with clear navigation",
+        "Emergency SOS form is prominently accessible to all users",
+        "Patient can submit emergency cases with personal information, location, and department selection",
+        "All forms include proper validation and error handling",
+        "UI is responsive and works on mobile devices",
+        "Admin sections are clearly separated from public-facing features"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Replace blockchain-focused routing with hospital management routes. Create main layout with public emergency submission page and admin-only dashboard section. Use authorization component to guard admin routes. Wire EmergencySOS component as default public page and AdminDashboard for authenticated admins. Reference generated hospital hero image at frontend/public/assets/generated/hospital-hero.dim_1920x600.png in the main layout or hero section."
+        },
+        {
+          "path": "frontend/src/components/HospitalLayout.tsx",
+          "operation": "create",
+          "description": "Create main layout component with hospital branding, navigation menu, and content area. Include hero section using generated image at frontend/public/assets/generated/hospital-hero.dim_1920x600.png. Provide navigation to emergency SOS (public) and admin dashboard (admin-only). Use responsive design with mobile menu support."
+        },
+        {
+          "path": "frontend/src/components/CaseStatusTracker.tsx",
+          "operation": "create",
+          "description": "Create component for users to view their submitted emergency case status. Display case information including department, assigned doctor (if any), and current status with visual status indicators using shadcn/ui Badge components."
+        },
+        {
+          "path": "frontend/index.css",
+          "operation": "modify",
+          "description": "Update global styles to use hospital-appropriate color scheme replacing blockchain theme. Maintain OKLCH color system but adjust hue values to medical/healthcare palette (blues, greens, whites). Keep existing Tailwind CSS structure."
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Ensure all UI components are fully functional with working toggle features, sign-in functionality, form submissions, and proper loading/error states",
+      "acceptanceCriteria": [
+        "All toggle switches respond correctly to user interaction",
+        "Sign-in functionality works without errors",
+        "All forms submit successfully and show confirmation",
+        "Data loads from backend without errors",
+        "Error messages display clearly when operations fail",
+        "Loading states are shown during async operations",
+        "No console errors appear during normal usage"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Replace blockchain-focused query hooks with hospital management queries and mutations. Include queries for emergencies, doctors, patients, and case assignments. Add mutations for creating emergencies, assigning cases, updating status, and adding doctors/patients. Implement proper loading states, error handling, and optimistic updates with toast notifications."
+        },
+        {
+          "path": "frontend/src/components/LoadingSpinner.tsx",
+          "operation": "create",
+          "description": "Create reusable loading spinner component using shadcn/ui styling for consistent loading states across the application. Include size variants and optional loading text."
+        },
+        {
+          "path": "frontend/src/components/ErrorDisplay.tsx",
+          "operation": "create",
+          "description": "Create error display component for showing user-friendly error messages with retry functionality. Handle authorization errors from backend traps gracefully. Use shadcn/ui Alert component."
+        },
+        {
+          "path": "frontend/src/hooks/useInternetIdentity.ts",
+          "operation": "modify",
+          "description": "Verify Internet Identity hook properly handles login/logout flows without errors. Ensure identity persistence across page refreshes and proper delegation validation. Add error handling for edge cases like duplicate login attempts."
+        },
+        {
+          "path": "frontend/src/components/ProfileSetupModal.tsx",
+          "operation": "create",
+          "description": "Create modal for first-time user profile setup (name and role) that appears after Internet Identity login when user has no profile. Use the authorization component's getCallerUserProfile() and saveCallerUserProfile() methods. Implement proper loading state handling to prevent modal flash as shown in authorization component usage instructions. Reference generated doctor avatar at frontend/public/assets/generated/doctor-avatar.dim_128x128.png as placeholder."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,217 @@
+{
+  "kind": "build_request",
+  "title": "Build complete hospital management application with admin system and emergency SOS department routing",
+  "projectName": "Hospital Management System",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-5",
+      "text": "Replace the current blockchain-focused backend data model with a hospital management data model that includes: Patient records with personal information and addresses, Emergency cases with status tracking (pending/processing/completed), Doctor profiles with assigned department information, Case assignments linking doctors to emergency cases, and Department categorizations for medical specialties",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-5",
+          "msg-7",
+          "msg-9"
+        ],
+        "quotes": [
+          "add one more feature that is when we click on emergency SOS we should also be able to write the type of department the case will refer to whether it's any types of department of doctor",
+          "The admin login must be able to handle all the processing cases , address and data of who is processing a request that's all and of the doctors who are taking the cases department wise as it is in an hospital"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend stores patient records with name, contact information, and address",
+        "Emergency cases include fields for case type, department selection, assigned doctor, status, and timestamps",
+        "Doctor records include name, specialty/department, and contact information",
+        "Department types are properly categorized (Emergency, Cardiology, Neurology, Pediatrics, Orthopedics, etc.)",
+        "All data is persisted using stable storage with proper upgrade compatibility"
+      ]
+    },
+    {
+      "id": "REQ-6",
+      "text": "Implement comprehensive admin authentication system that allows authorized admins to log in using Internet Identity and access administrative dashboard features",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-7"
+        ],
+        "quotes": [
+          "I just want the every feature of this link to work and an admin login added to it nothing more",
+          "The admin login must be able to handle all the processing cases , address and data of who is processing a request"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin can authenticate using Internet Identity",
+        "System maintains a list of authorized admin principals",
+        "Non-admin users cannot access admin-only features",
+        "Admin session persists across page refreshes",
+        "Clear indication of admin status in the UI"
+      ]
+    },
+    {
+      "id": "REQ-7",
+      "text": "Create admin dashboard that displays all processing cases with complete details including patient information, addresses, assigned doctors, case status, department assignments, and timestamps for case creation and updates",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-7",
+          "msg-9"
+        ],
+        "quotes": [
+          "The admin login must be able to handle all the processing cases , address and data of who is processing a request that's all and of the doctors who are taking the cases department wise as it is in an hospital"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Dashboard displays all emergency cases in a sortable, filterable table",
+        "Each case shows patient name, address, case type, department, assigned doctor, and current status",
+        "Admin can filter cases by status (pending/processing/completed)",
+        "Admin can filter cases by department",
+        "Case details include timestamps for submission and last update",
+        "Dashboard updates in real-time when new cases are added"
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "text": "Create admin view for managing doctors organized by department, showing which doctors are assigned to which cases, their department specializations, and current case loads",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-7"
+        ],
+        "quotes": [
+          "View doctors taking cases, organized by department (hospital-style management)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Doctors are displayed grouped by their department/specialty",
+        "Each doctor entry shows name, department, and number of active cases",
+        "Admin can view which specific cases are assigned to each doctor",
+        "Interface allows admin to reassign cases to different doctors",
+        "Department groupings include all major medical specialties"
+      ]
+    },
+    {
+      "id": "REQ-9",
+      "text": "Enhance Emergency SOS feature to include a department selection dropdown that allows users to specify which type of medical department should handle their emergency case (Emergency, Cardiology, Neurology, Pediatrics, Orthopedics, General Medicine, etc.)",
+      "target": "both",
+      "source": {
+        "messageIds": [
+          "msg-5",
+          "msg-9"
+        ],
+        "quotes": [
+          "add one more feature that is when we click on emergency SOS we should also be able to write the type of department the case will refer to whether it's any types of department of doctor",
+          "Enhanced Emergency SOS with department type selection for routing cases to appropriate medical departments"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Emergency SOS form includes a department selection dropdown",
+        "Dropdown includes all major hospital departments",
+        "Selected department is stored with the emergency case",
+        "Cases are automatically categorized by department for admin routing",
+        "Form validates that a department is selected before submission"
+      ]
+    },
+    {
+      "id": "REQ-10",
+      "text": "Replace current blockchain-focused UI with a hospital management interface that includes: user-facing Emergency SOS submission form with department selection, patient registration, case status tracking, and admin dashboard for managing all cases and doctor assignments",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-9",
+          "msg-11"
+        ],
+        "quotes": [
+          "restore everything matching that exactly",
+          "Make a complete build not a prototype we want complete and everything in this should work please",
+          "Restore the exact UI and functionality from your original application"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Clean, hospital-appropriate UI design with clear navigation",
+        "Emergency SOS form is prominently accessible to all users",
+        "Patient can submit emergency cases with personal information, location, and department selection",
+        "All forms include proper validation and error handling",
+        "UI is responsive and works on mobile devices",
+        "Admin sections are clearly separated from public-facing features"
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "text": "Implement backend API methods for creating emergency cases, assigning doctors to cases, updating case status, retrieving all cases for admin view, and managing doctor-case assignments with proper authentication checks",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-7",
+          "msg-9"
+        ],
+        "quotes": [
+          "The admin login must be able to handle all the processing cases",
+          "Make a complete build not a prototype we want complete and everything in this should work please"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Backend provides methods to create new emergency cases",
+        "Backend provides methods to assign doctors to cases (admin-only)",
+        "Backend provides methods to update case status (admin-only)",
+        "Backend provides methods to retrieve all cases (admin-only)",
+        "Backend provides methods to retrieve cases by department",
+        "All admin methods verify caller is an authorized admin",
+        "All methods include proper error handling and validation"
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "text": "Ensure all UI components are fully functional with working toggle features, sign-in functionality, form submissions, and data fetching with proper error handling and loading states",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-4",
+          "msg-5"
+        ],
+        "quotes": [
+          "all the features of this application is not working",
+          "The toggle features , sign in and"
+        ]
+      },
+      "acceptanceCriteria": [
+        "All toggle switches respond correctly to user interaction",
+        "Sign-in functionality works without errors",
+        "All forms submit successfully and show confirmation",
+        "Data loads from backend without errors",
+        "Error messages display clearly when operations fail",
+        "Loading states are shown during async operations",
+        "No console errors appear during normal usage"
+      ]
+    }
+  ],
+  "constraints": [
+    "Must use Motoko for backend with single-actor architecture",
+    "Must use React with TypeScript for frontend",
+    "Must use Internet Identity for authentication (no third-party auth)",
+    "Must maintain stable storage compatibility for backend data",
+    "Must use Shadcn UI components and Tailwind CSS for styling",
+    "All features must be production-ready and fully functional, not prototype-quality"
+  ],
+  "nonGoals": [
+    "Integration with external hospital management systems",
+    "Real-time WebSocket communication",
+    "SMS or email notifications",
+    "Payment processing for medical services",
+    "Electronic health records (EHR) integration",
+    "Telemedicine or video consultation features",
+    "Prescription management or pharmacy integration",
+    "Insurance claim processing"
+  ],
+  "imageRequirements": {
+    "required": [
+      "Hospital building exterior for hero section background (hospital-hero.dim_1920x600.png)",
+      "Medical emergency icon for SOS button (emergency-icon.dim_64x64.png)",
+      "Admin dashboard icon for navigation (admin-icon.dim_48x48.png)",
+      "Doctor profile placeholder avatar (doctor-avatar.dim_128x128.png)"
+    ],
+    "edits": []
+  }
+}
