@@ -1,0 +1,129 @@
+{
+  "kind": "build_request",
+  "title": "Role-based access codes, doctor self-registration with departments, and customer support button",
+  "projectName": "Vitals AI",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Update the backend to store a `registrationCode` field on doctor profiles. When a doctor registers, they must provide the code `2011` — if the code does not match, reject the registration with an error message. Store the doctor's selected department from the fixed list.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-8"
+        ],
+        "quotes": [
+          "the doctor to become a registered doctor should also enter the code 2011"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Doctor registration with code 2011 succeeds and stores the doctor profile.",
+        "Doctor registration with any other code is rejected with a clear error.",
+        "Doctor profile includes the selected department from the fixed list."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Update the backend admin authentication to use the hardcoded passcode `1107`. The admin role must have read-only access to all doctor profiles and all emergency cases across all departments. No admin create/edit/delete operations on doctors or cases.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-8",
+          "msg-9"
+        ],
+        "quotes": [
+          "the code for admin be 1107",
+          "Admin should be able to be a head of everything and he must be able to access all details of the existing doctors and cases"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Admin login with code 1107 grants access.",
+        "Admin login with any other code is rejected.",
+        "Backend exposes read-only query functions for all doctors and all cases accessible to admin.",
+        "No mutation functions are exposed to admin."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Update the DoctorPortal registration form to include a security code input field (code `2011`) and a department dropdown with the following fixed list: Cardiology, Neurology, Orthopedics, Pediatrics, Dermatology, Radiology, Oncology, Psychiatry, Gastroenterology, Urology, ENT, Ophthalmology, Gynecology, General Surgery, Emergency Medicine. The doctor can only register if the correct code is entered. After successful registration, the doctor sees only cases related to their department.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-8",
+          "msg-9"
+        ],
+        "quotes": [
+          "the doctor to become a registered doctor should also enter the code 2011",
+          "Fixed list of all the departments related to medical"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Doctor registration form has a security code field and a department dropdown.",
+        "Submitting with code other than 2011 shows an error and blocks registration.",
+        "Submitting with code 2011 and a selected department creates the doctor profile.",
+        "After login, the doctor dashboard filters cases to only show those matching their department.",
+        "All 15 departments are available in the dropdown."
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Update the AdminPortal to use passcode `1107` for authentication. After login, the admin dashboard must display: all registered doctor profiles (name, department, availability status) and all emergency cases across all departments — both in read-only mode with no edit or delete controls visible to admin.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-8",
+          "msg-9"
+        ],
+        "quotes": [
+          "the code for admin be 1107",
+          "he must be able to access all details of the existing doctors and cases as well as the dashboards",
+          "view"
+        ]
+      },
+      "acceptanceCriteria": [
+        "AdminPortal passcode is 1107.",
+        "Admin dashboard shows all doctor profiles with name, department, and availability.",
+        "Admin dashboard shows all cases across all departments.",
+        "No add/edit/delete buttons are visible in admin view.",
+        "Admin can view dashboards and stats."
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Implement the SupportButton component as a floating circle button fixed to the bottom-right corner of every page. Clicking it opens the user's default email client addressed to `satyamjha2553@gmail.com`. The button should display a customer support icon (e.g., a headset or chat bubble) and have a tooltip or aria-label of 'Customer Support'.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-8"
+        ],
+        "quotes": [
+          "the customer support icon on bottom right as a circle with the email satyamjha2553@gmail.com"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A floating circular button is visible on bottom-right of every page.",
+        "Clicking the button opens mailto:satyamjha2553@gmail.com.",
+        "Button has a support-related icon and accessible label.",
+        "Button does not obscure critical UI elements."
+      ]
+    }
+  ],
+  "constraints": [
+    "Admin access code must be exactly 1107.",
+    "Doctor registration code must be exactly 2011.",
+    "Admin has view-only access — no create, edit, or delete operations.",
+    "Department list is fixed and must not allow free-text entry.",
+    "Do not edit files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui."
+  ],
+  "nonGoals": [
+    "Admin assigning doctors to cases.",
+    "Admin editing or deleting doctor profiles or cases.",
+    "Dynamic or user-defined departments.",
+    "Any authentication beyond the hardcoded passcodes.",
+    "Email sending from within the app — support button only opens mailto link."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

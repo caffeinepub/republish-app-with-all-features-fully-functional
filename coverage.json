@@ -1,0 +1,98 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-25T09:44:40.307Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 5,
+    "implemented": 3,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Update the backend to store a `registrationCode` field on doctor profiles. When a doctor registers, they must provide the code `2011` — if the code does not match, reject the registration with an error message. Store the doctor's selected department from the fixed list.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Update the backend admin authentication to use the hardcoded passcode `1107`. The admin role must have read-only access to all doctor profiles and all emergency cases across all departments. No admin create/edit/delete operations on doctors or cases.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Update the DoctorPortal registration form to include a security code input field (code `2011`) and a department dropdown with the following fixed list: Cardiology, Neurology, Orthopedics, Pediatrics, Dermatology, Radiology, Oncology, Psychiatry, Gastroenterology, Urology, ENT, Ophthalmology, Gynecology, General Surgery, Emergency Medicine. The doctor can only register if the correct code is entered. After successful registration, the doctor sees only cases related to their department.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/DoctorPortal.tsx",
+          "frontend/src/components/CaseManagement.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/DoctorPortal.tsx",
+          "frontend/src/components/CaseManagement.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Update the AdminPortal to use passcode `1107` for authentication. After login, the admin dashboard must display: all registered doctor profiles (name, department, availability status) and all emergency cases across all departments — both in read-only mode with no edit or delete controls visible to admin.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/AdminPortal.tsx",
+          "frontend/src/components/AdminDashboard.tsx",
+          "frontend/src/components/DoctorManagement.tsx",
+          "frontend/src/components/CaseManagement.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/AdminPortal.tsx",
+          "frontend/src/components/AdminDashboard.tsx",
+          "frontend/src/components/DoctorManagement.tsx",
+          "frontend/src/components/CaseManagement.tsx"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Implement the SupportButton component as a floating circle button fixed to the bottom-right corner of every page. Clicking it opens the user's default email client addressed to `satyamjha2553@gmail.com`. The button should display a customer support icon (e.g., a headset or chat bubble) and have a tooltip or aria-label of 'Customer Support'.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/SupportButton.tsx",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/SupportButton.tsx",
+          "frontend/src/App.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "backend/main.mo",
+    "backend/migration.mo",
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/AdminDashboard.tsx",
+    "frontend/src/components/AdminPortal.tsx",
+    "frontend/src/components/CaseManagement.tsx",
+    "frontend/src/components/DoctorManagement.tsx",
+    "frontend/src/components/DoctorPortal.tsx",
+    "frontend/src/components/SupportButton.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useQueries.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

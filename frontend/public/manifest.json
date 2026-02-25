@@ -1,0 +1,16 @@
+{
+  "name": "Vitals AI",
+  "short_name": "Vitals AI",
+  "description": "AI-powered healthcare management platform connecting patients, doctors, and administrators.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#14b8a6",
+  "icons": [
+    {
+      "src": "/assets/generated/hospital-logo.dim_128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }
+  ]
+}

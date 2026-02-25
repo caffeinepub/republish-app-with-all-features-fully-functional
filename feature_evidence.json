@@ -1,0 +1,74 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-update-the-doctorportal-registration-form-to-include-a-security-code-input-field-code-2011-and-a-department-dropdown-with-the-following-fixed-list-cardiology-neurology-orthopedics-pediatrics-dermatology-radiology-oncology-psychiatry-gastroenterology-urology-ent-ophthalmology-gynecology-general-surgery-emergency-medicine-the-doctor-can-only-register-if-the-correct-code-is-entered-after-successful-registration-the-doctor-sees-only-cases-related-to-their-department",
+      "featureTitle": "Update the DoctorPortal registration form to include a security code input field (code `2011`) and a department dropdown with the following fixed list: Cardiology, Neurology, Orthopedics, Pediatrics, Dermatology, Radiology, Oncology, Psychiatry, Gastroenterology, Urology, ENT, Ophthalmology, Gynecology, General Surgery, Emergency Medicine. The doctor can only register if the correct code is entered. After successful registration, the doctor sees only cases related to their department.",
+      "files": [
+        "frontend/src/components/CaseManagement.tsx",
+        "frontend/src/components/DoctorPortal.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "qr-code@1.0.0",
+        "camera@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-update-the-adminportal-to-use-passcode-1107-for-authentication-after-login-the-admin-dashboard-must-display-all-registered-doctor-profiles-name-department-availability-status-and-all-emergency-cases-across-all-departments-both-in-read-only-mode-with-no-edit-or-delete-controls-visible-to-admin",
+      "featureTitle": "Update the AdminPortal to use passcode `1107` for authentication. After login, the admin dashboard must display: all registered doctor profiles (name, department, availability status) and all emergency cases across all departments — both in read-only mode with no edit or delete controls visible to admin.",
+      "files": [
+        "frontend/src/components/AdminDashboard.tsx",
+        "frontend/src/components/AdminPortal.tsx",
+        "frontend/src/components/CaseManagement.tsx",
+        "frontend/src/components/DoctorManagement.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "qr-code@1.0.0",
+        "camera@1.0.0"
+      ],
+      "testIds": [
+        "REQ-4"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-implement-the-supportbutton-component-as-a-floating-circle-button-fixed-to-the-bottom-right-corner-of-every-page-clicking-it-opens-the-user-s-default-email-client-addressed-to-satyamjha2553-gmail-com-the-button-should-display-a-customer-support-icon-e-g-a-headset-or-chat-bubble-and-have-a-tooltip-or-aria-label-of-customer-support",
+      "featureTitle": "Implement the SupportButton component as a floating circle button fixed to the bottom-right corner of every page. Clicking it opens the user's default email client addressed to `satyamjha2553@gmail.com`. The button should display a customer support icon (e.g., a headset or chat bubble) and have a tooltip or aria-label of 'Customer Support'.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/SupportButton.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "qr-code@1.0.0",
+        "camera@1.0.0"
+      ],
+      "testIds": [
+        "REQ-5"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

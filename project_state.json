@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "Medical platform with role-based access: Admin (code 1107) can view all doctor profiles, case records across departments, and dashboards (read-only). Doctors (code 2011) self-register, select from a fixed list of medical departments, and access cases related to their department. Customer support floating icon links to satyamjha2553@gmail.com.",
+  "architectural_notes": [
+    "Role-based access: Admin (code 1107) is view-only; Doctor (code 2011) self-registers and gets department-scoped case access",
+    "Admin cannot assign doctors; doctors register themselves using the code",
+    "Departments are a fixed predefined list — doctors cannot create custom department names"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-update-the-doctorportal-registration-form-to-include-a-security-code-input-field-code-2011-and-a-department-dropdown-with-the-following-fixed-list-cardiology-neurology-orthopedics-pediatrics-dermatology-radiology-oncology-psychiatry-gastroenterology-urology-ent-ophthalmology-gynecology-general-surgery-emergency-medicine-the-doctor-can-only-register-if-the-correct-code-is-entered-after-successful-registration-the-doctor-sees-only-cases-related-to-their-department",
+      "title": "Update the DoctorPortal registration form to include a security code input field (code `2011`) and a department dropdown with the following fixed list: Cardiology, Neurology, Orthopedics, Pediatrics, Dermatology, Radiology, Oncology, Psychiatry, Gastroenterology, Urology, ENT, Ophthalmology, Gynecology, General Surgery, Emergency Medicine. The doctor can only register if the correct code is entered. After successful registration, the doctor sees only cases related to their department.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-adminportal-to-use-passcode-1107-for-authentication-after-login-the-admin-dashboard-must-display-all-registered-doctor-profiles-name-department-availability-status-and-all-emergency-cases-across-all-departments-both-in-read-only-mode-with-no-edit-or-delete-controls-visible-to-admin",
+      "title": "Update the AdminPortal to use passcode `1107` for authentication. After login, the admin dashboard must display: all registered doctor profiles (name, department, availability status) and all emergency cases across all departments — both in read-only mode with no edit or delete controls visible to admin.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-the-supportbutton-component-as-a-floating-circle-button-fixed-to-the-bottom-right-corner-of-every-page-clicking-it-opens-the-user-s-default-email-client-addressed-to-satyamjha2553-gmail-com-the-button-should-display-a-customer-support-icon-e-g-a-headset-or-chat-bubble-and-have-a-tooltip-or-aria-label-of-customer-support",
+      "title": "Implement the SupportButton component as a floating circle button fixed to the bottom-right corner of every page. Clicking it opens the user's default email client addressed to `satyamjha2553@gmail.com`. The button should display a customer support icon (e.g., a headset or chat bubble) and have a tooltip or aria-label of 'Customer Support'.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Admin role with code 1107 — view-only access to all doctor profiles, case records across departments, and dashboards",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Doctor self-registration with code 2011 — selects from fixed list of medical departments, accesses cases related to their department",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Fixed list of standard medical departments for doctor registration (Cardiology, Neurology, Orthopedics, Pediatrics, Dermatology, Radiology, Oncology, Psychiatry, Gastroenterology, Urology, ENT, Ophthalmology, Gynecology, General Surgery, Emergency Medicine)",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Floating customer support circle icon on bottom-right linking to satyamjha2553@gmail.com",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Update the backend to store a `registrationCode` field on doctor profiles. When a doctor registers, they must provide the code `2011` — if the code does not match, reject the registration with an error message. Store the doctor's selected department from the fixed list.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Update the backend admin authentication to use the hardcoded passcode `1107`. The admin role must have read-only access to all doctor profiles and all emergency cases across all departments. No admin create/edit/delete operations on doctors or cases.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "Medical Platform",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}
