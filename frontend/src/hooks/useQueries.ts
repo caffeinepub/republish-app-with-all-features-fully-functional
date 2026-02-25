@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import { Department, Severity, CaseStatus } from '@/backend';
+import { Department, Severity, CaseStatus, Doctor } from '@/backend';
 
 // ─── Error helper ────────────────────────────────────────────────────────────
 export function getFriendlyErrorMessage(error: unknown): string {
@@ -78,6 +78,20 @@ export function useGetAllDoctors() {
   });
 }
 
+// Public doctor list — no auth required, used on the homepage showcase
+export function useGetAllDoctorsPublic() {
+  const { actor, isFetching } = useActor();
+
+  return useQuery({
+    queryKey: ['doctorsPublic'],
+    queryFn: async () => {
+      if (!actor) return [];
+      return actor.getAllDoctorsPublic();
+    },
+    enabled: !!actor && !isFetching,
+  });
+}
+
 export function useRegisterDoctor() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
@@ -97,6 +111,7 @@ export function useRegisterDoctor() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['doctors'] });
+      queryClient.invalidateQueries({ queryKey: ['doctorsPublic'] });
     },
   });
 }
@@ -117,12 +132,26 @@ export function useToggleDoctorAvailability() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (doctorId: bigint) => {
+    mutationFn: async (doctorId: bigint): Promise<Doctor> => {
       if (!actor) throw new Error('Actor not available');
       return actor.toggleDoctorAvailability(doctorId);
     },
-    onSuccess: () => {
+    onSuccess: (updatedDoctor: Doctor) => {
+      // Update the specific doctor in the cached doctors list immediately
+      queryClient.setQueryData<Doctor[]>(['doctors'], (old) => {
+        if (!old) return old;
+        return old.map((d) =>
+          d.id === updatedDoctor.id ? updatedDoctor : d
+        );
+      });
+      // Also invalidate to ensure fresh data from backend
       queryClient.invalidateQueries({ queryKey: ['doctors'] });
+      queryClient.invalidateQueries({ queryKey: ['doctorsPublic'] });
+    },
+    onError: () => {
+      // On error, invalidate to revert to server state
+      queryClient.invalidateQueries({ queryKey: ['doctors'] });
+      queryClient.invalidateQueries({ queryKey: ['doctorsPublic'] });
     },
   });
 }
@@ -156,7 +185,6 @@ export function useCreateEmergencyCase() {
       severity: Severity;
     }) => {
       if (!actor) throw new Error('Actor not available');
-      // Backend createEmergencyCase if available; otherwise use a workaround
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (actor as any).createEmergencyCase(patientName, condition, severity);
     },

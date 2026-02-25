@@ -1,95 +1,91 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T09:44:40.307Z",
+  "generatedAt": "2026-02-25T10:36:47.270Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 5,
-    "implemented": 3,
+    "total": 4,
+    "implemented": 4,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Update the backend to store a `registrationCode` field on doctor profiles. When a doctor registers, they must provide the code `2011` — if the code does not match, reject the registration with an error message. Store the doctor's selected department from the fixed list.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
+        "summary": "Replace all inflated or fabricated statistics (e.g., 'Trusted by 10,000+ patients', specific patient count claims) with honest, aspirational, mission-driven copy throughout the homepage, hero section, stats bar, and footer. Use forward-looking language such as 'Our mission is to be trusted by every patient, everywhere', 'Committed to delivering pure and proper healthcare to the world', 'Aspiring to set the global standard in patient care', and 'Built on the promise of world-class health facilities for all'. Remove any numeric claim that cannot be verified; replace with vision statements.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/HomePage.tsx",
+          "frontend/src/components/LandingPage.tsx",
+          "frontend/src/components/Footer.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/HomePage.tsx",
+          "frontend/src/components/LandingPage.tsx",
+          "frontend/src/components/Footer.tsx"
+        ]
       },
       {
         "id": "REQ-2",
-        "summary": "Update the backend admin authentication to use the hardcoded passcode `1107`. The admin role must have read-only access to all doctor profiles and all emergency cases across all departments. No admin create/edit/delete operations on doctors or cases.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
+        "summary": "Perform a comprehensive UI polish pass across all pages and components (HomePage, Header, Footer, hero section, stats bar, departments section, doctor showcase, LandingPage, RoleSelector). Improvements must include: (1) tighter, more intentional spacing and padding with consistent vertical rhythm; (2) refined typography — stronger visual hierarchy with clear heading scales, improved line-height and letter-spacing for readability; (3) elevated visual hierarchy so the most important content commands attention immediately; (4) premium card and section styling with subtle depth (shadows, borders, glassmorphism where appropriate); (5) smooth, tasteful animations and micro-interactions on scroll and hover; (6) cohesive color usage leveraging the existing teal/emerald/cyan palette defined in tailwind.config.js with proper contrast ratios; (7) a fully polished mobile layout with responsive breakpoints.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/HomePage.tsx",
+          "frontend/src/components/LandingPage.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/Footer.tsx",
+          "frontend/src/components/RoleSelector.tsx",
+          "frontend/src/index.css"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/HomePage.tsx",
+          "frontend/src/components/LandingPage.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/components/Footer.tsx",
+          "frontend/src/components/RoleSelector.tsx",
+          "frontend/src/index.css"
+        ]
       },
       {
         "id": "REQ-3",
-        "summary": "Update the DoctorPortal registration form to include a security code input field (code `2011`) and a department dropdown with the following fixed list: Cardiology, Neurology, Orthopedics, Pediatrics, Dermatology, Radiology, Oncology, Psychiatry, Gastroenterology, Urology, ENT, Ophthalmology, Gynecology, General Surgery, Emergency Medicine. The doctor can only register if the correct code is entered. After successful registration, the doctor sees only cases related to their department.",
+        "summary": "Redesign the hero section of the HomePage to be visually striking and aspirational. It should feature a bold, full-width layout with a strong headline communicating the hospital's world-class mission, a compelling subheadline with honest mission-driven copy, a prominent call-to-action button, and a high-quality visual element (gradient background, abstract medical imagery, or animated visual). The hero must immediately communicate trust, professionalism, and global ambition.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/DoctorPortal.tsx",
-          "frontend/src/components/CaseManagement.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/components/HomePage.tsx",
+          "frontend/src/components/LandingPage.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/DoctorPortal.tsx",
-          "frontend/src/components/CaseManagement.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/components/HomePage.tsx",
+          "frontend/src/components/LandingPage.tsx"
         ]
       },
       {
         "id": "REQ-4",
-        "summary": "Update the AdminPortal to use passcode `1107` for authentication. After login, the admin dashboard must display: all registered doctor profiles (name, department, availability status) and all emergency cases across all departments — both in read-only mode with no edit or delete controls visible to admin.",
+        "summary": "Enhance the Footer component with refined layout, consistent branding, and honest mission-driven messaging. Replace any boilerplate or inflated claims with the hospital's core values: pure healthcare, proper facilities, and global aspiration. Include a brief mission statement tagline in the footer. Ensure the footer has premium spacing, proper visual separation, and is fully responsive.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/AdminPortal.tsx",
-          "frontend/src/components/AdminDashboard.tsx",
-          "frontend/src/components/DoctorManagement.tsx",
-          "frontend/src/components/CaseManagement.tsx"
+          "frontend/src/components/Footer.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/AdminPortal.tsx",
-          "frontend/src/components/AdminDashboard.tsx",
-          "frontend/src/components/DoctorManagement.tsx",
-          "frontend/src/components/CaseManagement.tsx"
-        ]
-      },
-      {
-        "id": "REQ-5",
-        "summary": "Implement the SupportButton component as a floating circle button fixed to the bottom-right corner of every page. Clicking it opens the user's default email client addressed to `satyamjha2553@gmail.com`. The button should display a customer support icon (e.g., a headset or chat bubble) and have a tooltip or aria-label of 'Customer Support'.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/SupportButton.tsx",
-          "frontend/src/App.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/SupportButton.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/components/Footer.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
-    "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/AdminDashboard.tsx",
-    "frontend/src/components/AdminPortal.tsx",
-    "frontend/src/components/CaseManagement.tsx",
-    "frontend/src/components/DoctorManagement.tsx",
-    "frontend/src/components/DoctorPortal.tsx",
-    "frontend/src/components/SupportButton.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useQueries.ts",
+    "frontend/public/assets/generated/global-reach.dim_800x800.png",
+    "frontend/public/assets/generated/hero-bg.dim_1920x1080.png",
+    "frontend/src/components/Footer.tsx",
+    "frontend/src/components/Header.tsx",
+    "frontend/src/components/HomePage.tsx",
+    "frontend/src/components/LandingPage.tsx",
+    "frontend/src/components/RoleSelector.tsx",
+    "frontend/src/index.css",
+    "frontend/tailwind.config.js",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

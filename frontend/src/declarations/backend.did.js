@@ -8,11 +8,6 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
-export const UserRole = IDL.Variant({
-  'admin' : IDL.Null,
-  'user' : IDL.Null,
-  'guest' : IDL.Null,
-});
 export const Department = IDL.Variant({
   'emergency' : IDL.Null,
   'cardiology' : IDL.Null,
@@ -27,6 +22,11 @@ export const Doctor = IDL.Record({
   'available' : IDL.Bool,
   'registrationCode' : IDL.Text,
   'department' : Department,
+});
+export const UserRole = IDL.Variant({
+  'admin' : IDL.Null,
+  'user' : IDL.Null,
+  'guest' : IDL.Null,
 });
 export const CaseStatus = IDL.Variant({
   'resolved' : IDL.Null,
@@ -52,9 +52,12 @@ export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+  'activateDoctor' : IDL.Func([IDL.Nat], [Doctor], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'deactivateDoctor' : IDL.Func([IDL.Nat], [Doctor], []),
   'doctorLogin' : IDL.Func([IDL.Text, Department], [Doctor], ['query']),
   'getAllDoctors' : IDL.Func([], [IDL.Vec(Doctor)], ['query']),
+  'getAllDoctorsPublic' : IDL.Func([], [IDL.Vec(Doctor)], ['query']),
   'getAllEmergencyCases' : IDL.Func([], [IDL.Vec(EmergencyCase)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
@@ -73,11 +76,6 @@ export const idlService = IDL.Service({
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
-  const UserRole = IDL.Variant({
-    'admin' : IDL.Null,
-    'user' : IDL.Null,
-    'guest' : IDL.Null,
-  });
   const Department = IDL.Variant({
     'emergency' : IDL.Null,
     'cardiology' : IDL.Null,
@@ -92,6 +90,11 @@ export const idlFactory = ({ IDL }) => {
     'available' : IDL.Bool,
     'registrationCode' : IDL.Text,
     'department' : Department,
+  });
+  const UserRole = IDL.Variant({
+    'admin' : IDL.Null,
+    'user' : IDL.Null,
+    'guest' : IDL.Null,
   });
   const CaseStatus = IDL.Variant({
     'resolved' : IDL.Null,
@@ -117,9 +120,12 @@ export const idlFactory = ({ IDL }) => {
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
+    'activateDoctor' : IDL.Func([IDL.Nat], [Doctor], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'deactivateDoctor' : IDL.Func([IDL.Nat], [Doctor], []),
     'doctorLogin' : IDL.Func([IDL.Text, Department], [Doctor], ['query']),
     'getAllDoctors' : IDL.Func([], [IDL.Vec(Doctor)], ['query']),
+    'getAllDoctorsPublic' : IDL.Func([], [IDL.Vec(Doctor)], ['query']),
     'getAllEmergencyCases' : IDL.Func([], [IDL.Vec(EmergencyCase)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),

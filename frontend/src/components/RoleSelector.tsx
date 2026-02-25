@@ -1,134 +1,205 @@
 import React from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { UserCircle, Stethoscope, ShieldCheck, ArrowRight, ArrowLeft, Activity } from 'lucide-react';
+import {
+  User,
+  Stethoscope,
+  Shield,
+  ArrowRight,
+  Heart,
+  Activity,
+  CheckCircle,
+  Sparkles,
+  Globe,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const roles = [
-  {
-    key: 'patient',
-    path: '/patient',
-    icon: UserCircle,
-    title: 'Patient Portal',
-    description:
-      'Register your profile, submit emergency SOS alerts, and get AI-powered symptom guidance instantly.',
-    gradient: 'from-teal-500 to-teal-600',
-    lightBg: 'bg-teal-50 dark:bg-teal-900/20',
-    iconColor: 'text-teal-600 dark:text-teal-400',
-    btnClass: 'bg-teal-600 hover:bg-teal-700 text-white',
-    features: ['Emergency SOS', 'Symptom Checker', 'Medicine Suggestions'],
-  },
-  {
-    key: 'doctor',
-    path: '/doctor',
-    icon: Stethoscope,
-    title: 'Doctor Portal',
-    description:
-      'Log in with your name and department, toggle your availability, and manage assigned emergency cases.',
-    gradient: 'from-emerald-500 to-emerald-600',
-    lightBg: 'bg-emerald-50 dark:bg-emerald-900/20',
-    iconColor: 'text-emerald-600 dark:text-emerald-400',
-    btnClass: 'bg-emerald-600 hover:bg-emerald-700 text-white',
-    features: ['Case Management', 'Availability Toggle', 'Patient Overview'],
-  },
-  {
-    key: 'admin',
-    path: '/admin',
-    icon: ShieldCheck,
-    title: 'Admin Portal',
-    description:
-      'Manage doctors, departments, and oversee all emergency cases from a centralized dashboard.',
-    gradient: 'from-cyan-600 to-teal-700',
-    lightBg: 'bg-cyan-50 dark:bg-cyan-900/20',
-    iconColor: 'text-cyan-700 dark:text-cyan-400',
-    btnClass: 'bg-cyan-700 hover:bg-cyan-800 text-white',
-    features: ['Doctor Management', 'Case Assignment', 'Analytics Dashboard'],
-  },
-];
+interface RoleCardProps {
+  icon: React.ElementType;
+  title: string;
+  subtitle: string;
+  description: string;
+  features: string[];
+  path: string;
+  gradient: string;
+  iconBg: string;
+  iconColor: string;
+  accentColor: string;
+  badge?: string;
+}
 
-export default function RoleSelector() {
+function RoleCard({
+  icon: Icon,
+  title,
+  subtitle,
+  description,
+  features,
+  path,
+  gradient,
+  iconBg,
+  iconColor,
+  accentColor,
+  badge,
+}: RoleCardProps) {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-[calc(100vh-8rem)] bg-gradient-to-b from-teal-50/60 to-white dark:from-teal-950/20 dark:to-background py-16 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* Back button */}
-        <button
-          onClick={() => navigate({ to: '/' })}
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-teal-600 dark:text-muted-foreground dark:hover:text-teal-400 mb-8 transition-colors group"
-        >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
-          Back to Home
-        </button>
-
-        {/* Header */}
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 rounded-full px-4 py-1.5 text-sm font-semibold mb-5">
-            <Activity className="w-4 h-4" />
-            Vitals AI
+    <div
+      className={`relative bg-card border border-border rounded-3xl overflow-hidden card-hover group cursor-pointer shadow-card hover:shadow-card-xl transition-all duration-300`}
+      onClick={() => navigate({ to: path })}
+    >
+      {/* Gradient header */}
+      <div className={`${gradient} p-8 pb-6 relative overflow-hidden`}>
+        <div className="absolute inset-0 dot-pattern opacity-20" />
+        {badge && (
+          <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full px-3 py-1 text-xs font-semibold text-white">
+            {badge}
           </div>
-          <h1 className="font-heading text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-foreground mb-4">
-            Select Your Role
+        )}
+        <div className={`relative w-14 h-14 rounded-2xl ${iconBg} flex items-center justify-center mb-5 shadow-lg`}>
+          <Icon className={`w-7 h-7 ${iconColor}`} />
+        </div>
+        <h3 className="font-display font-black text-white text-2xl mb-1 relative">{title}</h3>
+        <p className={`text-sm font-medium relative ${accentColor}`}>{subtitle}</p>
+      </div>
+
+      {/* Content */}
+      <div className="p-8 pt-6">
+        <p className="text-muted-foreground text-sm leading-relaxed mb-6">{description}</p>
+
+        <ul className="space-y-2.5 mb-7">
+          {features.map((feature) => (
+            <li key={feature} className="flex items-center gap-3 text-sm text-foreground">
+              <CheckCircle className="w-4 h-4 text-teal-500 shrink-0" />
+              {feature}
+            </li>
+          ))}
+        </ul>
+
+        <Button
+          className="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold gap-2 group-hover:gap-3 transition-all duration-200 h-11"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate({ to: path });
+          }}
+        >
+          Enter {title}
+          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export default function RoleSelector() {
+  const roles: RoleCardProps[] = [
+    {
+      icon: User,
+      title: 'Patient',
+      subtitle: 'Personal Health Portal',
+      description:
+        'Access your health records, use our AI symptom checker, submit emergency cases, and connect with our medical team — all in one secure place.',
+      features: [
+        'AI-powered symptom checker',
+        'Emergency SOS submission',
+        'Secure health records',
+        'Doctor consultation access',
+      ],
+      path: '/patient',
+      gradient: 'bg-gradient-to-br from-teal-600 to-teal-800',
+      iconBg: 'bg-white/20',
+      iconColor: 'text-white',
+      accentColor: 'text-teal-200',
+      badge: 'For Patients',
+    },
+    {
+      icon: Stethoscope,
+      title: 'Doctor',
+      subtitle: 'Medical Professional Portal',
+      description:
+        'Manage your availability, view assigned emergency cases, and coordinate with the care team to deliver the best outcomes for your patients.',
+      features: [
+        'Availability management',
+        'Emergency case dashboard',
+        'Patient case coordination',
+        'Department-specific view',
+      ],
+      path: '/doctor',
+      gradient: 'bg-gradient-to-br from-emerald-600 to-emerald-800',
+      iconBg: 'bg-white/20',
+      iconColor: 'text-white',
+      accentColor: 'text-emerald-200',
+      badge: 'For Doctors',
+    },
+    {
+      icon: Shield,
+      title: 'Admin',
+      subtitle: 'Hospital Administration',
+      description:
+        'Oversee hospital operations, manage the medical team, monitor emergency cases, and ensure the highest standards of care are maintained.',
+      features: [
+        'Doctor management',
+        'Emergency case oversight',
+        'Hospital operations control',
+        'Real-time monitoring',
+      ],
+      path: '/admin',
+      gradient: 'bg-gradient-to-br from-cyan-700 to-teal-900',
+      iconBg: 'bg-white/20',
+      iconColor: 'text-white',
+      accentColor: 'text-cyan-200',
+      badge: 'Admin Only',
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-teal-950 via-teal-900 to-emerald-950 relative overflow-hidden">
+      {/* Background decorations */}
+      <div className="absolute inset-0 dot-pattern opacity-20 pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-teal-500/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+
+      <div className="relative max-w-6xl mx-auto px-6 lg:px-8 py-20 lg:py-28">
+        {/* Header */}
+        <div className="text-center mb-14 animate-fade-in">
+          <div className="inline-flex items-center gap-2 bg-teal-500/20 border border-teal-400/30 rounded-full px-4 py-2 text-sm font-medium text-teal-300 mb-7">
+            <Sparkles className="w-4 h-4" />
+            VitalsAI Healthcare Platform
+          </div>
+          <h1 className="font-display text-5xl lg:text-6xl font-black text-white mb-5 leading-tight">
+            Choose Your{' '}
+            <span className="text-gradient">Portal</span>
           </h1>
-          <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-            Choose the portal that matches your role to access your personalized healthcare dashboard.
+          <p className="text-teal-200 text-xl max-w-2xl mx-auto leading-relaxed">
+            Select the portal that matches your role to access the tools and information
+            designed specifically for you.
           </p>
         </div>
 
-        {/* Role Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {/* Role cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 stagger-children">
           {roles.map((role) => (
-            <div
-              key={role.key}
-              className="group bg-white dark:bg-card rounded-3xl shadow-md hover:shadow-2xl border border-gray-100 dark:border-border overflow-hidden transition-all duration-300 hover:-translate-y-2 cursor-pointer flex flex-col"
-              onClick={() => navigate({ to: role.path as '/patient' | '/doctor' | '/admin' })}
-            >
-              {/* Card top gradient bar */}
-              <div className={`h-2 bg-gradient-to-r ${role.gradient}`} />
-
-              <div className="p-8 flex flex-col flex-1">
-                {/* Icon */}
-                <div className={`w-16 h-16 rounded-2xl ${role.lightBg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                  <role.icon className={`w-8 h-8 ${role.iconColor}`} />
-                </div>
-
-                {/* Title & Description */}
-                <h2 className="font-heading text-2xl font-bold text-gray-900 dark:text-foreground mb-3">
-                  {role.title}
-                </h2>
-                <p className="text-gray-500 dark:text-muted-foreground text-sm leading-relaxed mb-6">
-                  {role.description}
-                </p>
-
-                {/* Feature list */}
-                <ul className="space-y-2 mb-8 flex-1">
-                  {role.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2 text-sm text-gray-600 dark:text-muted-foreground">
-                      <div className={`w-1.5 h-1.5 rounded-full bg-gradient-to-r ${role.gradient}`} />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                {/* CTA Button */}
-                <Button
-                  className={`w-full ${role.btnClass} font-semibold rounded-xl py-5 text-base shadow-sm group-hover:shadow-md transition-shadow`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate({ to: role.path as '/patient' | '/doctor' | '/admin' });
-                  }}
-                >
-                  Enter {role.title.split(' ')[0]} Portal
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </div>
+            <div key={role.title} className="animate-fade-in">
+              <RoleCard {...role} />
             </div>
           ))}
         </div>
 
         {/* Bottom note */}
-        <p className="text-center text-xs text-gray-400 dark:text-muted-foreground mt-10">
-          Vitals AI — Authorized access only. All activity is monitored and secured.
-        </p>
+        <div className="text-center mt-12 animate-fade-in">
+          <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl px-6 py-4">
+            <div className="flex items-center gap-2">
+              <Globe className="w-4 h-4 text-teal-400" />
+              <span className="text-teal-300 text-sm font-medium">
+                Committed to world-class healthcare for every patient, everywhere.
+              </span>
+            </div>
+            <div className="w-px h-4 bg-teal-700" />
+            <div className="flex items-center gap-1.5">
+              <Heart className="w-4 h-4 text-teal-400 fill-teal-400" />
+              <Activity className="w-4 h-4 text-emerald-400 animate-pulse" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

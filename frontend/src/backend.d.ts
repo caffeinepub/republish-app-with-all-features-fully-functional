@@ -51,9 +51,12 @@ export enum UserRole {
     guest = "guest"
 }
 export interface backendInterface {
+    activateDoctor(doctorId: bigint): Promise<Doctor>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
+    deactivateDoctor(doctorId: bigint): Promise<Doctor>;
     doctorLogin(name: string, department: Department): Promise<Doctor>;
     getAllDoctors(): Promise<Array<Doctor>>;
+    getAllDoctorsPublic(): Promise<Array<Doctor>>;
     getAllEmergencyCases(): Promise<Array<EmergencyCase>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;

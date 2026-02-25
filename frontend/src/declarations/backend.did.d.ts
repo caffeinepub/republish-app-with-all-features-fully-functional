@@ -45,9 +45,12 @@ export type UserRole = { 'admin' : null } |
   { 'guest' : null };
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
+  'activateDoctor' : ActorMethod<[bigint], Doctor>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'deactivateDoctor' : ActorMethod<[bigint], Doctor>,
   'doctorLogin' : ActorMethod<[string, Department], Doctor>,
   'getAllDoctors' : ActorMethod<[], Array<Doctor>>,
+  'getAllDoctorsPublic' : ActorMethod<[], Array<Doctor>>,
   'getAllEmergencyCases' : ActorMethod<[], Array<EmergencyCase>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,

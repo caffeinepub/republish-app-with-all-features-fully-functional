@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Stethoscope, LogOut, ToggleLeft, ToggleRight, Eye, EyeOff } from 'lucide-react';
+import { Stethoscope, LogOut, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,7 +27,6 @@ const DEPARTMENTS: { value: Department; label: string }[] = [
   { value: Department.generalMedicine, label: 'General Medicine' },
 ];
 
-// Extended display-only departments (for UI display; backend only supports the 6 above)
 const ALL_DISPLAY_DEPARTMENTS = [
   { value: Department.cardiology, label: 'Cardiology' },
   { value: Department.neurology, label: 'Neurology' },
@@ -59,6 +58,9 @@ export default function DoctorPortal() {
   const [showRegCode, setShowRegCode] = useState(false);
   const [regError, setRegError] = useState('');
   const [regSuccess, setRegSuccess] = useState('');
+
+  // Toggle error state
+  const [toggleError, setToggleError] = useState('');
 
   const doctorLogin = useDoctorLogin();
   const registerDoctor = useRegisterDoctor();
@@ -112,11 +114,13 @@ export default function DoctorPortal() {
 
   const handleToggleAvailability = async () => {
     if (!loggedInDoctor) return;
+    setToggleError('');
     try {
       const updated = await toggleAvailability.mutateAsync(loggedInDoctor.id);
+      // Immediately update local state with the returned doctor object
       setLoggedInDoctor(updated);
     } catch (err) {
-      console.error('Toggle error:', err);
+      setToggleError(getFriendlyErrorMessage(err));
     }
   };
 
@@ -125,6 +129,7 @@ export default function DoctorPortal() {
     setLoginName('');
     setLoginDepartment('');
     setLoginError('');
+    setToggleError('');
   };
 
   // Logged-in doctor dashboard
@@ -133,10 +138,13 @@ export default function DoctorPortal() {
       ALL_DISPLAY_DEPARTMENTS.find((d) => d.value === loggedInDoctor.department)?.label ??
       loggedInDoctor.department;
 
+    const isAvailable = loggedInDoctor.available;
+
     return (
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between mb-6">
+          {/* Header bar */}
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <Stethoscope className="w-5 h-5 text-primary" />
@@ -146,36 +154,58 @@ export default function DoctorPortal() {
                 <p className="text-sm text-muted-foreground">{deptLabel}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Badge
-                className={
-                  loggedInDoctor.available
-                    ? 'bg-green-100 text-green-700 border-green-200'
-                    : 'bg-gray-100 text-gray-600 border-gray-200'
-                }
-              >
-                {loggedInDoctor.available ? 'Available' : 'Unavailable'}
-              </Badge>
-              <Button
-                variant="outline"
-                size="sm"
+
+            <div className="flex items-center gap-3 flex-wrap">
+              {/* Availability toggle button */}
+              <button
                 onClick={handleToggleAvailability}
                 disabled={toggleAvailability.isPending}
-                className="flex items-center gap-1"
+                className={`
+                  relative inline-flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-sm
+                  border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2
+                  disabled:opacity-60 disabled:cursor-not-allowed
+                  ${isAvailable
+                    ? 'bg-green-50 border-green-400 text-green-700 hover:bg-green-100 focus:ring-green-400'
+                    : 'bg-red-50 border-red-400 text-red-700 hover:bg-red-100 focus:ring-red-400'
+                  }
+                `}
+                aria-label={`Status: ${isAvailable ? 'Available' : 'Busy'}. Click to toggle.`}
               >
-                {loggedInDoctor.available ? (
-                  <ToggleRight className="w-4 h-4 text-green-600" />
-                ) : (
-                  <ToggleLeft className="w-4 h-4 text-gray-400" />
-                )}
-                {toggleAvailability.isPending ? 'Updating...' : 'Toggle Status'}
-              </Button>
+                {/* Toggle track */}
+                <span
+                  className={`
+                    relative inline-flex w-10 h-5 rounded-full transition-colors duration-200
+                    ${isAvailable ? 'bg-green-400' : 'bg-red-400'}
+                  `}
+                >
+                  <span
+                    className={`
+                      absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200
+                      ${isAvailable ? 'translate-x-5' : 'translate-x-0'}
+                    `}
+                  />
+                </span>
+                {toggleAvailability.isPending
+                  ? 'Updating...'
+                  : isAvailable
+                  ? 'Available'
+                  : 'Busy'}
+              </button>
+
               <Button variant="outline" size="sm" onClick={handleLogout} className="flex items-center gap-1">
                 <LogOut className="w-4 h-4" />
                 Logout
               </Button>
             </div>
           </div>
+
+          {/* Toggle error */}
+          {toggleError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="w-4 h-4" />
+              <AlertDescription>{toggleError}</AlertDescription>
+            </Alert>
+          )}
 
           <Tabs defaultValue="my-cases">
             <TabsList className="grid w-full grid-cols-2">
@@ -312,13 +342,11 @@ export default function DoctorPortal() {
                     type="button"
                     onClick={() => setShowRegCode(!showRegCode)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    aria-label={showRegCode ? 'Hide code' : 'Show code'}
                   >
                     {showRegCode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  A valid registration code is required to register as a doctor.
-                </p>
               </div>
 
               {regError && (
@@ -333,7 +361,7 @@ export default function DoctorPortal() {
               )}
 
               <Button type="submit" className="w-full" disabled={registerDoctor.isPending}>
-                {registerDoctor.isPending ? 'Registering...' : 'Register as Doctor'}
+                {registerDoctor.isPending ? 'Registering...' : 'Register'}
               </Button>
             </form>
           )}

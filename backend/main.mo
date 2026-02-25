@@ -7,9 +7,7 @@ import Text "mo:core/Text";
 import Time "mo:core/Time";
 import AccessControl "authorization/access-control";
 import MixinAuthorization "authorization/MixinAuthorization";
-import Migration "migration";
 
-(with migration = Migration.run)
 actor {
   // Types
   public type Department = {
@@ -84,7 +82,6 @@ actor {
   };
 
   // User profile management
-  // Any authenticated user (non-guest) can get their own profile
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can get their own profile");
@@ -92,7 +89,6 @@ actor {
     userProfiles.get(caller);
   };
 
-  // Any authenticated user can view their own profile; admins can view any profile
   public query ({ caller }) func getUserProfile(user : Principal) : async ?UserProfile {
     if (caller != user and not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Can only view your own profile");
@@ -100,7 +96,6 @@ actor {
     userProfiles.get(user);
   };
 
-  // Any authenticated user (non-guest) can save their own profile
   public shared ({ caller }) func saveCallerUserProfile(profile : UserProfile) : async () {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only authenticated users can save their own profile");
@@ -109,7 +104,6 @@ actor {
   };
 
   // Doctor self-registration with registration code - open to all callers
-  // The registration code "2011" is required; no role check needed before verifying the code
   public shared ({ caller }) func registerDoctor(name : Text, department : Department, registrationCode : Text) : async Doctor {
     if (registrationCode != "2011") {
       Runtime.trap("Unauthorized: Invalid registration code");
@@ -128,6 +122,37 @@ actor {
     doctor;
   };
 
+  // Lifecycle management - admin only
+  public shared ({ caller }) func activateDoctor(doctorId : Nat) : async Doctor {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only admins can activate doctor profiles");
+    };
+
+    let doctor = switch (doctors.get(doctorId)) {
+      case (null) { Runtime.trap("Doctor not found") };
+      case (?doc) { doc };
+    };
+
+    let activatedDoctor = { doctor with available = true };
+    doctors.add(doctorId, activatedDoctor);
+    activatedDoctor;
+  };
+
+  public shared ({ caller }) func deactivateDoctor(doctorId : Nat) : async Doctor {
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only admins can deactivate doctor profiles");
+    };
+
+    let doctor = switch (doctors.get(doctorId)) {
+      case (null) { Runtime.trap("Doctor not found") };
+      case (?doc) { doc };
+    };
+
+    let deactivatedDoctor = { doctor with available = false };
+    doctors.add(doctorId, deactivatedDoctor);
+    deactivatedDoctor;
+  };
+
   // View all doctors - admin only (read-only)
   public query ({ caller }) func getAllDoctors() : async [Doctor] {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
@@ -136,11 +161,10 @@ actor {
     doctors.values().toArray();
   };
 
-  // Toggle doctor availability - requires authenticated user role
-  // Doctors (registered users) can toggle availability; admins cannot modify doctor records per the plan
+  // Toggle doctor availability - admin only (modifies doctor records)
   public shared ({ caller }) func toggleDoctorAvailability(doctorId : Nat) : async Doctor {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Runtime.trap("Unauthorized: Only authenticated users can toggle doctor availability");
+    if (not (AccessControl.isAdmin(accessControlState, caller))) {
+      Runtime.trap("Unauthorized: Only admins can toggle doctor availability");
     };
 
     let doctor = switch (doctors.get(doctorId)) {
@@ -171,5 +195,11 @@ actor {
       case (null) { Runtime.trap("Doctor not found") };
       case (?doctor) { doctor };
     };
+  };
+
+  // Get All Doctors (Public) - For HomePage Showcase
+  // Accessible to all (including guests) to display doctor list on the homepage
+  public query func getAllDoctorsPublic() : async [Doctor] {
+    doctors.values().toArray();
   };
 };

@@ -42,6 +42,9 @@ export default function DoctorManagement({ readOnly = false }: DoctorManagementP
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
+  // Track which specific doctor ID is being toggled
+  const [togglingDoctorId, setTogglingDoctorId] = useState<bigint | null>(null);
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -73,10 +76,13 @@ export default function DoctorManagement({ readOnly = false }: DoctorManagementP
   };
 
   const handleToggle = async (doctorId: bigint) => {
+    setTogglingDoctorId(doctorId);
     try {
       await toggleAvailability.mutateAsync(doctorId);
     } catch (err) {
       setError(getFriendlyErrorMessage(err));
+    } finally {
+      setTogglingDoctorId(null);
     }
   };
 
@@ -168,50 +174,80 @@ export default function DoctorManagement({ readOnly = false }: DoctorManagementP
             <p className="text-muted-foreground text-center py-8">No doctors registered yet.</p>
           ) : (
             <div className="space-y-3">
-              {doctors.map((doctor) => (
-                <div
-                  key={doctor.id.toString()}
-                  className="flex items-center justify-between p-4 rounded-lg border border-border bg-card hover:bg-accent/5 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Stethoscope className="w-5 h-5 text-primary" />
+              {doctors.map((doctor) => {
+                const isThisToggling = togglingDoctorId === doctor.id;
+                const isAvailable = doctor.available;
+
+                return (
+                  <div
+                    key={doctor.id.toString()}
+                    className="flex items-center justify-between p-4 rounded-lg border border-border bg-card hover:bg-accent/5 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <Stethoscope className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-foreground">{doctor.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {DEPARTMENT_LABELS[doctor.department] ?? doctor.department}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold text-foreground">{doctor.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {DEPARTMENT_LABELS[doctor.department] ?? doctor.department}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Badge
-                      variant={doctor.available ? 'default' : 'secondary'}
-                      className={doctor.available ? 'bg-green-100 text-green-700 border-green-200' : ''}
-                    >
-                      {doctor.available ? (
-                        <span className="flex items-center gap-1">
-                          <CheckCircle className="w-3 h-3" /> Available
-                        </span>
-                      ) : (
-                        <span className="flex items-center gap-1">
-                          <XCircle className="w-3 h-3" /> Unavailable
-                        </span>
-                      )}
-                    </Badge>
-                    {!readOnly && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleToggle(doctor.id)}
-                        disabled={toggleAvailability.isPending}
+                    <div className="flex items-center gap-3">
+                      <Badge
+                        className={
+                          isAvailable
+                            ? 'bg-green-100 text-green-700 border-green-200'
+                            : 'bg-red-100 text-red-700 border-red-200'
+                        }
                       >
-                        Toggle
-                      </Button>
-                    )}
+                        {isAvailable ? (
+                          <span className="flex items-center gap-1">
+                            <CheckCircle className="w-3 h-3" /> Available
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1">
+                            <XCircle className="w-3 h-3" /> Busy
+                          </span>
+                        )}
+                      </Badge>
+                      {!readOnly && (
+                        <button
+                          onClick={() => handleToggle(doctor.id)}
+                          disabled={isThisToggling}
+                          className={`
+                            relative inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold
+                            border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1
+                            disabled:opacity-60 disabled:cursor-not-allowed
+                            ${isAvailable
+                              ? 'bg-green-50 border-green-400 text-green-700 hover:bg-green-100 focus:ring-green-400'
+                              : 'bg-red-50 border-red-400 text-red-700 hover:bg-red-100 focus:ring-red-400'
+                            }
+                          `}
+                          aria-label={`Toggle availability for ${doctor.name}`}
+                        >
+                          {/* Mini toggle track */}
+                          <span
+                            className={`
+                              relative inline-flex w-8 h-4 rounded-full transition-colors duration-200
+                              ${isAvailable ? 'bg-green-400' : 'bg-red-400'}
+                            `}
+                          >
+                            <span
+                              className={`
+                                absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white shadow transition-transform duration-200
+                                ${isAvailable ? 'translate-x-4' : 'translate-x-0'}
+                              `}
+                            />
+                          </span>
+                          {isThisToggling ? 'Updating...' : isAvailable ? 'Available' : 'Busy'}
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
