@@ -1,20 +1,23 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T10:36:47.267Z",
-  "summary": "The diff implements all four requirements comprehensively. REQ-1 (replace fabricated statistics with aspirational copy) is addressed in HomePage, Footer, Header, and LandingPage. REQ-2 (UI polish) is addressed via index.css, tailwind.config.js, and all component files. REQ-3 (hero redesign) is addressed in HomePage.tsx with full-width layout, gradient background, hero image, and aspirational headline. REQ-4 (footer enhancement) is addressed in Footer.tsx with mission CTA banner and honest tagline. The two required images are referenced in the code. No significant missing requirements or hallucinated features are detected.",
-  "missing_requirements": [],
+  "generatedAt": "2026-02-27T15:50:51.000Z",
+  "summary": "The diff implements most of the required features: backend stat query functions, new React Query hooks with 5-second refetchInterval, and a rebuilt AdminDashboard with three stat cards. However, REQ-3 (AdminPortal.tsx passcode gate) is not evidenced in the diff — AdminPortal.tsx is not listed as a modified file.",
+  "missing_requirements": [
+    {
+      "id": "REQ-3",
+      "requirement": "Ensure the AdminPortal passcode gate (in AdminPortal.tsx) correctly renders AdminDashboard after successful authentication. The passcode login form must function end-to-end: entering the correct passcode grants access and displays the working stats dashboard; the logout button clears the session and returns to the login screen.",
+      "reason": "AdminPortal.tsx does not appear in the list of modified files in the diff. There is no evidence that the passcode gate, logout button, sessionStorage clearing, or error handling for incorrect passcode were updated.",
+      "evidence": []
+    }
+  ],
   "hallucinated_features": [],
-  "confidence": 0.88,
+  "confidence": 0.82,
   "changed_files": [
+    "backend/main.mo",
     "frontend-file-summaries.txt",
-    "frontend/src/components/Footer.tsx",
-    "frontend/src/components/Header.tsx",
-    "frontend/src/components/HomePage.tsx",
-    "frontend/src/components/LandingPage.tsx",
-    "frontend/src/components/RoleSelector.tsx",
-    "frontend/src/index.css",
-    "frontend/tailwind.config.js",
+    "frontend/src/components/AdminDashboard.tsx",
+    "frontend/src/hooks/useQueries.ts",
     "project_state.json"
   ]
 }

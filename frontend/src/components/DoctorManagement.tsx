@@ -14,9 +14,13 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useGetAllDoctors, useRegisterDoctor, useToggleDoctorAvailability } from '@/hooks/useQueries';
+import {
+  useGetAllDoctors,
+  useRegisterDoctor,
+  useUpdateDoctorAvailability,
+  getFriendlyErrorMessage,
+} from '@/hooks/useQueries';
 import { Department } from '@/backend';
-import { getFriendlyErrorMessage } from '@/hooks/useQueries';
 
 const DEPARTMENT_LABELS: Record<string, string> = {
   [Department.emergency]: 'Emergency Medicine',
@@ -34,15 +38,15 @@ interface DoctorManagementProps {
 export default function DoctorManagement({ readOnly = false }: DoctorManagementProps) {
   const { data: doctors, isLoading } = useGetAllDoctors();
   const registerDoctor = useRegisterDoctor();
-  const toggleAvailability = useToggleDoctorAvailability();
+  const updateAvailability = useUpdateDoctorAvailability();
 
   const [name, setName] = useState('');
   const [department, setDepartment] = useState<Department | ''>('');
+  const [contactInfo, setContactInfo] = useState('');
   const [registrationCode, setRegistrationCode] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Track which specific doctor ID is being toggled
   const [togglingDoctorId, setTogglingDoctorId] = useState<bigint | null>(null);
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -51,7 +55,7 @@ export default function DoctorManagement({ readOnly = false }: DoctorManagementP
     setSuccess('');
 
     if (!name.trim() || !department || !registrationCode.trim()) {
-      setError('Please fill in all fields.');
+      setError('Please fill in all required fields.');
       return;
     }
 
@@ -64,21 +68,25 @@ export default function DoctorManagement({ readOnly = false }: DoctorManagementP
       await registerDoctor.mutateAsync({
         name: name.trim(),
         department: department as Department,
+        contactInfo: contactInfo.trim(),
         registrationCode,
+        // omit yearsOfExperience and certifications so they default to undefined
       });
       setSuccess(`Dr. ${name} registered successfully!`);
       setName('');
       setDepartment('');
+      setContactInfo('');
       setRegistrationCode('');
     } catch (err) {
       setError(getFriendlyErrorMessage(err));
     }
   };
 
-  const handleToggle = async (doctorId: bigint) => {
+  const handleToggle = async (doctorId: bigint, currentAvailable: boolean) => {
     setTogglingDoctorId(doctorId);
     try {
-      await toggleAvailability.mutateAsync(doctorId);
+      // Pass doctorId as bigint directly — matches the hook's expected type
+      await updateAvailability.mutateAsync({ doctorId, available: !currentAvailable });
     } catch (err) {
       setError(getFriendlyErrorMessage(err));
     } finally {
@@ -124,6 +132,18 @@ export default function DoctorManagement({ readOnly = false }: DoctorManagementP
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="contactInfo">
+                  Contact Info{' '}
+                  <span className="text-muted-foreground text-xs">(optional)</span>
+                </Label>
+                <Input
+                  id="contactInfo"
+                  value={contactInfo}
+                  onChange={(e) => setContactInfo(e.target.value)}
+                  placeholder="Phone number or email"
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="regCode">Registration Code</Label>
@@ -213,36 +233,14 @@ export default function DoctorManagement({ readOnly = false }: DoctorManagementP
                         )}
                       </Badge>
                       {!readOnly && (
-                        <button
-                          onClick={() => handleToggle(doctor.id)}
-                          disabled={isThisToggling}
-                          className={`
-                            relative inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold
-                            border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-1
-                            disabled:opacity-60 disabled:cursor-not-allowed
-                            ${isAvailable
-                              ? 'bg-green-50 border-green-400 text-green-700 hover:bg-green-100 focus:ring-green-400'
-                              : 'bg-red-50 border-red-400 text-red-700 hover:bg-red-100 focus:ring-red-400'
-                            }
-                          `}
-                          aria-label={`Toggle availability for ${doctor.name}`}
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleToggle(doctor.id, isAvailable)}
+                          disabled={isThisToggling || updateAvailability.isPending}
                         >
-                          {/* Mini toggle track */}
-                          <span
-                            className={`
-                              relative inline-flex w-8 h-4 rounded-full transition-colors duration-200
-                              ${isAvailable ? 'bg-green-400' : 'bg-red-400'}
-                            `}
-                          >
-                            <span
-                              className={`
-                                absolute top-0.5 left-0.5 w-3 h-3 rounded-full bg-white shadow transition-transform duration-200
-                                ${isAvailable ? 'translate-x-4' : 'translate-x-0'}
-                              `}
-                            />
-                          </span>
-                          {isThisToggling ? 'Updating...' : isAvailable ? 'Available' : 'Busy'}
-                        </button>
+                          {isThisToggling ? 'Updating...' : isAvailable ? 'Set Busy' : 'Set Available'}
+                        </Button>
                       )}
                     </div>
                   </div>

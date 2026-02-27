@@ -1,228 +1,176 @@
 import React, { useState } from 'react';
-import { AlertTriangle, User, CheckCircle, Clock } from 'lucide-react';
+import { useGetAllCasesPublic } from '../hooks/useQueries';
+import { EmergencyCase, Department, Severity } from '../backend';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
-import {
-  useGetAllEmergencyCases,
-  useGetAllDoctors,
-  useAssignDoctor,
-  useResolveCase,
-  getFriendlyErrorMessage,
-} from '@/hooks/useQueries';
-import { CaseStatus, Severity, Department } from '@/backend';
+import { AlertTriangle, Activity, User, Building2, RefreshCw, Loader2, Search } from 'lucide-react';
 
-const SEVERITY_CONFIG: Record<string, { label: string; className: string }> = {
-  [Severity.critical]: { label: 'Critical', className: 'bg-red-100 text-red-700 border-red-200' },
-  [Severity.high]: { label: 'High', className: 'bg-orange-100 text-orange-700 border-orange-200' },
-  [Severity.medium]: { label: 'Medium', className: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
-  [Severity.low]: { label: 'Low', className: 'bg-green-100 text-green-700 border-green-200' },
-};
+const DEPARTMENTS: { value: Department; label: string }[] = [
+  { value: Department.emergency, label: 'Emergency' },
+  { value: Department.cardiology, label: 'Cardiology' },
+  { value: Department.neurology, label: 'Neurology' },
+  { value: Department.pediatrics, label: 'Pediatrics' },
+  { value: Department.orthopedics, label: 'Orthopedics' },
+  { value: Department.generalMedicine, label: 'General Medicine' },
+];
 
-const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
-  [CaseStatus.open]: { label: 'Open', className: 'bg-blue-100 text-blue-700 border-blue-200' },
-  [CaseStatus.assigned]: { label: 'Assigned', className: 'bg-purple-100 text-purple-700 border-purple-200' },
-  [CaseStatus.resolved]: { label: 'Resolved', className: 'bg-gray-100 text-gray-600 border-gray-200' },
-};
+function getDeptLabel(dept: Department): string {
+  return DEPARTMENTS.find(d => d.value === dept)?.label ?? dept;
+}
 
-const DEPARTMENT_LABELS: Record<string, string> = {
-  [Department.emergency]: 'Emergency Medicine',
-  [Department.cardiology]: 'Cardiology',
-  [Department.neurology]: 'Neurology',
-  [Department.pediatrics]: 'Pediatrics',
-  [Department.orthopedics]: 'Orthopedics',
-  [Department.generalMedicine]: 'General Medicine',
-};
+function getSeverityColor(severity: Severity): string {
+  switch (severity) {
+    case Severity.critical: return 'bg-red-500/20 text-red-400 border-red-500/40';
+    case Severity.high: return 'bg-orange-500/20 text-orange-400 border-orange-500/40';
+    case Severity.medium: return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40';
+    case Severity.low: return 'bg-green-500/20 text-green-400 border-green-500/40';
+    default: return 'bg-muted text-muted-foreground border-border';
+  }
+}
+
+function getStatusColor(status: string): string {
+  switch (status) {
+    case 'open': return 'bg-blue-500/20 text-blue-400 border-blue-500/40';
+    case 'assigned': return 'bg-purple-500/20 text-purple-400 border-purple-500/40';
+    case 'inProgress': return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/40';
+    case 'resolved': return 'bg-green-500/20 text-green-400 border-green-500/40';
+    case 'closed': return 'bg-muted text-muted-foreground border-border';
+    default: return 'bg-muted text-muted-foreground border-border';
+  }
+}
+
+function isEmergency(c: EmergencyCase): boolean {
+  return c.severity === Severity.critical || c.severity === Severity.high;
+}
 
 interface CaseManagementProps {
-  readOnly?: boolean;
   departmentFilter?: Department;
 }
 
-export default function CaseManagement({ readOnly = false, departmentFilter }: CaseManagementProps) {
-  const { data: cases, isLoading: casesLoading } = useGetAllEmergencyCases();
-  const { data: doctors } = useGetAllDoctors();
-  const assignDoctor = useAssignDoctor();
-  const resolveCase = useResolveCase();
+export default function CaseManagement({ departmentFilter }: CaseManagementProps) {
+  const { data: allCases = [], isLoading, refetch } = useGetAllCasesPublic();
+  const [search, setSearch] = useState('');
 
-  const [selectedDoctors, setSelectedDoctors] = useState<Record<string, string>>({});
-  const [error, setError] = useState('');
+  const cases = departmentFilter
+    ? allCases.filter(c => c.caseType === departmentFilter)
+    : allCases;
 
-  const filteredCases = departmentFilter
-    ? cases?.filter((c) => {
-        // Filter by matching department in condition text or by assigned doctor's department
-        const assignedDoctor = c.assignedDoctorId
-          ? doctors?.find((d) => d.id === c.assignedDoctorId)
-          : null;
-        if (assignedDoctor) {
-          return assignedDoctor.department === departmentFilter;
-        }
-        return true; // Show unassigned cases to all doctors
-      })
-    : cases;
+  const filtered = cases.filter(c =>
+    c.patientName.toLowerCase().includes(search.toLowerCase()) ||
+    c.condition.toLowerCase().includes(search.toLowerCase())
+  );
 
-  const handleAssign = async (caseId: bigint) => {
-    const doctorIdStr = selectedDoctors[caseId.toString()];
-    if (!doctorIdStr) {
-      setError('Please select a doctor to assign.');
-      return;
-    }
-    setError('');
-    try {
-      await assignDoctor.mutateAsync({ caseId, doctorId: BigInt(doctorIdStr) });
-    } catch (err) {
-      setError(getFriendlyErrorMessage(err));
-    }
-  };
-
-  const handleResolve = async (caseId: bigint) => {
-    setError('');
-    try {
-      await resolveCase.mutateAsync(caseId);
-    } catch (err) {
-      setError(getFriendlyErrorMessage(err));
-    }
-  };
-
-  const availableDoctors = doctors?.filter((d) => d.available) ?? [];
+  const emergencyCases = filtered.filter(isEmergency);
+  const regularCases = filtered.filter(c => !isEmergency(c));
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <AlertTriangle className="w-5 h-5 text-primary" />
-            Emergency Cases
-            {departmentFilter && (
-              <Badge variant="outline" className="ml-2 text-xs">
-                {DEPARTMENT_LABELS[departmentFilter] ?? departmentFilter}
-              </Badge>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {error && (
-            <Alert variant="destructive" className="mb-4">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+      <div className="flex items-center gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            placeholder="Search cases..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="pl-9 bg-muted/50 border-border"
+          />
+        </div>
+        <Button variant="outline" size="sm" onClick={() => refetch()} className="gap-2">
+          <RefreshCw className="w-4 h-4" />
+          Refresh
+        </Button>
+      </div>
 
-          {casesLoading ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-24 w-full" />
+      {isLoading ? (
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="w-6 h-6 animate-spin text-primary" />
+          <span className="ml-2 text-muted-foreground">Loading cases...</span>
+        </div>
+      ) : (
+        <>
+          {/* Emergency Cases */}
+          {emergencyCases.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-red-400 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 animate-pulse" />
+                Emergency / SOS Cases ({emergencyCases.length})
+              </h3>
+              {emergencyCases.map(c => (
+                <div
+                  key={String(c.id)}
+                  className="rounded-lg border-2 border-red-500/40 bg-red-500/5 p-4"
+                >
+                  <div className="flex items-start justify-between gap-2 flex-wrap">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <AlertTriangle className="w-4 h-4 text-red-400" />
+                        <span className="font-semibold text-foreground">{c.patientName}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full border font-bold ${getSeverityColor(c.severity)}`}>
+                          {c.severity.toUpperCase()}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">{c.condition}</p>
+                      {c.patientDetails && (
+                        <p className="text-xs text-muted-foreground mt-1">{c.patientDetails}</p>
+                      )}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {getDeptLabel(c.caseType)} • {new Date(Number(c.submissionDate) / 1_000_000).toLocaleString()}
+                      </p>
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full border flex-shrink-0 ${getStatusColor(c.status)}`}>
+                      {c.status}
+                    </span>
+                  </div>
+                </div>
               ))}
             </div>
-          ) : !filteredCases || filteredCases.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">No emergency cases found.</p>
-          ) : (
-            <div className="space-y-4">
-              {filteredCases.map((emergencyCase) => {
-                const severityConfig = SEVERITY_CONFIG[emergencyCase.severity] ?? {
-                  label: emergencyCase.severity,
-                  className: '',
-                };
-                const statusConfig = STATUS_CONFIG[emergencyCase.status] ?? {
-                  label: emergencyCase.status,
-                  className: '',
-                };
-                const assignedDoctor = emergencyCase.assignedDoctorId
-                  ? doctors?.find((d) => d.id === emergencyCase.assignedDoctorId)
-                  : null;
+          )}
 
-                return (
-                  <div
-                    key={emergencyCase.id.toString()}
-                    className="p-4 rounded-lg border border-border bg-card space-y-3"
-                  >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2">
-                        <User className="w-4 h-4 text-muted-foreground mt-0.5" />
-                        <div>
-                          <p className="font-semibold text-foreground">{emergencyCase.patientName}</p>
-                          <p className="text-sm text-muted-foreground">{emergencyCase.condition}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <Badge className={severityConfig.className}>{severityConfig.label}</Badge>
-                        <Badge className={statusConfig.className}>{statusConfig.label}</Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Clock className="w-3 h-3" />
-                      {new Date(Number(emergencyCase.createdAt) / 1_000_000).toLocaleString()}
-                      {assignedDoctor && (
-                        <span className="ml-2 flex items-center gap-1">
-                          <CheckCircle className="w-3 h-3 text-green-600" />
-                          Assigned to {assignedDoctor.name}
+          {/* Regular Cases */}
+          {regularCases.length > 0 && (
+            <div className="space-y-2">
+              <h3 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
+                <Activity className="w-4 h-4" />
+                Regular Cases ({regularCases.length})
+              </h3>
+              {regularCases.map(c => (
+                <div key={String(c.id)} className="rounded-lg border border-border bg-muted/20 p-4">
+                  <div className="flex items-start justify-between gap-2 flex-wrap">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <User className="w-4 h-4 text-muted-foreground" />
+                        <span className="font-semibold text-foreground">{c.patientName}</span>
+                        <span className={`text-xs px-2 py-0.5 rounded-full border ${getSeverityColor(c.severity)}`}>
+                          {c.severity}
                         </span>
-                      )}
-                    </div>
-
-                    {!readOnly && emergencyCase.status !== CaseStatus.resolved && (
-                      <div className="flex items-center gap-2 pt-1">
-                        {emergencyCase.status === CaseStatus.open && (
-                          <>
-                            <Select
-                              value={selectedDoctors[emergencyCase.id.toString()] ?? ''}
-                              onValueChange={(v) =>
-                                setSelectedDoctors((prev) => ({
-                                  ...prev,
-                                  [emergencyCase.id.toString()]: v,
-                                }))
-                              }
-                            >
-                              <SelectTrigger className="flex-1 h-8 text-sm">
-                                <SelectValue placeholder="Select doctor" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {availableDoctors.map((doc) => (
-                                  <SelectItem key={doc.id.toString()} value={doc.id.toString()}>
-                                    {doc.name} — {DEPARTMENT_LABELS[doc.department] ?? doc.department}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <Button
-                              size="sm"
-                              onClick={() => handleAssign(emergencyCase.id)}
-                              disabled={assignDoctor.isPending}
-                            >
-                              Assign
-                            </Button>
-                          </>
-                        )}
-                        {emergencyCase.status === CaseStatus.assigned && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleResolve(emergencyCase.id)}
-                            disabled={resolveCase.isPending}
-                            className="text-green-700 border-green-300 hover:bg-green-50"
-                          >
-                            <CheckCircle className="w-3 h-3 mr-1" />
-                            Resolve
-                          </Button>
-                        )}
                       </div>
-                    )}
+                      <p className="text-sm text-muted-foreground">{c.condition}</p>
+                      {c.patientDetails && (
+                        <p className="text-xs text-muted-foreground mt-1">{c.patientDetails}</p>
+                      )}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {getDeptLabel(c.caseType)} • {new Date(Number(c.submissionDate) / 1_000_000).toLocaleString()}
+                      </p>
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full border flex-shrink-0 ${getStatusColor(c.status)}`}>
+                      {c.status}
+                    </span>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           )}
-        </CardContent>
-      </Card>
+
+          {filtered.length === 0 && (
+            <div className="text-center py-8 text-muted-foreground">
+              <Activity className="w-10 h-10 mx-auto mb-2 opacity-30" />
+              <p>No cases found</p>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

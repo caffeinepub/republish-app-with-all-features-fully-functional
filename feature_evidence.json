@@ -2,38 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-replace-all-inflated-or-fabricated-statistics-e-g-trusted-by-10-000-patients-specific-patient-count-claims-with-honest-aspirational-mission-driven-copy-throughout-the-homepage-hero-section-stats-bar-and-footer-use-forward-looking-language-such-as-our-mission-is-to-be-trusted-by-every-patient-everywhere-committed-to-delivering-pure-and-proper-healthcare-to-the-world-aspiring-to-set-the-global-standard-in-patient-care-and-built-on-the-promise-of-world-class-health-facilities-for-all-remove-any-numeric-claim-that-cannot-be-verified-replace-with-vision-statements",
-      "featureTitle": "Replace all inflated or fabricated statistics (e.g., 'Trusted by 10,000+ patients', specific patient count claims) with honest, aspirational, mission-driven copy throughout the homepage, hero section, stats bar, and footer. Use forward-looking language such as 'Our mission is to be trusted by every patient, everywhere', 'Committed to delivering pure and proper healthcare to the world', 'Aspiring to set the global standard in patient care', and 'Built on the promise of world-class health facilities for all'. Remove any numeric claim that cannot be verified; replace with vision statements.",
+      "featureId": "feature-rewrite-the-admindashboard-component-to-prominently-display-three-stat-cards-total-doctors-total-cases-and-total-emergencies-each-card-must-show-the-live-count-fetched-from-the-backend-the-dashboard-must-auto-refresh-all-three-stats-every-5-seconds-using-react-query-s-refetchinterval-so-the-numbers-stay-current-without-manual-page-reload",
+      "featureTitle": "Rewrite the AdminDashboard component to prominently display three stat cards: Total Doctors, Total Cases, and Total Emergencies. Each card must show the live count fetched from the backend. The dashboard must auto-refresh all three stats every 5 seconds using React Query's refetchInterval so the numbers stay current without manual page reload.",
       "files": [
-        "frontend/src/components/Footer.tsx",
-        "frontend/src/components/HomePage.tsx",
-        "frontend/src/components/LandingPage.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "qr-code@1.0.0",
-        "camera@1.0.0"
-      ],
-      "testIds": [
-        "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-perform-a-comprehensive-ui-polish-pass-across-all-pages-and-components-homepage-header-footer-hero-section-stats-bar-departments-section-doctor-showcase-landingpage-roleselector-improvements-must-include-1-tighter-more-intentional-spacing-and-padding-with-consistent-vertical-rhythm-2-refined-typography-stronger-visual-hierarchy-with-clear-heading-scales-improved-line-height-and-letter-spacing-for-readability-3-elevated-visual-hierarchy-so-the-most-important-content-commands-attention-immediately-4-premium-card-and-section-styling-with-subtle-depth-shadows-borders-glassmorphism-where-appropriate-5-smooth-tasteful-animations-and-micro-interactions-on-scroll-and-hover-6-cohesive-color-usage-leveraging-the-existing-teal-emerald-cyan-palette-defined-in-tailwind-config-js-with-proper-contrast-ratios-7-a-fully-polished-mobile-layout-with-responsive-breakpoints",
-      "featureTitle": "Perform a comprehensive UI polish pass across all pages and components (HomePage, Header, Footer, hero section, stats bar, departments section, doctor showcase, LandingPage, RoleSelector). Improvements must include: (1) tighter, more intentional spacing and padding with consistent vertical rhythm; (2) refined typography — stronger visual hierarchy with clear heading scales, improved line-height and letter-spacing for readability; (3) elevated visual hierarchy so the most important content commands attention immediately; (4) premium card and section styling with subtle depth (shadows, borders, glassmorphism where appropriate); (5) smooth, tasteful animations and micro-interactions on scroll and hover; (6) cohesive color usage leveraging the existing teal/emerald/cyan palette defined in tailwind.config.js with proper contrast ratios; (7) a fully polished mobile layout with responsive breakpoints.",
-      "files": [
-        "frontend/src/components/Footer.tsx",
-        "frontend/src/components/Header.tsx",
-        "frontend/src/components/HomePage.tsx",
-        "frontend/src/components/LandingPage.tsx",
-        "frontend/src/components/RoleSelector.tsx",
-        "frontend/src/index.css"
+        "frontend/src/components/AdminDashboard.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -51,32 +23,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-redesign-the-hero-section-of-the-homepage-to-be-visually-striking-and-aspirational-it-should-feature-a-bold-full-width-layout-with-a-strong-headline-communicating-the-hospital-s-world-class-mission-a-compelling-subheadline-with-honest-mission-driven-copy-a-prominent-call-to-action-button-and-a-high-quality-visual-element-gradient-background-abstract-medical-imagery-or-animated-visual-the-hero-must-immediately-communicate-trust-professionalism-and-global-ambition",
-      "featureTitle": "Redesign the hero section of the HomePage to be visually striking and aspirational. It should feature a bold, full-width layout with a strong headline communicating the hospital's world-class mission, a compelling subheadline with honest mission-driven copy, a prominent call-to-action button, and a high-quality visual element (gradient background, abstract medical imagery, or animated visual). The hero must immediately communicate trust, professionalism, and global ambition.",
+      "featureId": "feature-add-or-update-react-query-hooks-in-usequeries-ts-to-support-fetching-the-three-admin-stat-counts-total-doctors-total-cases-total-emergencies-with-a-5-second-refetchinterval-these-hooks-must-handle-errors-gracefully-and-return-sensible-defaults-e-g-0-when-data-is-unavailable",
+      "featureTitle": "Add or update React Query hooks in useQueries.ts to support fetching the three admin stat counts (total doctors, total cases, total emergencies) with a 5-second refetchInterval. These hooks must handle errors gracefully and return sensible defaults (e.g., 0) when data is unavailable.",
       "files": [
-        "frontend/src/components/HomePage.tsx",
-        "frontend/src/components/LandingPage.tsx"
-      ],
-      "components": [
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0",
-        "qr-code@1.0.0",
-        "camera@1.0.0"
-      ],
-      "testIds": [
-        "REQ-3"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-enhance-the-footer-component-with-refined-layout-consistent-branding-and-honest-mission-driven-messaging-replace-any-boilerplate-or-inflated-claims-with-the-hospital-s-core-values-pure-healthcare-proper-facilities-and-global-aspiration-include-a-brief-mission-statement-tagline-in-the-footer-ensure-the-footer-has-premium-spacing-proper-visual-separation-and-is-fully-responsive",
-      "featureTitle": "Enhance the Footer component with refined layout, consistent branding, and honest mission-driven messaging. Replace any boilerplate or inflated claims with the hospital's core values: pure healthcare, proper facilities, and global aspiration. Include a brief mission statement tagline in the footer. Ensure the footer has premium spacing, proper visual separation, and is fully responsive.",
-      "files": [
-        "frontend/src/components/Footer.tsx"
+        "frontend/src/hooks/useQueries.ts"
       ],
       "components": [
         "core-infrastructure@1.0.2",

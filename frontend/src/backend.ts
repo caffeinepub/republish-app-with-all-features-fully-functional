@@ -89,29 +89,51 @@ export class ExternalBlob {
         return this;
     }
 }
+export type DoctorLoginResult = {
+    __kind__: "success";
+    success: Doctor;
+} | {
+    __kind__: "notApproved";
+    notApproved: null;
+} | {
+    __kind__: "doctorNotFound";
+    doctorNotFound: null;
+} | {
+    __kind__: "invalidCredentials";
+    invalidCredentials: null;
+};
 export interface EmergencyCase {
     id: bigint;
     status: CaseStatus;
-    createdAt: bigint;
+    patientDetails: string;
+    caseType: Department;
     assignedDoctorId?: bigint;
+    submissionDate: bigint;
     patientName: string;
     severity: Severity;
     condition: string;
 }
 export interface Doctor {
     id: bigint;
+    status: DoctorStatus;
+    yearsOfExperience?: bigint;
+    contactInfo: string;
     name: string;
     available: boolean;
     registrationCode: string;
+    registrationDate: bigint;
     department: Department;
+    certifications?: Array<string>;
 }
 export interface UserProfile {
     name: string;
 }
 export enum CaseStatus {
     resolved = "resolved",
+    closed = "closed",
     assigned = "assigned",
-    open = "open"
+    open = "open",
+    inProgress = "inProgress"
 }
 export enum Department {
     emergency = "emergency",
@@ -120,6 +142,11 @@ export enum Department {
     orthopedics = "orthopedics",
     pediatrics = "pediatrics",
     neurology = "neurology"
+}
+export enum DoctorStatus {
+    pendingApproval = "pendingApproval",
+    approved = "approved",
+    rejected = "rejected"
 }
 export enum Severity {
     low = "low",
@@ -134,23 +161,38 @@ export enum UserRole {
 }
 export interface backendInterface {
     _initializeAccessControlWithSecret(userSecret: string): Promise<void>;
-    activateDoctor(doctorId: bigint): Promise<Doctor>;
+    approveDoctor(doctorId: bigint): Promise<Doctor>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
-    deactivateDoctor(doctorId: bigint): Promise<Doctor>;
-    doctorLogin(name: string, department: Department): Promise<Doctor>;
+    assignDoctorToCase(caseId: bigint, doctorId: bigint): Promise<EmergencyCase>;
+    deleteCase(caseId: bigint): Promise<void>;
+    doctorLogin(doctorId: bigint, registrationCode: string): Promise<DoctorLoginResult>;
+    getActiveCriticalEmergencyCounts(): Promise<{
+        totalOpen: bigint;
+        totalActive: bigint;
+        totalCritical: bigint;
+    }>;
+    getAllCasesPublic(): Promise<Array<EmergencyCase>>;
     getAllDoctors(): Promise<Array<Doctor>>;
     getAllDoctorsPublic(): Promise<Array<Doctor>>;
     getAllEmergencyCases(): Promise<Array<EmergencyCase>>;
+    getAvailableDoctorsByDepartment(department: Department): Promise<Array<Doctor>>;
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
+    getPendingApprovalDoctors(): Promise<Array<Doctor>>;
+    getTotalEmergencyCaseCount(): Promise<bigint>;
+    getTotalRegisteredDoctorCount(): Promise<bigint>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     initialize(): Promise<void>;
     isCallerAdmin(): Promise<boolean>;
-    registerDoctor(name: string, department: Department, registrationCode: string): Promise<Doctor>;
+    registerDoctor(name: string, department: Department, contactInfo: string, registrationCode: string, yearsOfExperience: bigint | null, certifications: Array<string> | null): Promise<Doctor>;
+    rejectDoctor(doctorId: bigint): Promise<Doctor>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
-    toggleDoctorAvailability(doctorId: bigint): Promise<Doctor>;
+    submitCase(patientName: string, patientDetails: string, condition: string, caseType: Department, severity: Severity): Promise<EmergencyCase>;
+    updateCaseStatus(caseId: bigint, newStatus: CaseStatus): Promise<EmergencyCase>;
+    updateDoctorAvailability(doctorId: bigint, available: boolean): Promise<void>;
+    updateDoctorDepartment(doctorId: bigint, newDepartment: Department): Promise<void>;
 }
-import type { CaseStatus as _CaseStatus, Department as _Department, Doctor as _Doctor, EmergencyCase as _EmergencyCase, Severity as _Severity, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
+import type { CaseStatus as _CaseStatus, Department as _Department, Doctor as _Doctor, DoctorLoginResult as _DoctorLoginResult, DoctorStatus as _DoctorStatus, EmergencyCase as _EmergencyCase, Severity as _Severity, UserProfile as _UserProfile, UserRole as _UserRole } from "./declarations/backend.did.d.ts";
 export class Backend implements backendInterface {
     constructor(private actor: ActorSubclass<_SERVICE>, private _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, private _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, private processError?: (error: unknown) => never){}
     async _initializeAccessControlWithSecret(arg0: string): Promise<void> {
@@ -167,144 +209,246 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async activateDoctor(arg0: bigint): Promise<Doctor> {
+    async approveDoctor(arg0: bigint): Promise<Doctor> {
         if (this.processError) {
             try {
-                const result = await this.actor.activateDoctor(arg0);
+                const result = await this.actor.approveDoctor(arg0);
                 return from_candid_Doctor_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.activateDoctor(arg0);
+            const result = await this.actor.approveDoctor(arg0);
             return from_candid_Doctor_n1(this._uploadFile, this._downloadFile, result);
         }
     }
     async assignCallerUserRole(arg0: Principal, arg1: UserRole): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n5(this._uploadFile, this._downloadFile, arg1));
+                const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n9(this._uploadFile, this._downloadFile, arg1));
                 return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n5(this._uploadFile, this._downloadFile, arg1));
+            const result = await this.actor.assignCallerUserRole(arg0, to_candid_UserRole_n9(this._uploadFile, this._downloadFile, arg1));
             return result;
         }
     }
-    async deactivateDoctor(arg0: bigint): Promise<Doctor> {
+    async assignDoctorToCase(arg0: bigint, arg1: bigint): Promise<EmergencyCase> {
         if (this.processError) {
             try {
-                const result = await this.actor.deactivateDoctor(arg0);
-                return from_candid_Doctor_n1(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.assignDoctorToCase(arg0, arg1);
+                return from_candid_EmergencyCase_n11(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.deactivateDoctor(arg0);
-            return from_candid_Doctor_n1(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.assignDoctorToCase(arg0, arg1);
+            return from_candid_EmergencyCase_n11(this._uploadFile, this._downloadFile, result);
         }
     }
-    async doctorLogin(arg0: string, arg1: Department): Promise<Doctor> {
+    async deleteCase(arg0: bigint): Promise<void> {
         if (this.processError) {
             try {
-                const result = await this.actor.doctorLogin(arg0, to_candid_Department_n7(this._uploadFile, this._downloadFile, arg1));
-                return from_candid_Doctor_n1(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.deleteCase(arg0);
+                return result;
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.doctorLogin(arg0, to_candid_Department_n7(this._uploadFile, this._downloadFile, arg1));
-            return from_candid_Doctor_n1(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.deleteCase(arg0);
+            return result;
+        }
+    }
+    async doctorLogin(arg0: bigint, arg1: string): Promise<DoctorLoginResult> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.doctorLogin(arg0, arg1);
+                return from_candid_DoctorLoginResult_n17(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.doctorLogin(arg0, arg1);
+            return from_candid_DoctorLoginResult_n17(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getActiveCriticalEmergencyCounts(): Promise<{
+        totalOpen: bigint;
+        totalActive: bigint;
+        totalCritical: bigint;
+    }> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getActiveCriticalEmergencyCounts();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getActiveCriticalEmergencyCounts();
+            return result;
+        }
+    }
+    async getAllCasesPublic(): Promise<Array<EmergencyCase>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAllCasesPublic();
+                return from_candid_vec_n19(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAllCasesPublic();
+            return from_candid_vec_n19(this._uploadFile, this._downloadFile, result);
         }
     }
     async getAllDoctors(): Promise<Array<Doctor>> {
         if (this.processError) {
             try {
                 const result = await this.actor.getAllDoctors();
-                return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
+                return from_candid_vec_n20(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getAllDoctors();
-            return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
+            return from_candid_vec_n20(this._uploadFile, this._downloadFile, result);
         }
     }
     async getAllDoctorsPublic(): Promise<Array<Doctor>> {
         if (this.processError) {
             try {
                 const result = await this.actor.getAllDoctorsPublic();
-                return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
+                return from_candid_vec_n20(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getAllDoctorsPublic();
-            return from_candid_vec_n9(this._uploadFile, this._downloadFile, result);
+            return from_candid_vec_n20(this._uploadFile, this._downloadFile, result);
         }
     }
     async getAllEmergencyCases(): Promise<Array<EmergencyCase>> {
         if (this.processError) {
             try {
                 const result = await this.actor.getAllEmergencyCases();
-                return from_candid_vec_n10(this._uploadFile, this._downloadFile, result);
+                return from_candid_vec_n19(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getAllEmergencyCases();
-            return from_candid_vec_n10(this._uploadFile, this._downloadFile, result);
+            return from_candid_vec_n19(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getAvailableDoctorsByDepartment(arg0: Department): Promise<Array<Doctor>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getAvailableDoctorsByDepartment(to_candid_Department_n21(this._uploadFile, this._downloadFile, arg0));
+                return from_candid_vec_n20(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getAvailableDoctorsByDepartment(to_candid_Department_n21(this._uploadFile, this._downloadFile, arg0));
+            return from_candid_vec_n20(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCallerUserProfile(): Promise<UserProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserProfile();
-                return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n23(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserProfile();
-            return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n23(this._uploadFile, this._downloadFile, result);
         }
     }
     async getCallerUserRole(): Promise<UserRole> {
         if (this.processError) {
             try {
                 const result = await this.actor.getCallerUserRole();
-                return from_candid_UserRole_n19(this._uploadFile, this._downloadFile, result);
+                return from_candid_UserRole_n24(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getCallerUserRole();
-            return from_candid_UserRole_n19(this._uploadFile, this._downloadFile, result);
+            return from_candid_UserRole_n24(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getPendingApprovalDoctors(): Promise<Array<Doctor>> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getPendingApprovalDoctors();
+                return from_candid_vec_n20(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getPendingApprovalDoctors();
+            return from_candid_vec_n20(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async getTotalEmergencyCaseCount(): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getTotalEmergencyCaseCount();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getTotalEmergencyCaseCount();
+            return result;
+        }
+    }
+    async getTotalRegisteredDoctorCount(): Promise<bigint> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.getTotalRegisteredDoctorCount();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.getTotalRegisteredDoctorCount();
+            return result;
         }
     }
     async getUserProfile(arg0: Principal): Promise<UserProfile | null> {
         if (this.processError) {
             try {
                 const result = await this.actor.getUserProfile(arg0);
-                return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
+                return from_candid_opt_n23(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
             const result = await this.actor.getUserProfile(arg0);
-            return from_candid_opt_n18(this._uploadFile, this._downloadFile, result);
+            return from_candid_opt_n23(this._uploadFile, this._downloadFile, result);
         }
     }
     async initialize(): Promise<void> {
@@ -335,17 +479,31 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async registerDoctor(arg0: string, arg1: Department, arg2: string): Promise<Doctor> {
+    async registerDoctor(arg0: string, arg1: Department, arg2: string, arg3: string, arg4: bigint | null, arg5: Array<string> | null): Promise<Doctor> {
         if (this.processError) {
             try {
-                const result = await this.actor.registerDoctor(arg0, to_candid_Department_n7(this._uploadFile, this._downloadFile, arg1), arg2);
+                const result = await this.actor.registerDoctor(arg0, to_candid_Department_n21(this._uploadFile, this._downloadFile, arg1), arg2, arg3, to_candid_opt_n26(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n27(this._uploadFile, this._downloadFile, arg5));
                 return from_candid_Doctor_n1(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.registerDoctor(arg0, to_candid_Department_n7(this._uploadFile, this._downloadFile, arg1), arg2);
+            const result = await this.actor.registerDoctor(arg0, to_candid_Department_n21(this._uploadFile, this._downloadFile, arg1), arg2, arg3, to_candid_opt_n26(this._uploadFile, this._downloadFile, arg4), to_candid_opt_n27(this._uploadFile, this._downloadFile, arg5));
+            return from_candid_Doctor_n1(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async rejectDoctor(arg0: bigint): Promise<Doctor> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.rejectDoctor(arg0);
+                return from_candid_Doctor_n1(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.rejectDoctor(arg0);
             return from_candid_Doctor_n1(this._uploadFile, this._downloadFile, result);
         }
     }
@@ -363,25 +521,73 @@ export class Backend implements backendInterface {
             return result;
         }
     }
-    async toggleDoctorAvailability(arg0: bigint): Promise<Doctor> {
+    async submitCase(arg0: string, arg1: string, arg2: string, arg3: Department, arg4: Severity): Promise<EmergencyCase> {
         if (this.processError) {
             try {
-                const result = await this.actor.toggleDoctorAvailability(arg0);
-                return from_candid_Doctor_n1(this._uploadFile, this._downloadFile, result);
+                const result = await this.actor.submitCase(arg0, arg1, arg2, to_candid_Department_n21(this._uploadFile, this._downloadFile, arg3), to_candid_Severity_n28(this._uploadFile, this._downloadFile, arg4));
+                return from_candid_EmergencyCase_n11(this._uploadFile, this._downloadFile, result);
             } catch (e) {
                 this.processError(e);
                 throw new Error("unreachable");
             }
         } else {
-            const result = await this.actor.toggleDoctorAvailability(arg0);
-            return from_candid_Doctor_n1(this._uploadFile, this._downloadFile, result);
+            const result = await this.actor.submitCase(arg0, arg1, arg2, to_candid_Department_n21(this._uploadFile, this._downloadFile, arg3), to_candid_Severity_n28(this._uploadFile, this._downloadFile, arg4));
+            return from_candid_EmergencyCase_n11(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updateCaseStatus(arg0: bigint, arg1: CaseStatus): Promise<EmergencyCase> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateCaseStatus(arg0, to_candid_CaseStatus_n30(this._uploadFile, this._downloadFile, arg1));
+                return from_candid_EmergencyCase_n11(this._uploadFile, this._downloadFile, result);
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateCaseStatus(arg0, to_candid_CaseStatus_n30(this._uploadFile, this._downloadFile, arg1));
+            return from_candid_EmergencyCase_n11(this._uploadFile, this._downloadFile, result);
+        }
+    }
+    async updateDoctorAvailability(arg0: bigint, arg1: boolean): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateDoctorAvailability(arg0, arg1);
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateDoctorAvailability(arg0, arg1);
+            return result;
+        }
+    }
+    async updateDoctorDepartment(arg0: bigint, arg1: Department): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.updateDoctorDepartment(arg0, to_candid_Department_n21(this._uploadFile, this._downloadFile, arg1));
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.updateDoctorDepartment(arg0, to_candid_Department_n21(this._uploadFile, this._downloadFile, arg1));
+            return result;
         }
     }
 }
 function from_candid_CaseStatus_n13(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _CaseStatus): CaseStatus {
     return from_candid_variant_n14(_uploadFile, _downloadFile, value);
 }
-function from_candid_Department_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Department): Department {
+function from_candid_Department_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Department): Department {
+    return from_candid_variant_n7(_uploadFile, _downloadFile, value);
+}
+function from_candid_DoctorLoginResult_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _DoctorLoginResult): DoctorLoginResult {
+    return from_candid_variant_n18(_uploadFile, _downloadFile, value);
+}
+function from_candid_DoctorStatus_n3(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _DoctorStatus): DoctorStatus {
     return from_candid_variant_n4(_uploadFile, _downloadFile, value);
 }
 function from_candid_Doctor_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Doctor): Doctor {
@@ -390,31 +596,38 @@ function from_candid_Doctor_n1(_uploadFile: (file: ExternalBlob) => Promise<Uint
 function from_candid_EmergencyCase_n11(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _EmergencyCase): EmergencyCase {
     return from_candid_record_n12(_uploadFile, _downloadFile, value);
 }
-function from_candid_Severity_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Severity): Severity {
-    return from_candid_variant_n17(_uploadFile, _downloadFile, value);
+function from_candid_Severity_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _Severity): Severity {
+    return from_candid_variant_n16(_uploadFile, _downloadFile, value);
 }
-function from_candid_UserRole_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
-    return from_candid_variant_n20(_uploadFile, _downloadFile, value);
+function from_candid_UserRole_n24(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: _UserRole): UserRole {
+    return from_candid_variant_n25(_uploadFile, _downloadFile, value);
 }
-function from_candid_opt_n15(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [bigint]): bigint | null {
+function from_candid_opt_n23(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
     return value.length === 0 ? null : value[0];
 }
-function from_candid_opt_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [_UserProfile]): UserProfile | null {
+function from_candid_opt_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [bigint]): bigint | null {
+    return value.length === 0 ? null : value[0];
+}
+function from_candid_opt_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: [] | [Array<string>]): Array<string> | null {
     return value.length === 0 ? null : value[0];
 }
 function from_candid_record_n12(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     id: bigint;
     status: _CaseStatus;
-    createdAt: bigint;
+    patientDetails: string;
+    caseType: _Department;
     assignedDoctorId: [] | [bigint];
+    submissionDate: bigint;
     patientName: string;
     severity: _Severity;
     condition: string;
 }): {
     id: bigint;
     status: CaseStatus;
-    createdAt: bigint;
+    patientDetails: string;
+    caseType: Department;
     assignedDoctorId?: bigint;
+    submissionDate: bigint;
     patientName: string;
     severity: Severity;
     condition: string;
@@ -422,44 +635,65 @@ function from_candid_record_n12(_uploadFile: (file: ExternalBlob) => Promise<Uin
     return {
         id: value.id,
         status: from_candid_CaseStatus_n13(_uploadFile, _downloadFile, value.status),
-        createdAt: value.createdAt,
-        assignedDoctorId: record_opt_to_undefined(from_candid_opt_n15(_uploadFile, _downloadFile, value.assignedDoctorId)),
+        patientDetails: value.patientDetails,
+        caseType: from_candid_Department_n6(_uploadFile, _downloadFile, value.caseType),
+        assignedDoctorId: record_opt_to_undefined(from_candid_opt_n5(_uploadFile, _downloadFile, value.assignedDoctorId)),
+        submissionDate: value.submissionDate,
         patientName: value.patientName,
-        severity: from_candid_Severity_n16(_uploadFile, _downloadFile, value.severity),
+        severity: from_candid_Severity_n15(_uploadFile, _downloadFile, value.severity),
         condition: value.condition
     };
 }
 function from_candid_record_n2(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     id: bigint;
+    status: _DoctorStatus;
+    yearsOfExperience: [] | [bigint];
+    contactInfo: string;
     name: string;
     available: boolean;
     registrationCode: string;
+    registrationDate: bigint;
     department: _Department;
+    certifications: [] | [Array<string>];
 }): {
     id: bigint;
+    status: DoctorStatus;
+    yearsOfExperience?: bigint;
+    contactInfo: string;
     name: string;
     available: boolean;
     registrationCode: string;
+    registrationDate: bigint;
     department: Department;
+    certifications?: Array<string>;
 } {
     return {
         id: value.id,
+        status: from_candid_DoctorStatus_n3(_uploadFile, _downloadFile, value.status),
+        yearsOfExperience: record_opt_to_undefined(from_candid_opt_n5(_uploadFile, _downloadFile, value.yearsOfExperience)),
+        contactInfo: value.contactInfo,
         name: value.name,
         available: value.available,
         registrationCode: value.registrationCode,
-        department: from_candid_Department_n3(_uploadFile, _downloadFile, value.department)
+        registrationDate: value.registrationDate,
+        department: from_candid_Department_n6(_uploadFile, _downloadFile, value.department),
+        certifications: record_opt_to_undefined(from_candid_opt_n8(_uploadFile, _downloadFile, value.certifications))
     };
 }
 function from_candid_variant_n14(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     resolved: null;
 } | {
+    closed: null;
+} | {
     assigned: null;
 } | {
     open: null;
+} | {
+    inProgress: null;
 }): CaseStatus {
-    return "resolved" in value ? CaseStatus.resolved : "assigned" in value ? CaseStatus.assigned : "open" in value ? CaseStatus.open : value;
+    return "resolved" in value ? CaseStatus.resolved : "closed" in value ? CaseStatus.closed : "assigned" in value ? CaseStatus.assigned : "open" in value ? CaseStatus.open : "inProgress" in value ? CaseStatus.inProgress : value;
 }
-function from_candid_variant_n17(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n16(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     low: null;
 } | {
     high: null;
@@ -470,7 +704,42 @@ function from_candid_variant_n17(_uploadFile: (file: ExternalBlob) => Promise<Ui
 }): Severity {
     return "low" in value ? Severity.low : "high" in value ? Severity.high : "critical" in value ? Severity.critical : "medium" in value ? Severity.medium : value;
 }
-function from_candid_variant_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+function from_candid_variant_n18(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    success: _Doctor;
+} | {
+    notApproved: null;
+} | {
+    doctorNotFound: null;
+} | {
+    invalidCredentials: null;
+}): {
+    __kind__: "success";
+    success: Doctor;
+} | {
+    __kind__: "notApproved";
+    notApproved: null;
+} | {
+    __kind__: "doctorNotFound";
+    doctorNotFound: null;
+} | {
+    __kind__: "invalidCredentials";
+    invalidCredentials: null;
+} {
+    return "success" in value ? {
+        __kind__: "success",
+        success: from_candid_Doctor_n1(_uploadFile, _downloadFile, value.success)
+    } : "notApproved" in value ? {
+        __kind__: "notApproved",
+        notApproved: value.notApproved
+    } : "doctorNotFound" in value ? {
+        __kind__: "doctorNotFound",
+        doctorNotFound: value.doctorNotFound
+    } : "invalidCredentials" in value ? {
+        __kind__: "invalidCredentials",
+        invalidCredentials: value.invalidCredentials
+    } : value;
+}
+function from_candid_variant_n25(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     admin: null;
 } | {
     user: null;
@@ -480,6 +749,15 @@ function from_candid_variant_n20(_uploadFile: (file: ExternalBlob) => Promise<Ui
     return "admin" in value ? UserRole.admin : "user" in value ? UserRole.user : "guest" in value ? UserRole.guest : value;
 }
 function from_candid_variant_n4(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
+    pendingApproval: null;
+} | {
+    approved: null;
+} | {
+    rejected: null;
+}): DoctorStatus {
+    return "pendingApproval" in value ? DoctorStatus.pendingApproval : "approved" in value ? DoctorStatus.approved : "rejected" in value ? DoctorStatus.rejected : value;
+}
+function from_candid_variant_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: {
     emergency: null;
 } | {
     cardiology: null;
@@ -494,19 +772,31 @@ function from_candid_variant_n4(_uploadFile: (file: ExternalBlob) => Promise<Uin
 }): Department {
     return "emergency" in value ? Department.emergency : "cardiology" in value ? Department.cardiology : "generalMedicine" in value ? Department.generalMedicine : "orthopedics" in value ? Department.orthopedics : "pediatrics" in value ? Department.pediatrics : "neurology" in value ? Department.neurology : value;
 }
-function from_candid_vec_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_EmergencyCase>): Array<EmergencyCase> {
+function from_candid_vec_n19(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_EmergencyCase>): Array<EmergencyCase> {
     return value.map((x)=>from_candid_EmergencyCase_n11(_uploadFile, _downloadFile, x));
 }
-function from_candid_vec_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Doctor>): Array<Doctor> {
+function from_candid_vec_n20(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<_Doctor>): Array<Doctor> {
     return value.map((x)=>from_candid_Doctor_n1(_uploadFile, _downloadFile, x));
 }
-function to_candid_Department_n7(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Department): _Department {
-    return to_candid_variant_n8(_uploadFile, _downloadFile, value);
+function to_candid_CaseStatus_n30(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: CaseStatus): _CaseStatus {
+    return to_candid_variant_n31(_uploadFile, _downloadFile, value);
 }
-function to_candid_UserRole_n5(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
-    return to_candid_variant_n6(_uploadFile, _downloadFile, value);
+function to_candid_Department_n21(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Department): _Department {
+    return to_candid_variant_n22(_uploadFile, _downloadFile, value);
 }
-function to_candid_variant_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
+function to_candid_Severity_n28(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Severity): _Severity {
+    return to_candid_variant_n29(_uploadFile, _downloadFile, value);
+}
+function to_candid_UserRole_n9(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): _UserRole {
+    return to_candid_variant_n10(_uploadFile, _downloadFile, value);
+}
+function to_candid_opt_n26(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: bigint | null): [] | [bigint] {
+    return value === null ? candid_none() : candid_some(value);
+}
+function to_candid_opt_n27(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Array<string> | null): [] | [Array<string>] {
+    return value === null ? candid_none() : candid_some(value);
+}
+function to_candid_variant_n10(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: UserRole): {
     admin: null;
 } | {
     user: null;
@@ -521,7 +811,7 @@ function to_candid_variant_n6(_uploadFile: (file: ExternalBlob) => Promise<Uint8
         guest: null
     } : value;
 }
-function to_candid_variant_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Department): {
+function to_candid_variant_n22(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Department): {
     emergency: null;
 } | {
     cardiology: null;
@@ -546,6 +836,48 @@ function to_candid_variant_n8(_uploadFile: (file: ExternalBlob) => Promise<Uint8
         pediatrics: null
     } : value == Department.neurology ? {
         neurology: null
+    } : value;
+}
+function to_candid_variant_n29(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: Severity): {
+    low: null;
+} | {
+    high: null;
+} | {
+    critical: null;
+} | {
+    medium: null;
+} {
+    return value == Severity.low ? {
+        low: null
+    } : value == Severity.high ? {
+        high: null
+    } : value == Severity.critical ? {
+        critical: null
+    } : value == Severity.medium ? {
+        medium: null
+    } : value;
+}
+function to_candid_variant_n31(_uploadFile: (file: ExternalBlob) => Promise<Uint8Array>, _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>, value: CaseStatus): {
+    resolved: null;
+} | {
+    closed: null;
+} | {
+    assigned: null;
+} | {
+    open: null;
+} | {
+    inProgress: null;
+} {
+    return value == CaseStatus.resolved ? {
+        resolved: null
+    } : value == CaseStatus.closed ? {
+        closed: null
+    } : value == CaseStatus.assigned ? {
+        assigned: null
+    } : value == CaseStatus.open ? {
+        open: null
+    } : value == CaseStatus.inProgress ? {
+        inProgress: null
     } : value;
 }
 export interface CreateActorOptions {

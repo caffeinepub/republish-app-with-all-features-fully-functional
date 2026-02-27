@@ -1,115 +1,107 @@
 {
   "kind": "build_request",
-  "title": "Premium Hospital Website — Aspirational Messaging & UI Polish",
-  "projectName": "Vitals AI Hospital",
+  "title": "Fix Admin Portal with Working Auto-Refreshing Stats Dashboard",
+  "projectName": "Vitals AI",
   "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Replace all inflated or fabricated statistics (e.g., 'Trusted by 10,000+ patients', specific patient count claims) with honest, aspirational, mission-driven copy throughout the homepage, hero section, stats bar, and footer. Use forward-looking language such as 'Our mission is to be trusted by every patient, everywhere', 'Committed to delivering pure and proper healthcare to the world', 'Aspiring to set the global standard in patient care', and 'Built on the promise of world-class health facilities for all'. Remove any numeric claim that cannot be verified; replace with vision statements.",
-      "target": "frontend",
+      "text": "Expose backend query functions that return accurate counts for: total number of registered doctors, total number of emergency cases, and total number of active/critical emergencies. These must be callable without authentication so the admin dashboard can poll them reliably.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-3",
-          "msg-4"
+          "msg-6",
+          "msg-8"
         ],
         "quotes": [
-          "we are not here to make false promises so please don't write trusted by 10000 + patients write the realistic type of thing",
-          "will be trusted by the whole world aspirational you get it"
+          "make an admin portal where the real time, total doctors, cases and emergencies are showed"
         ]
       },
       "acceptanceCriteria": [
-        "No fabricated numeric statistics (patient counts, satisfaction percentages, etc.) appear anywhere on the site",
-        "Hero and stats sections contain aspirational, forward-looking mission statements instead",
-        "All copy reads as authentic and honest without inflated claims",
-        "Aspirational language is consistent in tone across homepage, hero, stats bar, departments section, and footer"
+        "A query function returns the total count of doctors in the system",
+        "A query function returns the total count of all cases",
+        "A query function returns the total count of emergency/critical cases",
+        "All three functions return correct, up-to-date values reflecting the current state"
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Perform a comprehensive UI polish pass across all pages and components (HomePage, Header, Footer, hero section, stats bar, departments section, doctor showcase, LandingPage, RoleSelector). Improvements must include: (1) tighter, more intentional spacing and padding with consistent vertical rhythm; (2) refined typography — stronger visual hierarchy with clear heading scales, improved line-height and letter-spacing for readability; (3) elevated visual hierarchy so the most important content commands attention immediately; (4) premium card and section styling with subtle depth (shadows, borders, glassmorphism where appropriate); (5) smooth, tasteful animations and micro-interactions on scroll and hover; (6) cohesive color usage leveraging the existing teal/emerald/cyan palette defined in tailwind.config.js with proper contrast ratios; (7) a fully polished mobile layout with responsive breakpoints.",
+      "text": "Rewrite the AdminDashboard component to prominently display three stat cards: Total Doctors, Total Cases, and Total Emergencies. Each card must show the live count fetched from the backend. The dashboard must auto-refresh all three stats every 5 seconds using React Query's refetchInterval so the numbers stay current without manual page reload.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3",
-          "msg-4",
-          "msg-5"
+          "msg-6",
+          "msg-8",
+          "msg-10"
         ],
         "quotes": [
-          "about the ui it's awesome now , I leave it all on you , if you think any changes has to be made to make it more better and the best then please do help me",
-          "tightening spacing, refining typography, improving visual hierarchy, and making sure the overall feel is truly premium and professional"
+          "make an admin portal where the real time, total doctors, cases and emergencies are showed",
+          "keep the ui unchanged"
         ]
       },
       "acceptanceCriteria": [
-        "Spacing and padding are consistent and intentional across all sections",
-        "Typography hierarchy is clear: H1 > H2 > H3 > body with appropriate scale and weight",
-        "Cards, sections, and interactive elements have premium styling with depth and polish",
-        "Hover and scroll animations are smooth and purposeful without being distracting",
-        "Color palette is cohesive using the teal/emerald/cyan theme throughout",
-        "Layout is fully responsive and looks premium on mobile, tablet, and desktop"
+        "Three stat cards are visible on the admin dashboard: Total Doctors, Total Cases, Total Emergencies",
+        "Each card displays the correct count fetched from the backend",
+        "Stats automatically refresh every 5 seconds without user interaction",
+        "A loading state is shown while data is being fetched on first load",
+        "An error state is shown gracefully if the backend call fails",
+        "The overall page layout, color scheme, typography, and existing UI elements outside the stats section remain visually unchanged"
       ]
     },
     {
       "id": "REQ-3",
-      "text": "Redesign the hero section of the HomePage to be visually striking and aspirational. It should feature a bold, full-width layout with a strong headline communicating the hospital's world-class mission, a compelling subheadline with honest mission-driven copy, a prominent call-to-action button, and a high-quality visual element (gradient background, abstract medical imagery, or animated visual). The hero must immediately communicate trust, professionalism, and global ambition.",
+      "text": "Ensure the AdminPortal passcode gate (in AdminPortal.tsx) correctly renders AdminDashboard after successful authentication. The passcode login form must function end-to-end: entering the correct passcode grants access and displays the working stats dashboard; the logout button clears the session and returns to the login screen.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3",
-          "msg-5"
+          "msg-7",
+          "msg-8"
         ],
         "quotes": [
-          "giving pure and proper health facilities",
-          "make it the best"
+          "Nothing in the admin dashboard is working"
         ]
       },
       "acceptanceCriteria": [
-        "Hero section spans full viewport width with a premium visual design",
-        "Headline clearly communicates the hospital's aspirational, world-class mission",
-        "No false statistics or unverified claims appear in the hero",
-        "Call-to-action button is prominent and visually appealing",
-        "Hero looks outstanding on all screen sizes"
+        "Entering the correct admin passcode displays the AdminDashboard with stats",
+        "Entering an incorrect passcode shows an error and blocks access",
+        "The Logout button clears sessionStorage and returns to the passcode screen",
+        "No blank screen or silent failure occurs at any step of the admin portal flow"
       ]
     },
     {
       "id": "REQ-4",
-      "text": "Enhance the Footer component with refined layout, consistent branding, and honest mission-driven messaging. Replace any boilerplate or inflated claims with the hospital's core values: pure healthcare, proper facilities, and global aspiration. Include a brief mission statement tagline in the footer. Ensure the footer has premium spacing, proper visual separation, and is fully responsive.",
+      "text": "Add or update React Query hooks in useQueries.ts to support fetching the three admin stat counts (total doctors, total cases, total emergencies) with a 5-second refetchInterval. These hooks must handle errors gracefully and return sensible defaults (e.g., 0) when data is unavailable.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-3"
+          "msg-8",
+          "msg-10"
         ],
         "quotes": [
-          "giving pure and proper health facilities",
-          "will be trusted by the whole world aspirational"
+          "make it work please make it work"
         ]
       },
       "acceptanceCriteria": [
-        "Footer contains a concise, honest mission statement or tagline",
-        "No inflated statistics or false claims appear in the footer",
-        "Footer layout is clean, well-spaced, and visually consistent with the rest of the site",
-        "Footer is fully responsive across all breakpoints"
+        "Three React Query hooks exist for fetching doctor count, case count, and emergency count",
+        "Each hook uses refetchInterval of 5000ms",
+        "Hooks return 0 as default when data is not yet loaded or an error occurs",
+        "Hooks are consumed correctly by AdminDashboard"
       ]
     }
   ],
   "constraints": [
-    "Do not fabricate or include any unverifiable statistics, patient counts, or satisfaction numbers",
-    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui",
-    "Do not alter backend logic or data models — this is a frontend-only change",
-    "Preserve the existing teal/emerald/cyan color palette defined in tailwind.config.js"
+    "Do not alter the existing UI layout, color scheme, typography, or any component outside the admin portal stats section",
+    "Do not use WebSockets — use polling (React Query refetchInterval) for auto-refresh",
+    "Do not modify immutable frontend paths: useInternetIdentity.ts, useActor.ts, main.tsx, or components/ui"
   ],
   "nonGoals": [
-    "Adding new backend features or data models",
-    "Implementing live appointment booking",
-    "Adding new portal pages or routes",
-    "Changing the authentication system",
-    "Adding real patient data or testimonials"
+    "Adding new admin actions such as adding/removing doctors or updating case statuses",
+    "Redesigning any page outside the admin dashboard stats area",
+    "Implementing a new authentication system — existing passcode gate in AdminPortal.tsx is sufficient",
+    "Any changes to the patient portal or doctor portal"
   ],
   "imageRequirements": {
-    "required": [
-      "Premium abstract medical hero background with soft teal and emerald gradient blending into deep navy, subtle geometric medical cross patterns, clean and aspirational (hero-bg.dim_1920x1080.png)",
-      "Elegant abstract world globe illustration with teal circuit-line connections suggesting global healthcare reach, minimal flat style on transparent background (global-reach.dim_800x800.png)"
-    ],
+    "required": [],
     "edits": []
   }
 }

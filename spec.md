@@ -1,13 +1,12 @@
 # Specification
 
 ## Summary
-**Goal:** Polish the Vitals AI Hospital website with aspirational, honest messaging and a premium UI refresh across all public-facing pages and components.
+**Goal:** Fix the Admin Portal so it correctly authenticates, displays live stats, and auto-refreshes every 5 seconds.
 
 **Planned changes:**
-- Replace all fabricated or unverifiable statistics (patient counts, satisfaction percentages) with aspirational, mission-driven copy throughout the homepage, hero section, stats bar, departments section, and footer
-- Redesign the hero section with a bold full-width layout, strong aspirational headline, honest subheadline, prominent CTA button, and a premium visual background
-- Perform a comprehensive UI polish pass across all pages (HomePage, Header, Footer, LandingPage, RoleSelector): tighten spacing and vertical rhythm, refine typography hierarchy, add premium card/section styling with subtle depth (shadows, glassmorphism), smooth hover/scroll micro-animations, and cohesive teal/emerald/cyan color usage
-- Enhance the footer with a concise mission statement tagline, clean layout, proper visual separation, and full responsiveness — removing any inflated claims
-- Use new hero background and global-reach images to elevate visual quality
+- Add backend query functions to return accurate counts for total doctors, total cases, and total active/critical emergencies (no auth required)
+- Add three React Query hooks in `useQueries.ts` for fetching each stat count with a 5-second `refetchInterval`, returning 0 as default on error
+- Rewrite `AdminDashboard` to show three stat cards (Total Doctors, Total Cases, Total Emergencies) populated from those hooks, with loading and error states
+- Fix `AdminPortal.tsx` passcode gate to correctly render `AdminDashboard` after successful login, and return to the login screen on logout
 
-**User-visible outcome:** Visitors see a polished, trustworthy hospital website with aspirational but honest messaging, a striking hero section, premium UI styling, and a cohesive professional look across all screen sizes.
+**User-visible outcome:** The admin can enter the passcode, see a working dashboard with live-updating counts for doctors, cases, and emergencies refreshing every 5 seconds, and log out cleanly — with no blank screens or broken states.

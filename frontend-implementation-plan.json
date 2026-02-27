@@ -1,116 +1,58 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Premium Hospital Website — Aspirational Messaging & UI Polish",
+  "title": "Fix Admin Portal with Working Auto-Refreshing Stats Dashboard",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Replace all inflated or fabricated statistics with honest, aspirational, mission-driven copy throughout the homepage, hero section, stats bar, and footer",
-      "acceptanceCriteria": [
-        "No fabricated numeric statistics (patient counts, satisfaction percentages, etc.) appear anywhere on the site",
-        "Hero and stats sections contain aspirational, forward-looking mission statements instead",
-        "All copy reads as authentic and honest without inflated claims",
-        "Aspirational language is consistent in tone across homepage, hero, stats bar, departments section, and footer"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/HomePage.tsx",
-          "operation": "modify",
-          "description": "Replace all numeric statistics and fabricated claims with honest, aspirational mission statements. Update the stats section to feature forward-looking language such as 'Our mission is to be trusted by every patient, everywhere', 'Committed to delivering pure and proper healthcare to the world', 'Aspiring to set the global standard in patient care'. Remove any unverifiable patient count claims or satisfaction percentages. Ensure all department descriptions use authentic, vision-driven copy."
-        },
-        {
-          "path": "frontend/src/components/LandingPage.tsx",
-          "operation": "modify",
-          "description": "Update hero section, stats display, and feature descriptions to remove any fabricated statistics. Replace with aspirational messaging aligned with the hospital's mission: pure healthcare, proper facilities, and global aspiration. Ensure the three-step 'how it works' section reflects honest, achievable language."
-        },
-        {
-          "path": "frontend/src/components/Footer.tsx",
-          "operation": "modify",
-          "description": "Replace any boilerplate or inflated claims in the footer with the hospital's core values and mission statement. Add a concise tagline such as 'Built on the promise of world-class health facilities for all' or 'Giving pure and proper health facilities'. Remove any fabricated statistics or unverifiable claims from the footer content."
-        }
-      ]
-    },
-    {
       "id": "REQ-2",
-      "summary": "Perform comprehensive UI polish pass across all pages and components with refined spacing, typography, visual hierarchy, premium styling, animations, cohesive color usage, and responsive layout",
+      "summary": "Rewrite AdminDashboard to display three auto-refreshing stat cards (Total Doctors, Total Cases, Total Emergencies) that poll backend every 5 seconds using React Query",
       "acceptanceCriteria": [
-        "Spacing and padding are consistent and intentional across all sections",
-        "Typography hierarchy is clear: H1 > H2 > H3 > body with appropriate scale and weight",
-        "Cards, sections, and interactive elements have premium styling with depth and polish",
-        "Hover and scroll animations are smooth and purposeful without being distracting",
-        "Color palette is cohesive using the teal/emerald/cyan theme throughout",
-        "Layout is fully responsive and looks premium on mobile, tablet, and desktop"
+        "Three stat cards are visible on the admin dashboard: Total Doctors, Total Cases, Total Emergencies",
+        "Each card displays the correct count fetched from the backend",
+        "Stats automatically refresh every 5 seconds without user interaction",
+        "A loading state is shown while data is being fetched on first load",
+        "An error state is shown gracefully if the backend call fails",
+        "The overall page layout, color scheme, typography, and existing UI elements outside the stats section remain visually unchanged"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/HomePage.tsx",
+          "path": "frontend/src/components/AdminDashboard.tsx",
           "operation": "modify",
-          "description": "Apply comprehensive UI polish: tighten spacing and padding with consistent vertical rhythm, refine typography hierarchy (stronger heading scales, improved line-height and letter-spacing), elevate visual hierarchy so hero and key sections command attention, add premium card styling with subtle depth (shadows, borders), implement smooth scroll and hover animations, ensure cohesive teal/emerald/cyan color usage from tailwind.config.js, and optimize responsive breakpoints for mobile, tablet, and desktop. Enhance the services grid, stats section, and doctors listing with premium visual treatment."
-        },
-        {
-          "path": "frontend/src/components/LandingPage.tsx",
-          "operation": "modify",
-          "description": "Apply comprehensive UI polish: refine spacing and padding for consistent vertical rhythm, strengthen typography hierarchy across hero headline, subheadline, and feature cards, add premium card styling with depth effects (shadows, subtle borders or glassmorphism), implement smooth hover and scroll animations on feature cards and CTA buttons, ensure cohesive color palette usage, and optimize responsive layout for all screen sizes. Polish the three-step section with refined spacing and visual treatment."
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "modify",
-          "description": "Apply UI polish: refine spacing and padding for the emergency hotline bar and main navigation, strengthen typography for navigation links, improve visual hierarchy, ensure cohesive teal/emerald/cyan color usage, add smooth hover transitions on navigation items, and optimize responsive behavior for mobile menu. Ensure the header maintains premium visual quality across all breakpoints."
-        },
-        {
-          "path": "frontend/src/components/Footer.tsx",
-          "operation": "modify",
-          "description": "Apply UI polish: refine layout with tighter, intentional spacing, improve typography hierarchy for footer sections and links, add proper visual separation between sections (subtle borders or spacing), ensure cohesive color usage from the teal/emerald/cyan palette, and optimize responsive layout for mobile, tablet, and desktop. Ensure the CTA banner has premium styling with depth and polish."
-        },
-        {
-          "path": "frontend/src/components/RoleSelector.tsx",
-          "operation": "modify",
-          "description": "Apply UI polish: refine card spacing and padding, strengthen typography hierarchy for role titles and descriptions, add premium card styling with subtle depth (shadows, borders, hover effects), implement smooth hover and selection animations, ensure cohesive teal/emerald/cyan color usage, and optimize responsive grid layout for all screen sizes."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Enhance global styles to support premium UI: refine base typography settings (line-height, letter-spacing, font weights), ensure smooth animation utilities (fade-in, slide-up, pulse) are optimized and purposeful, verify theme color variables are cohesive with the teal/emerald/cyan palette, and add any additional utility classes needed for consistent spacing and visual rhythm across the application."
+          "description": "Replace the existing dashboard implementation with a simplified version that prominently displays three stat cards at the top: Total Doctors (using useTotalDoctorCount), Total Cases (using useTotalCaseCount), and Total Emergencies (using useTotalEmergencyCount). Each stat card must show the live count with appropriate loading and error states. Retain the existing tabs for doctor and case management below the stats section. Keep all existing styling, colors, typography, and layout unchanged outside the stats area. Use the Card component from shadcn-ui for consistency."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Redesign the hero section of the HomePage to be visually striking and aspirational with bold layout, strong headline, compelling subheadline with honest mission-driven copy, prominent CTA, and high-quality visual element",
+      "summary": "Ensure AdminPortal passcode gate correctly renders AdminDashboard after authentication with working login and logout flows",
       "acceptanceCriteria": [
-        "Hero section spans full viewport width with a premium visual design",
-        "Headline clearly communicates the hospital's aspirational, world-class mission",
-        "No false statistics or unverified claims appear in the hero",
-        "Call-to-action button is prominent and visually appealing",
-        "Hero looks outstanding on all screen sizes"
+        "Entering the correct admin passcode displays the AdminDashboard with stats",
+        "Entering an incorrect passcode shows an error and blocks access",
+        "The Logout button clears sessionStorage and returns to the passcode screen",
+        "No blank screen or silent failure occurs at any step of the admin portal flow"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/HomePage.tsx",
+          "path": "frontend/src/components/AdminPortal.tsx",
           "operation": "modify",
-          "description": "Redesign the hero section to be visually striking and aspirational. Create a full-width layout featuring a bold headline communicating the world-class mission (e.g., 'Aspiring to set the global standard in patient care'), a compelling subheadline with honest mission-driven copy (e.g., 'Giving pure and proper health facilities'), and a prominent call-to-action button. Integrate the generated image frontend/public/assets/generated/hero-bg.dim_1920x1080.png as a background with soft teal and emerald gradient blending. Ensure no fabricated statistics appear in the hero. Add subtle animations and ensure outstanding responsive design across mobile, tablet, and desktop. Verify the component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/LandingPage.tsx",
-          "operation": "modify",
-          "description": "Enhance the existing hero section to align with the aspirational redesign. Strengthen the headline to clearly communicate the hospital's world-class mission, refine the subheadline with honest, forward-looking copy, and make the CTA button more prominent with premium styling. Consider integrating frontend/public/assets/generated/global-reach.dim_800x800.png as a supporting visual element (e.g., as an illustration alongside the hero text). Ensure no fabricated claims appear and the hero is fully responsive. Verify the component's usage instructions before implementing."
+          "description": "Review and fix the passcode authentication flow to ensure: (1) the login form correctly validates the passcode and sets sessionStorage on success, (2) failed login attempts show a visible error message, (3) successful authentication immediately renders the AdminDashboard component with no blank screen, (4) the Logout button clears sessionStorage and returns to the login form, (5) the component checks sessionStorage on mount to skip login if already authenticated. Verify the passcode is hardcoded or retrieved correctly. Ensure all state transitions are smooth with no race conditions."
         }
       ]
     },
     {
       "id": "REQ-4",
-      "summary": "Enhance the Footer component with refined layout, consistent branding, honest mission-driven messaging, mission statement tagline, premium spacing, proper visual separation, and full responsiveness",
+      "summary": "Add React Query hooks to fetch total doctors, total cases, and total emergencies with 5-second auto-refresh intervals",
       "acceptanceCriteria": [
-        "Footer contains a concise, honest mission statement or tagline",
-        "No inflated statistics or false claims appear in the footer",
-        "Footer layout is clean, well-spaced, and visually consistent with the rest of the site",
-        "Footer is fully responsive across all breakpoints"
+        "Three React Query hooks exist for fetching doctor count, case count, and emergency count",
+        "Each hook uses refetchInterval of 5000ms",
+        "Hooks return 0 as default when data is not yet loaded or an error occurs",
+        "Hooks are consumed correctly by AdminDashboard"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/Footer.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Enhance the Footer with a concise mission statement tagline such as 'Built on the promise of world-class health facilities for all' or 'Giving pure and proper health facilities'. Replace any boilerplate or inflated claims with the hospital's core values: pure healthcare, proper facilities, and global aspiration. Refine the layout with premium spacing, proper visual separation between sections (subtle borders or dividers), consistent branding using the teal/emerald/cyan palette, and ensure full responsiveness across mobile, tablet, and desktop. Remove any fabricated statistics or unverifiable claims."
+          "description": "Add three new React Query hooks: useTotalDoctorCount (calls getTotalRegisteredDoctorCount), useTotalCaseCount (calls getTotalEmergencyCaseCount), and useTotalEmergencyCount (calls getActiveCriticalEmergencyCounts and returns totalActive + totalCritical + totalOpen). Each hook must use refetchInterval: 5000 to auto-refresh every 5 seconds. Return a default value of 0 (or { totalActive: 0, totalCritical: 0, totalOpen: 0 } for emergencies) when data is undefined or an error occurs. Use the existing useActor hook to get the backend actor. Follow the existing pattern in useQueries.ts for consistency."
         }
       ]
     }

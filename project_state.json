@@ -1,42 +1,27 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Premium hospital website with aspirational, mission-driven messaging (no false statistics), focused on delivering pure and proper world-class healthcare. UI is polished and premium. User delegates all design decisions to the assistant.",
+  "summary": "Healthcare app with an admin portal showing real-time (auto-refreshing) stats: Total Doctors, Total Cases, and Total Emergencies. Existing UI must remain unchanged.",
   "architectural_notes": [
-    "Hospital website project — premium UI, no false statistics or inflated patient numbers",
-    "User delegates all design/content decisions to assistant; assistant should proactively improve the site"
+    "Admin portal stats must auto-refresh every few seconds (no WebSocket support)",
+    "Existing UI must remain unchanged — only the admin portal section is being rebuilt"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
-  "imageRequirements": "## Required Images\n- Premium abstract medical hero background with soft teal and emerald gradient blending into deep navy, subtle geometric medical cross patterns, clean and aspirational (hero-bg.dim_1920x1080.png)\n- Elegant abstract world globe illustration with teal circuit-line connections suggesting global healthcare reach, minimal flat style on transparent background (global-reach.dim_800x800.png)",
+  "known_issues": [
+    "Admin dashboard (version 37) was completely non-functional — all features broken"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-replace-all-inflated-or-fabricated-statistics-e-g-trusted-by-10-000-patients-specific-patient-count-claims-with-honest-aspirational-mission-driven-copy-throughout-the-homepage-hero-section-stats-bar-and-footer-use-forward-looking-language-such-as-our-mission-is-to-be-trusted-by-every-patient-everywhere-committed-to-delivering-pure-and-proper-healthcare-to-the-world-aspiring-to-set-the-global-standard-in-patient-care-and-built-on-the-promise-of-world-class-health-facilities-for-all-remove-any-numeric-claim-that-cannot-be-verified-replace-with-vision-statements",
-      "title": "Replace all inflated or fabricated statistics (e.g., 'Trusted by 10,000+ patients', specific patient count claims) with honest, aspirational, mission-driven copy throughout the homepage, hero section, stats bar, and footer. Use forward-looking language such as 'Our mission is to be trusted by every patient, everywhere', 'Committed to delivering pure and proper healthcare to the world', 'Aspiring to set the global standard in patient care', and 'Built on the promise of world-class health facilities for all'. Remove any numeric claim that cannot be verified; replace with vision statements.",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-perform-a-comprehensive-ui-polish-pass-across-all-pages-and-components-homepage-header-footer-hero-section-stats-bar-departments-section-doctor-showcase-landingpage-roleselector-improvements-must-include-1-tighter-more-intentional-spacing-and-padding-with-consistent-vertical-rhythm-2-refined-typography-stronger-visual-hierarchy-with-clear-heading-scales-improved-line-height-and-letter-spacing-for-readability-3-elevated-visual-hierarchy-so-the-most-important-content-commands-attention-immediately-4-premium-card-and-section-styling-with-subtle-depth-shadows-borders-glassmorphism-where-appropriate-5-smooth-tasteful-animations-and-micro-interactions-on-scroll-and-hover-6-cohesive-color-usage-leveraging-the-existing-teal-emerald-cyan-palette-defined-in-tailwind-config-js-with-proper-contrast-ratios-7-a-fully-polished-mobile-layout-with-responsive-breakpoints",
-      "title": "Perform a comprehensive UI polish pass across all pages and components (HomePage, Header, Footer, hero section, stats bar, departments section, doctor showcase, LandingPage, RoleSelector). Improvements must include: (1) tighter, more intentional spacing and padding with consistent vertical rhythm; (2) refined typography — stronger visual hierarchy with clear heading scales, improved line-height and letter-spacing for readability; (3) elevated visual hierarchy so the most important content commands attention immediately; (4) premium card and section styling with subtle depth (shadows, borders, glassmorphism where appropriate); (5) smooth, tasteful animations and micro-interactions on scroll and hover; (6) cohesive color usage leveraging the existing teal/emerald/cyan palette defined in tailwind.config.js with proper contrast ratios; (7) a fully polished mobile layout with responsive breakpoints.",
+      "id": "feature-rewrite-the-admindashboard-component-to-prominently-display-three-stat-cards-total-doctors-total-cases-and-total-emergencies-each-card-must-show-the-live-count-fetched-from-the-backend-the-dashboard-must-auto-refresh-all-three-stats-every-5-seconds-using-react-query-s-refetchinterval-so-the-numbers-stay-current-without-manual-page-reload",
+      "title": "Rewrite the AdminDashboard component to prominently display three stat cards: Total Doctors, Total Cases, and Total Emergencies. Each card must show the live count fetched from the backend. The dashboard must auto-refresh all three stats every 5 seconds using React Query's refetchInterval so the numbers stay current without manual page reload.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-redesign-the-hero-section-of-the-homepage-to-be-visually-striking-and-aspirational-it-should-feature-a-bold-full-width-layout-with-a-strong-headline-communicating-the-hospital-s-world-class-mission-a-compelling-subheadline-with-honest-mission-driven-copy-a-prominent-call-to-action-button-and-a-high-quality-visual-element-gradient-background-abstract-medical-imagery-or-animated-visual-the-hero-must-immediately-communicate-trust-professionalism-and-global-ambition",
-      "title": "Redesign the hero section of the HomePage to be visually striking and aspirational. It should feature a bold, full-width layout with a strong headline communicating the hospital's world-class mission, a compelling subheadline with honest mission-driven copy, a prominent call-to-action button, and a high-quality visual element (gradient background, abstract medical imagery, or animated visual). The hero must immediately communicate trust, professionalism, and global ambition.",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-enhance-the-footer-component-with-refined-layout-consistent-branding-and-honest-mission-driven-messaging-replace-any-boilerplate-or-inflated-claims-with-the-hospital-s-core-values-pure-healthcare-proper-facilities-and-global-aspiration-include-a-brief-mission-statement-tagline-in-the-footer-ensure-the-footer-has-premium-spacing-proper-visual-separation-and-is-fully-responsive",
-      "title": "Enhance the Footer component with refined layout, consistent branding, and honest mission-driven messaging. Replace any boilerplate or inflated claims with the hospital's core values: pure healthcare, proper facilities, and global aspiration. Include a brief mission statement tagline in the footer. Ensure the footer has premium spacing, proper visual separation, and is fully responsive.",
+      "id": "feature-add-or-update-react-query-hooks-in-usequeries-ts-to-support-fetching-the-three-admin-stat-counts-total-doctors-total-cases-total-emergencies-with-a-5-second-refetchinterval-these-hooks-must-handle-errors-gracefully-and-return-sensible-defaults-e-g-0-when-data-is-unavailable",
+      "title": "Add or update React Query hooks in useQueries.ts to support fetching the three admin stat counts (total doctors, total cases, total emergencies) with a 5-second refetchInterval. These hooks must handle errors gracefully and return sensible defaults (e.g., 0) when data is unavailable.",
       "reqIds": [
         "REQ-4"
       ],
@@ -46,19 +31,29 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Replace inflated stats with honest, aspirational mission-driven messaging (e.g., 'Our goal is to be trusted by every patient, everywhere')",
+      "summary": "Working admin portal with auto-refreshing stats: Total Doctors, Total Cases, Total Emergencies",
       "reqIds": [],
       "status": "pending"
     },
     {
       "id": "AR-2",
-      "summary": "Polish and improve UI: tighten spacing, refine typography, improve visual hierarchy for a premium professional feel",
-      "reqIds": [],
+      "summary": "Expose backend query functions that return accurate counts for: total number of registered doctors, total number of emergency cases, and total number of active/critical emergencies. These must be callable without authentication so the admin dashboard can poll them reliably.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Ensure the AdminPortal passcode gate (in AdminPortal.tsx) correctly renders AdminDashboard after successful authentication. The passcode login form must function end-to-end: entering the correct passcode grants access and displays the working stats dashboard; the logout button clears the session and returns to the login screen.",
+      "reqIds": [
+        "REQ-3"
+      ],
       "status": "pending"
     }
   ],
   "gameProjectType": "none",
-  "projectName": "Hospital Website",
+  "projectName": "Vitals AI",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

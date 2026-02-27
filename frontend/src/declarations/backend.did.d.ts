@@ -11,8 +11,10 @@ import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
 export type CaseStatus = { 'resolved' : null } |
+  { 'closed' : null } |
   { 'assigned' : null } |
-  { 'open' : null };
+  { 'open' : null } |
+  { 'inProgress' : null };
 export type Department = { 'emergency' : null } |
   { 'cardiology' : null } |
   { 'generalMedicine' : null } |
@@ -21,16 +23,30 @@ export type Department = { 'emergency' : null } |
   { 'neurology' : null };
 export interface Doctor {
   'id' : bigint,
+  'status' : DoctorStatus,
+  'yearsOfExperience' : [] | [bigint],
+  'contactInfo' : string,
   'name' : string,
   'available' : boolean,
   'registrationCode' : string,
+  'registrationDate' : bigint,
   'department' : Department,
+  'certifications' : [] | [Array<string>],
 }
+export type DoctorLoginResult = { 'success' : Doctor } |
+  { 'notApproved' : null } |
+  { 'doctorNotFound' : null } |
+  { 'invalidCredentials' : null };
+export type DoctorStatus = { 'pendingApproval' : null } |
+  { 'approved' : null } |
+  { 'rejected' : null };
 export interface EmergencyCase {
   'id' : bigint,
   'status' : CaseStatus,
-  'createdAt' : bigint,
+  'patientDetails' : string,
+  'caseType' : Department,
   'assignedDoctorId' : [] | [bigint],
+  'submissionDate' : bigint,
   'patientName' : string,
   'severity' : Severity,
   'condition' : string,
@@ -45,21 +61,41 @@ export type UserRole = { 'admin' : null } |
   { 'guest' : null };
 export interface _SERVICE {
   '_initializeAccessControlWithSecret' : ActorMethod<[string], undefined>,
-  'activateDoctor' : ActorMethod<[bigint], Doctor>,
+  'approveDoctor' : ActorMethod<[bigint], Doctor>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
-  'deactivateDoctor' : ActorMethod<[bigint], Doctor>,
-  'doctorLogin' : ActorMethod<[string, Department], Doctor>,
+  'assignDoctorToCase' : ActorMethod<[bigint, bigint], EmergencyCase>,
+  'deleteCase' : ActorMethod<[bigint], undefined>,
+  'doctorLogin' : ActorMethod<[bigint, string], DoctorLoginResult>,
+  'getActiveCriticalEmergencyCounts' : ActorMethod<
+    [],
+    { 'totalOpen' : bigint, 'totalActive' : bigint, 'totalCritical' : bigint }
+  >,
+  'getAllCasesPublic' : ActorMethod<[], Array<EmergencyCase>>,
   'getAllDoctors' : ActorMethod<[], Array<Doctor>>,
   'getAllDoctorsPublic' : ActorMethod<[], Array<Doctor>>,
   'getAllEmergencyCases' : ActorMethod<[], Array<EmergencyCase>>,
+  'getAvailableDoctorsByDepartment' : ActorMethod<[Department], Array<Doctor>>,
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
+  'getPendingApprovalDoctors' : ActorMethod<[], Array<Doctor>>,
+  'getTotalEmergencyCaseCount' : ActorMethod<[], bigint>,
+  'getTotalRegisteredDoctorCount' : ActorMethod<[], bigint>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'initialize' : ActorMethod<[], undefined>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
-  'registerDoctor' : ActorMethod<[string, Department, string], Doctor>,
+  'registerDoctor' : ActorMethod<
+    [string, Department, string, string, [] | [bigint], [] | [Array<string>]],
+    Doctor
+  >,
+  'rejectDoctor' : ActorMethod<[bigint], Doctor>,
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
-  'toggleDoctorAvailability' : ActorMethod<[bigint], Doctor>,
+  'submitCase' : ActorMethod<
+    [string, string, string, Department, Severity],
+    EmergencyCase
+  >,
+  'updateCaseStatus' : ActorMethod<[bigint, CaseStatus], EmergencyCase>,
+  'updateDoctorAvailability' : ActorMethod<[bigint, boolean], undefined>,
+  'updateDoctorDepartment' : ActorMethod<[bigint, Department], undefined>,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

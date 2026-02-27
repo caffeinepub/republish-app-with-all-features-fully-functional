@@ -8,6 +8,11 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const DoctorStatus = IDL.Variant({
+  'pendingApproval' : IDL.Null,
+  'approved' : IDL.Null,
+  'rejected' : IDL.Null,
+});
 export const Department = IDL.Variant({
   'emergency' : IDL.Null,
   'cardiology' : IDL.Null,
@@ -18,10 +23,15 @@ export const Department = IDL.Variant({
 });
 export const Doctor = IDL.Record({
   'id' : IDL.Nat,
+  'status' : DoctorStatus,
+  'yearsOfExperience' : IDL.Opt(IDL.Nat),
+  'contactInfo' : IDL.Text,
   'name' : IDL.Text,
   'available' : IDL.Bool,
   'registrationCode' : IDL.Text,
+  'registrationDate' : IDL.Int,
   'department' : Department,
+  'certifications' : IDL.Opt(IDL.Vec(IDL.Text)),
 });
 export const UserRole = IDL.Variant({
   'admin' : IDL.Null,
@@ -30,8 +40,10 @@ export const UserRole = IDL.Variant({
 });
 export const CaseStatus = IDL.Variant({
   'resolved' : IDL.Null,
+  'closed' : IDL.Null,
   'assigned' : IDL.Null,
   'open' : IDL.Null,
+  'inProgress' : IDL.Null,
 });
 export const Severity = IDL.Variant({
   'low' : IDL.Null,
@@ -42,25 +54,54 @@ export const Severity = IDL.Variant({
 export const EmergencyCase = IDL.Record({
   'id' : IDL.Nat,
   'status' : CaseStatus,
-  'createdAt' : IDL.Int,
+  'patientDetails' : IDL.Text,
+  'caseType' : Department,
   'assignedDoctorId' : IDL.Opt(IDL.Nat),
+  'submissionDate' : IDL.Int,
   'patientName' : IDL.Text,
   'severity' : Severity,
   'condition' : IDL.Text,
+});
+export const DoctorLoginResult = IDL.Variant({
+  'success' : Doctor,
+  'notApproved' : IDL.Null,
+  'doctorNotFound' : IDL.Null,
+  'invalidCredentials' : IDL.Null,
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 
 export const idlService = IDL.Service({
   '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-  'activateDoctor' : IDL.Func([IDL.Nat], [Doctor], []),
+  'approveDoctor' : IDL.Func([IDL.Nat], [Doctor], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-  'deactivateDoctor' : IDL.Func([IDL.Nat], [Doctor], []),
-  'doctorLogin' : IDL.Func([IDL.Text, Department], [Doctor], ['query']),
+  'assignDoctorToCase' : IDL.Func([IDL.Nat, IDL.Nat], [EmergencyCase], []),
+  'deleteCase' : IDL.Func([IDL.Nat], [], []),
+  'doctorLogin' : IDL.Func([IDL.Nat, IDL.Text], [DoctorLoginResult], ['query']),
+  'getActiveCriticalEmergencyCounts' : IDL.Func(
+      [],
+      [
+        IDL.Record({
+          'totalOpen' : IDL.Nat,
+          'totalActive' : IDL.Nat,
+          'totalCritical' : IDL.Nat,
+        }),
+      ],
+      ['query'],
+    ),
+  'getAllCasesPublic' : IDL.Func([], [IDL.Vec(EmergencyCase)], ['query']),
   'getAllDoctors' : IDL.Func([], [IDL.Vec(Doctor)], ['query']),
   'getAllDoctorsPublic' : IDL.Func([], [IDL.Vec(Doctor)], ['query']),
   'getAllEmergencyCases' : IDL.Func([], [IDL.Vec(EmergencyCase)], ['query']),
+  'getAvailableDoctorsByDepartment' : IDL.Func(
+      [Department],
+      [IDL.Vec(Doctor)],
+      ['query'],
+    ),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+  'getPendingApprovalDoctors' : IDL.Func([], [IDL.Vec(Doctor)], ['query']),
+  'getTotalEmergencyCaseCount' : IDL.Func([], [IDL.Nat], ['query']),
+  'getTotalRegisteredDoctorCount' : IDL.Func([], [IDL.Nat], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserProfile)],
@@ -68,14 +109,38 @@ export const idlService = IDL.Service({
     ),
   'initialize' : IDL.Func([], [], []),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-  'registerDoctor' : IDL.Func([IDL.Text, Department, IDL.Text], [Doctor], []),
+  'registerDoctor' : IDL.Func(
+      [
+        IDL.Text,
+        Department,
+        IDL.Text,
+        IDL.Text,
+        IDL.Opt(IDL.Nat),
+        IDL.Opt(IDL.Vec(IDL.Text)),
+      ],
+      [Doctor],
+      [],
+    ),
+  'rejectDoctor' : IDL.Func([IDL.Nat], [Doctor], []),
   'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-  'toggleDoctorAvailability' : IDL.Func([IDL.Nat], [Doctor], []),
+  'submitCase' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, Department, Severity],
+      [EmergencyCase],
+      [],
+    ),
+  'updateCaseStatus' : IDL.Func([IDL.Nat, CaseStatus], [EmergencyCase], []),
+  'updateDoctorAvailability' : IDL.Func([IDL.Nat, IDL.Bool], [], []),
+  'updateDoctorDepartment' : IDL.Func([IDL.Nat, Department], [], []),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const DoctorStatus = IDL.Variant({
+    'pendingApproval' : IDL.Null,
+    'approved' : IDL.Null,
+    'rejected' : IDL.Null,
+  });
   const Department = IDL.Variant({
     'emergency' : IDL.Null,
     'cardiology' : IDL.Null,
@@ -86,10 +151,15 @@ export const idlFactory = ({ IDL }) => {
   });
   const Doctor = IDL.Record({
     'id' : IDL.Nat,
+    'status' : DoctorStatus,
+    'yearsOfExperience' : IDL.Opt(IDL.Nat),
+    'contactInfo' : IDL.Text,
     'name' : IDL.Text,
     'available' : IDL.Bool,
     'registrationCode' : IDL.Text,
+    'registrationDate' : IDL.Int,
     'department' : Department,
+    'certifications' : IDL.Opt(IDL.Vec(IDL.Text)),
   });
   const UserRole = IDL.Variant({
     'admin' : IDL.Null,
@@ -98,8 +168,10 @@ export const idlFactory = ({ IDL }) => {
   });
   const CaseStatus = IDL.Variant({
     'resolved' : IDL.Null,
+    'closed' : IDL.Null,
     'assigned' : IDL.Null,
     'open' : IDL.Null,
+    'inProgress' : IDL.Null,
   });
   const Severity = IDL.Variant({
     'low' : IDL.Null,
@@ -110,25 +182,58 @@ export const idlFactory = ({ IDL }) => {
   const EmergencyCase = IDL.Record({
     'id' : IDL.Nat,
     'status' : CaseStatus,
-    'createdAt' : IDL.Int,
+    'patientDetails' : IDL.Text,
+    'caseType' : Department,
     'assignedDoctorId' : IDL.Opt(IDL.Nat),
+    'submissionDate' : IDL.Int,
     'patientName' : IDL.Text,
     'severity' : Severity,
     'condition' : IDL.Text,
+  });
+  const DoctorLoginResult = IDL.Variant({
+    'success' : Doctor,
+    'notApproved' : IDL.Null,
+    'doctorNotFound' : IDL.Null,
+    'invalidCredentials' : IDL.Null,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
   
   return IDL.Service({
     '_initializeAccessControlWithSecret' : IDL.Func([IDL.Text], [], []),
-    'activateDoctor' : IDL.Func([IDL.Nat], [Doctor], []),
+    'approveDoctor' : IDL.Func([IDL.Nat], [Doctor], []),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
-    'deactivateDoctor' : IDL.Func([IDL.Nat], [Doctor], []),
-    'doctorLogin' : IDL.Func([IDL.Text, Department], [Doctor], ['query']),
+    'assignDoctorToCase' : IDL.Func([IDL.Nat, IDL.Nat], [EmergencyCase], []),
+    'deleteCase' : IDL.Func([IDL.Nat], [], []),
+    'doctorLogin' : IDL.Func(
+        [IDL.Nat, IDL.Text],
+        [DoctorLoginResult],
+        ['query'],
+      ),
+    'getActiveCriticalEmergencyCounts' : IDL.Func(
+        [],
+        [
+          IDL.Record({
+            'totalOpen' : IDL.Nat,
+            'totalActive' : IDL.Nat,
+            'totalCritical' : IDL.Nat,
+          }),
+        ],
+        ['query'],
+      ),
+    'getAllCasesPublic' : IDL.Func([], [IDL.Vec(EmergencyCase)], ['query']),
     'getAllDoctors' : IDL.Func([], [IDL.Vec(Doctor)], ['query']),
     'getAllDoctorsPublic' : IDL.Func([], [IDL.Vec(Doctor)], ['query']),
     'getAllEmergencyCases' : IDL.Func([], [IDL.Vec(EmergencyCase)], ['query']),
+    'getAvailableDoctorsByDepartment' : IDL.Func(
+        [Department],
+        [IDL.Vec(Doctor)],
+        ['query'],
+      ),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
+    'getPendingApprovalDoctors' : IDL.Func([], [IDL.Vec(Doctor)], ['query']),
+    'getTotalEmergencyCaseCount' : IDL.Func([], [IDL.Nat], ['query']),
+    'getTotalRegisteredDoctorCount' : IDL.Func([], [IDL.Nat], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserProfile)],
@@ -136,9 +241,28 @@ export const idlFactory = ({ IDL }) => {
       ),
     'initialize' : IDL.Func([], [], []),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
-    'registerDoctor' : IDL.Func([IDL.Text, Department, IDL.Text], [Doctor], []),
+    'registerDoctor' : IDL.Func(
+        [
+          IDL.Text,
+          Department,
+          IDL.Text,
+          IDL.Text,
+          IDL.Opt(IDL.Nat),
+          IDL.Opt(IDL.Vec(IDL.Text)),
+        ],
+        [Doctor],
+        [],
+      ),
+    'rejectDoctor' : IDL.Func([IDL.Nat], [Doctor], []),
     'saveCallerUserProfile' : IDL.Func([UserProfile], [], []),
-    'toggleDoctorAvailability' : IDL.Func([IDL.Nat], [Doctor], []),
+    'submitCase' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, Department, Severity],
+        [EmergencyCase],
+        [],
+      ),
+    'updateCaseStatus' : IDL.Func([IDL.Nat, CaseStatus], [EmergencyCase], []),
+    'updateDoctorAvailability' : IDL.Func([IDL.Nat, IDL.Bool], [], []),
+    'updateDoctorDepartment' : IDL.Func([IDL.Nat, Department], [], []),
   });
 };
 

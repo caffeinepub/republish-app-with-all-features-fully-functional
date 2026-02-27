@@ -1,91 +1,67 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T10:36:47.270Z",
+  "generatedAt": "2026-02-27T15:50:51.005Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 4,
-    "implemented": 4,
+    "implemented": 2,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Replace all inflated or fabricated statistics (e.g., 'Trusted by 10,000+ patients', specific patient count claims) with honest, aspirational, mission-driven copy throughout the homepage, hero section, stats bar, and footer. Use forward-looking language such as 'Our mission is to be trusted by every patient, everywhere', 'Committed to delivering pure and proper healthcare to the world', 'Aspiring to set the global standard in patient care', and 'Built on the promise of world-class health facilities for all'. Remove any numeric claim that cannot be verified; replace with vision statements.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/HomePage.tsx",
-          "frontend/src/components/LandingPage.tsx",
-          "frontend/src/components/Footer.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/HomePage.tsx",
-          "frontend/src/components/LandingPage.tsx",
-          "frontend/src/components/Footer.tsx"
-        ]
+        "summary": "Expose backend query functions that return accurate counts for: total number of registered doctors, total number of emergency cases, and total number of active/critical emergencies. These must be callable without authentication so the admin dashboard can poll them reliably.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       },
       {
         "id": "REQ-2",
-        "summary": "Perform a comprehensive UI polish pass across all pages and components (HomePage, Header, Footer, hero section, stats bar, departments section, doctor showcase, LandingPage, RoleSelector). Improvements must include: (1) tighter, more intentional spacing and padding with consistent vertical rhythm; (2) refined typography — stronger visual hierarchy with clear heading scales, improved line-height and letter-spacing for readability; (3) elevated visual hierarchy so the most important content commands attention immediately; (4) premium card and section styling with subtle depth (shadows, borders, glassmorphism where appropriate); (5) smooth, tasteful animations and micro-interactions on scroll and hover; (6) cohesive color usage leveraging the existing teal/emerald/cyan palette defined in tailwind.config.js with proper contrast ratios; (7) a fully polished mobile layout with responsive breakpoints.",
+        "summary": "Rewrite the AdminDashboard component to prominently display three stat cards: Total Doctors, Total Cases, and Total Emergencies. Each card must show the live count fetched from the backend. The dashboard must auto-refresh all three stats every 5 seconds using React Query's refetchInterval so the numbers stay current without manual page reload.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/HomePage.tsx",
-          "frontend/src/components/LandingPage.tsx",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/Footer.tsx",
-          "frontend/src/components/RoleSelector.tsx",
-          "frontend/src/index.css"
+          "frontend/src/components/AdminDashboard.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/components/HomePage.tsx",
-          "frontend/src/components/LandingPage.tsx",
-          "frontend/src/components/Header.tsx",
-          "frontend/src/components/Footer.tsx",
-          "frontend/src/components/RoleSelector.tsx",
-          "frontend/src/index.css"
+          "frontend/src/components/AdminDashboard.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "Redesign the hero section of the HomePage to be visually striking and aspirational. It should feature a bold, full-width layout with a strong headline communicating the hospital's world-class mission, a compelling subheadline with honest mission-driven copy, a prominent call-to-action button, and a high-quality visual element (gradient background, abstract medical imagery, or animated visual). The hero must immediately communicate trust, professionalism, and global ambition.",
-        "status": "implemented",
+        "summary": "Ensure the AdminPortal passcode gate (in AdminPortal.tsx) correctly renders AdminDashboard after successful authentication. The passcode login form must function end-to-end: entering the correct passcode grants access and displays the working stats dashboard; the logout button clears the session and returns to the login screen.",
+        "status": "missing",
         "plannedFiles": [
-          "frontend/src/components/HomePage.tsx",
-          "frontend/src/components/LandingPage.tsx"
+          "frontend/src/components/AdminPortal.tsx"
         ],
-        "matchedFiles": [
-          "frontend/src/components/HomePage.tsx",
-          "frontend/src/components/LandingPage.tsx"
-        ]
+        "matchedFiles": []
       },
       {
         "id": "REQ-4",
-        "summary": "Enhance the Footer component with refined layout, consistent branding, and honest mission-driven messaging. Replace any boilerplate or inflated claims with the hospital's core values: pure healthcare, proper facilities, and global aspiration. Include a brief mission statement tagline in the footer. Ensure the footer has premium spacing, proper visual separation, and is fully responsive.",
+        "summary": "Add or update React Query hooks in useQueries.ts to support fetching the three admin stat counts (total doctors, total cases, total emergencies) with a 5-second refetchInterval. These hooks must handle errors gracefully and return sensible defaults (e.g., 0) when data is unavailable.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/components/Footer.tsx"
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/components/Footer.tsx"
+          "frontend/src/hooks/useQueries.ts"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/main.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/public/assets/generated/global-reach.dim_800x800.png",
-    "frontend/public/assets/generated/hero-bg.dim_1920x1080.png",
-    "frontend/src/components/Footer.tsx",
-    "frontend/src/components/Header.tsx",
-    "frontend/src/components/HomePage.tsx",
-    "frontend/src/components/LandingPage.tsx",
-    "frontend/src/components/RoleSelector.tsx",
-    "frontend/src/index.css",
-    "frontend/tailwind.config.js",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/components/AdminDashboard.tsx",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
+    "frontend/src/hooks/useQueries.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

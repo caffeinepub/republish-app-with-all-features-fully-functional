@@ -1,834 +1,551 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import {
-  Heart,
-  Activity,
-  Shield,
-  Brain,
-  Baby,
-  Bone,
-  Stethoscope,
-  ArrowRight,
-  ChevronRight,
-  Star,
-  Globe,
-  Zap,
-  Clock,
-  CheckCircle,
-  Users,
-  Award,
-  Sparkles,
-  Phone,
-  MapPin,
-  Mail,
-  Play,
-  TrendingUp,
-  Target,
-  Lightbulb,
+  Heart, Shield, Globe, Stethoscope, Brain, Baby, Bone, Pill, Zap,
+  CheckCircle, ArrowRight, Star, Clock, Users, Phone, Mail, MapPin,
+  Activity, Sparkles, TrendingUp, Award, HeartPulse, Rocket, Target
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { useGetAllDoctorsPublic } from '@/hooks/useQueries';
-import { Department } from '@/backend';
+import { useGetAllDoctorsPublic } from '../hooks/useQueries';
+import { Department } from '../backend';
 
-// ─── Helpers ────────────────────────────────────────────────────────────────
-
-function departmentLabel(dept: Department): string {
-  const map: Record<Department, string> = {
-    [Department.emergency]: 'Emergency',
-    [Department.cardiology]: 'Cardiology',
-    [Department.neurology]: 'Neurology',
-    [Department.pediatrics]: 'Pediatrics',
-    [Department.orthopedics]: 'Orthopedics',
-    [Department.generalMedicine]: 'General Medicine',
-  };
-  return map[dept] ?? dept;
-}
-
-function departmentColor(dept: Department): string {
-  const map: Record<Department, string> = {
-    [Department.emergency]: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
-    [Department.cardiology]: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
-    [Department.neurology]: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
-    [Department.pediatrics]: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-    [Department.orthopedics]: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300',
-    [Department.generalMedicine]: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
-  };
-  return map[dept] ?? 'bg-teal-100 text-teal-700';
-}
-
-// ─── Section: Hero ───────────────────────────────────────────────────────────
-
+// ─── Hero Section ─────────────────────────────────────────────────────────────
 function HeroSection() {
   const navigate = useNavigate();
-
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Background image */}
-      <div className="absolute inset-0">
-        <img
-          src="/assets/generated/hero-bg.dim_1920x1080.png"
-          alt=""
-          className="w-full h-full object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-teal-950/92 via-teal-900/80 to-teal-800/60" />
-        <div className="absolute inset-0 bg-gradient-to-t from-teal-950/60 via-transparent to-transparent" />
-      </div>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Animated mesh background */}
+      <div className="absolute inset-0 mesh-pattern" />
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20"
+        style={{ backgroundImage: "url('/assets/generated/hero-bg.dim_1920x1080.png')" }}
+      />
+      {/* Animated blobs */}
+      <div className="absolute top-20 left-10 w-72 h-72 rounded-full bg-teal-300/30 animate-blob blur-3xl" />
+      <div className="absolute top-40 right-10 w-96 h-96 rounded-full bg-violet-300/25 animate-blob blur-3xl" style={{ animationDelay: '3s' }} />
+      <div className="absolute bottom-20 left-1/3 w-80 h-80 rounded-full bg-coral-300/20 animate-blob blur-3xl" style={{ animationDelay: '6s' }} />
 
-      {/* Decorative elements */}
-      <div className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-teal-500/10 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/3 w-64 h-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+      <div className="relative z-10 text-center px-4 max-w-6xl mx-auto pt-24">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm border border-teal-200 rounded-full px-5 py-2.5 mb-8 shadow-teal-sm animate-fade-in">
+          <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
+          <span className="text-teal-700 text-sm font-bold">AI-Powered Smart Hospital Platform</span>
+          <Sparkles className="w-4 h-4 text-coral-500" />
+        </div>
 
-      {/* Grid pattern overlay */}
-      <div className="absolute inset-0 grid-pattern opacity-30 pointer-events-none" />
+        {/* Headline */}
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-display font-black mb-6 leading-tight animate-slide-up">
+          <span className="text-slate-800">Your Health,</span>
+          <br />
+          <span className="text-gradient">Our Mission</span>
+        </h1>
 
-      <div className="relative max-w-7xl mx-auto px-6 lg:px-8 pt-32 pb-20 w-full">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left: Text content */}
-          <div className="animate-fade-in-left">
-            {/* Mission badge */}
-            <div className="inline-flex items-center gap-2 bg-teal-500/20 backdrop-blur-sm border border-teal-400/30 rounded-full px-4 py-2 text-sm font-medium text-teal-200 mb-8">
-              <Sparkles className="w-4 h-4 text-teal-300" />
-              Our Mission: World-Class Healthcare for All
+        <p className="text-xl md:text-2xl text-slate-600 mb-10 max-w-3xl mx-auto leading-relaxed font-medium animate-fade-in" style={{ animationDelay: '200ms' }}>
+          Building next-generation healthcare with AI-powered diagnostics, real-time vitals monitoring, and instant emergency response — for everyone, everywhere.
+        </p>
+
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: '400ms' }}>
+          <button
+            onClick={() => navigate({ to: '/select-role' })}
+            className="gradient-coral-rose text-white font-bold px-10 py-4 rounded-full text-lg transition-all duration-300 shadow-coral hover:shadow-coral-lg hover:-translate-y-1 hover:scale-105 flex items-center gap-2 justify-center"
+          >
+            Get Started Free <ArrowRight className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
+            className="bg-white/80 backdrop-blur-sm border-2 border-teal-200 text-teal-700 font-bold px-10 py-4 rounded-full text-lg transition-all duration-300 hover:bg-white hover:border-teal-400 hover:-translate-y-1 shadow-card"
+          >
+            Explore Services
+          </button>
+        </div>
+
+        {/* Aspirational stats row */}
+        <div className="mt-16 grid grid-cols-3 gap-6 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '600ms' }}>
+          {[
+            { value: '∞', label: 'Patients to Serve', color: 'text-teal-600' },
+            { value: '🚀', label: 'Growing Fast', color: 'text-coral-500' },
+            { value: '24/7', label: 'Always Available', color: 'text-violet-600' },
+          ].map((stat) => (
+            <div key={stat.label} className="glass-card-white rounded-2xl p-4 text-center">
+              <div className={`text-2xl md:text-3xl font-black ${stat.color}`}>{stat.value}</div>
+              <div className="text-xs text-slate-500 font-semibold mt-1">{stat.label}</div>
             </div>
-
-            {/* Headline */}
-            <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.05] tracking-tight mb-6">
-              Pure Care.{' '}
-              <span className="block text-gradient-warm">Proper Healing.</span>
-              <span className="block text-teal-300">Global Vision.</span>
-            </h1>
-
-            {/* Subheadline */}
-            <p className="text-lg sm:text-xl text-teal-100/90 leading-relaxed mb-10 max-w-xl">
-              We are building a healthcare system that every person in the world can trust —
-              grounded in clinical excellence, driven by compassion, and committed to giving
-              pure and proper health facilities to all.
-            </p>
-
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-12">
-              <Button
-                size="lg"
-                onClick={() => navigate({ to: '/select-role' })}
-                className="bg-teal-500 hover:bg-teal-400 text-white font-semibold px-8 py-4 h-auto text-base shadow-teal-lg hover:shadow-glow transition-all duration-300 gap-2 group"
-              >
-                Access Your Portal
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => {
-                  const el = document.querySelector('#services');
-                  el?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="border-white/30 text-white hover:bg-white/10 hover:border-white/50 px-8 py-4 h-auto text-base backdrop-blur-sm transition-all duration-300 gap-2"
-              >
-                <Play className="w-4 h-4" />
-                Explore Services
-              </Button>
-            </div>
-
-            {/* Mission pillars */}
-            <div className="flex flex-wrap gap-3">
-              {[
-                { icon: Shield, text: 'Patient Safety' },
-                { icon: Award, text: 'Clinical Excellence' },
-                { icon: Globe, text: 'Global Reach' },
-                { icon: Heart, text: 'Compassionate Care' },
-              ].map(({ icon: Icon, text }) => (
-                <div
-                  key={text}
-                  className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-3 py-1.5 text-sm text-teal-100"
-                >
-                  <Icon className="w-3.5 h-3.5 text-teal-300" />
-                  {text}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right: Visual card stack */}
-          <div className="hidden lg:flex flex-col gap-4 animate-fade-in-right">
-            {/* Main visual card */}
-            <div className="glass-card rounded-3xl p-6 shadow-card-xl">
-              <div className="flex items-center gap-4 mb-5">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-teal">
-                  <Heart className="w-7 h-7 text-white fill-white" />
-                </div>
-                <div>
-                  <p className="font-display font-bold text-white text-lg">Our Commitment</p>
-                  <p className="text-teal-300 text-sm">To every patient, everywhere</p>
-                </div>
-              </div>
-              <div className="space-y-3">
-                {[
-                  'Pure and proper healthcare for all',
-                  'Evidence-based clinical decisions',
-                  'Compassionate, patient-first approach',
-                  'Aspiring to set the global standard',
-                ].map((item) => (
-                  <div key={item} className="flex items-center gap-3 text-sm text-teal-100">
-                    <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-                    {item}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Secondary cards row */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="glass-card rounded-2xl p-5">
-                <div className="w-10 h-10 rounded-xl bg-teal-500/30 flex items-center justify-center mb-3">
-                  <Activity className="w-5 h-5 text-teal-300" />
-                </div>
-                <p className="font-display font-bold text-white text-lg">24/7</p>
-                <p className="text-teal-300 text-sm">Emergency Care</p>
-              </div>
-              <div className="glass-card rounded-2xl p-5">
-                <div className="w-10 h-10 rounded-xl bg-emerald-500/30 flex items-center justify-center mb-3">
-                  <Zap className="w-5 h-5 text-emerald-300" />
-                </div>
-                <p className="font-display font-bold text-white text-lg">AI-Powered</p>
-                <p className="text-teal-300 text-sm">Symptom Analysis</p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
       {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-teal-300/60 animate-bounce">
-        <span className="text-xs font-medium tracking-widest uppercase">Scroll</span>
-        <div className="w-px h-8 bg-gradient-to-b from-teal-300/60 to-transparent" />
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <div className="w-6 h-10 border-2 border-teal-400/60 rounded-full flex items-start justify-center p-1">
+          <div className="w-1.5 h-3 bg-teal-500/70 rounded-full animate-pulse" />
+        </div>
       </div>
     </section>
   );
 }
 
-// ─── Section: Mission Statement ──────────────────────────────────────────────
-
+// ─── Mission Section ───────────────────────────────────────────────────────────
 function MissionSection() {
-  return (
-    <section className="py-20 lg:py-28 bg-gradient-to-br from-teal-950 via-teal-900 to-emerald-950 relative overflow-hidden">
-      <div className="absolute inset-0 dot-pattern opacity-20 pointer-events-none" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-px h-20 bg-gradient-to-b from-transparent to-teal-500/40" />
-
-      <div className="relative max-w-5xl mx-auto px-6 lg:px-8 text-center">
-        <div className="inline-flex items-center gap-2 bg-teal-500/20 border border-teal-400/30 rounded-full px-4 py-2 text-sm font-medium text-teal-300 mb-8">
-          <Target className="w-4 h-4" />
-          What We Stand For
-        </div>
-
-        <h2 className="font-display text-4xl lg:text-5xl font-black text-white mb-6 leading-tight">
-          Not just a hospital.{' '}
-          <span className="text-gradient">A promise to the world.</span>
-        </h2>
-
-        <p className="text-teal-200 text-xl leading-relaxed mb-14 max-w-3xl mx-auto">
-          We don't measure our success in numbers. We measure it in lives improved, families
-          reassured, and communities strengthened. Our aspiration is to be the healthcare
-          system the world deserves.
-        </p>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 stagger-children">
-          {[
-            {
-              icon: Heart,
-              title: 'Pure Healthcare',
-              desc: 'Uncompromising quality in every diagnosis, treatment, and interaction — because your health deserves nothing less.',
-              color: 'from-teal-500/20 to-teal-600/10',
-              iconColor: 'text-teal-300',
-            },
-            {
-              icon: Shield,
-              title: 'Proper Facilities',
-              desc: 'State-of-the-art infrastructure and protocols designed to deliver safe, effective, and dignified care to every patient.',
-              color: 'from-emerald-500/20 to-emerald-600/10',
-              iconColor: 'text-emerald-300',
-            },
-            {
-              icon: Globe,
-              title: 'Global Aspiration',
-              desc: 'We aim to set the standard for healthcare worldwide — building a system that every person on earth can rely on.',
-              color: 'from-cyan-500/20 to-cyan-600/10',
-              iconColor: 'text-cyan-300',
-            },
-          ].map(({ icon: Icon, title, desc, color, iconColor }) => (
-            <div
-              key={title}
-              className={`animate-fade-in bg-gradient-to-br ${color} border border-white/10 rounded-2xl p-7 text-left card-hover`}
-            >
-              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-5">
-                <Icon className={`w-6 h-6 ${iconColor}`} />
-              </div>
-              <h3 className="font-display font-bold text-white text-xl mb-3">{title}</h3>
-              <p className="text-teal-200/80 text-sm leading-relaxed">{desc}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── Section: Services ───────────────────────────────────────────────────────
-
-function ServicesSection() {
-  const navigate = useNavigate();
-
-  const services = [
-    {
-      icon: Activity,
-      title: 'Emergency Care',
-      desc: 'Round-the-clock emergency response with rapid triage, critical care specialists, and life-saving interventions.',
-      color: 'bg-red-50 dark:bg-red-950/20',
-      iconBg: 'bg-red-100 dark:bg-red-900/30',
-      iconColor: 'text-red-600 dark:text-red-400',
-      badge: '24/7',
-    },
+  const pillars = [
     {
       icon: Heart,
-      title: 'Cardiology',
-      desc: 'Comprehensive heart care from preventive screenings to advanced interventional procedures and cardiac rehabilitation.',
-      color: 'bg-pink-50 dark:bg-pink-950/20',
-      iconBg: 'bg-pink-100 dark:bg-pink-900/30',
-      iconColor: 'text-pink-600 dark:text-pink-400',
-      badge: 'Specialist',
-    },
-    {
-      icon: Brain,
-      title: 'Neurology',
-      desc: 'Expert neurological care for brain, spine, and nervous system conditions with cutting-edge diagnostic technology.',
-      color: 'bg-purple-50 dark:bg-purple-950/20',
-      iconBg: 'bg-purple-100 dark:bg-purple-900/30',
-      iconColor: 'text-purple-600 dark:text-purple-400',
-      badge: 'Advanced',
-    },
-    {
-      icon: Baby,
-      title: 'Pediatrics',
-      desc: 'Gentle, specialized care for children from newborns to adolescents, with a child-friendly environment.',
-      color: 'bg-blue-50 dark:bg-blue-950/20',
-      iconBg: 'bg-blue-100 dark:bg-blue-900/30',
-      iconColor: 'text-blue-600 dark:text-blue-400',
-      badge: 'Child-Safe',
-    },
-    {
-      icon: Bone,
-      title: 'Orthopedics',
-      desc: 'Comprehensive musculoskeletal care including joint replacement, sports medicine, and rehabilitation programs.',
-      color: 'bg-orange-50 dark:bg-orange-950/20',
-      iconBg: 'bg-orange-100 dark:bg-orange-900/30',
-      iconColor: 'text-orange-600 dark:text-orange-400',
-      badge: 'Surgical',
-    },
-    {
-      icon: Stethoscope,
-      title: 'General Medicine',
-      desc: 'Holistic primary care and preventive medicine for all ages, focusing on long-term health and wellness.',
-      color: 'bg-teal-50 dark:bg-teal-950/20',
-      iconBg: 'bg-teal-100 dark:bg-teal-900/30',
-      iconColor: 'text-teal-600 dark:text-teal-400',
-      badge: 'Primary',
-    },
-  ];
-
-  return (
-    <section id="services" className="py-20 lg:py-28 bg-background">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-700/50 rounded-full px-4 py-2 text-sm font-medium text-teal-700 dark:text-teal-300 mb-5">
-            <Stethoscope className="w-4 h-4" />
-            Our Specialties
-          </div>
-          <h2 className="font-display text-4xl lg:text-5xl font-black text-foreground mb-4">
-            Comprehensive Care,{' '}
-            <span className="text-gradient">Every Specialty</span>
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            From emergency response to specialized treatment, our departments are staffed by
-            dedicated professionals committed to your recovery and wellbeing.
-          </p>
-        </div>
-
-        {/* Services grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
-          {services.map(({ icon: Icon, title, desc, color, iconBg, iconColor, badge }) => (
-            <div
-              key={title}
-              className={`animate-fade-in ${color} border border-border rounded-2xl p-7 card-hover group cursor-pointer`}
-              onClick={() => navigate({ to: '/select-role' })}
-            >
-              <div className="flex items-start justify-between mb-5">
-                <div className={`w-12 h-12 rounded-xl ${iconBg} flex items-center justify-center`}>
-                  <Icon className={`w-6 h-6 ${iconColor}`} />
-                </div>
-                <Badge variant="secondary" className="text-xs font-medium">
-                  {badge}
-                </Badge>
-              </div>
-              <h3 className="font-display font-bold text-foreground text-xl mb-2">{title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">{desc}</p>
-              <div className="flex items-center gap-1.5 text-sm font-medium text-teal-600 dark:text-teal-400 group-hover:gap-2.5 transition-all duration-200">
-                Learn more <ChevronRight className="w-4 h-4" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ─── Section: Doctors ────────────────────────────────────────────────────────
-
-function DoctorsSection() {
-  const { data: doctors, isLoading } = useGetAllDoctorsPublic();
-
-  return (
-    <section id="doctors" className="py-20 lg:py-28 bg-teal-50/50 dark:bg-teal-950/30">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 bg-teal-100 dark:bg-teal-900/40 border border-teal-200 dark:border-teal-700/50 rounded-full px-4 py-2 text-sm font-medium text-teal-700 dark:text-teal-300 mb-5">
-            <Users className="w-4 h-4" />
-            Our Medical Team
-          </div>
-          <h2 className="font-display text-4xl lg:text-5xl font-black text-foreground mb-4">
-            Meet the Doctors{' '}
-            <span className="text-gradient">Behind the Care</span>
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Our physicians are the heart of VitalsAI — each one dedicated to delivering
-            compassionate, evidence-based care to every patient they serve.
-          </p>
-        </div>
-
-        {/* Loading state */}
-        {isLoading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-card border border-border rounded-2xl p-6 animate-pulse">
-                <div className="w-16 h-16 rounded-2xl bg-muted mb-4 shimmer" />
-                <div className="h-5 bg-muted rounded-lg mb-2 shimmer" />
-                <div className="h-4 bg-muted rounded-lg w-2/3 shimmer" />
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Doctors grid */}
-        {!isLoading && doctors && doctors.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 stagger-children">
-            {doctors.map((doctor) => (
-              <div
-                key={doctor.id.toString()}
-                className="animate-fade-in bg-card border border-border rounded-2xl p-6 card-hover group"
-              >
-                {/* Avatar */}
-                <div className="relative mb-4">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-teal">
-                    <span className="text-white font-display font-bold text-xl">
-                      {doctor.name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                  <div
-                    className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-card ${
-                      doctor.available ? 'bg-emerald-500' : 'bg-red-400'
-                    }`}
-                  />
-                </div>
-
-                {/* Info */}
-                <h3 className="font-display font-bold text-foreground text-base mb-1">
-                  Dr. {doctor.name}
-                </h3>
-                <span
-                  className={`inline-block text-xs font-medium px-2.5 py-1 rounded-full mb-3 ${departmentColor(doctor.department)}`}
-                >
-                  {departmentLabel(doctor.department)}
-                </span>
-                <div className="flex items-center gap-1.5 text-xs font-medium">
-                  <div
-                    className={`w-2 h-2 rounded-full ${
-                      doctor.available ? 'bg-emerald-500' : 'bg-red-400'
-                    }`}
-                  />
-                  <span
-                    className={
-                      doctor.available
-                        ? 'text-emerald-600 dark:text-emerald-400'
-                        : 'text-red-500 dark:text-red-400'
-                    }
-                  >
-                    {doctor.available ? 'Available' : 'Busy'}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Empty state */}
-        {!isLoading && (!doctors || doctors.length === 0) && (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 rounded-2xl bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center mx-auto mb-4">
-              <Users className="w-8 h-8 text-teal-500" />
-            </div>
-            <h3 className="font-display font-bold text-foreground text-xl mb-2">
-              Building Our Team
-            </h3>
-            <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-              Our medical team is growing. Doctors will appear here once they join the platform.
-            </p>
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-// ─── Section: Why Choose Us ──────────────────────────────────────────────────
-
-function WhyUsSection() {
-  const reasons = [
-    {
-      icon: Zap,
-      title: 'AI-Assisted Diagnosis',
-      desc: 'Our intelligent symptom checker helps you understand your health before you even step into a clinic.',
-    },
-    {
-      icon: Clock,
-      title: 'Always Available',
-      desc: 'Emergency care and support available 24 hours a day, 7 days a week — because health emergencies don\'t wait.',
+      title: 'Pure Healthcare',
+      desc: 'Every decision we make is guided by one principle: what is best for the patient. No compromises, no shortcuts.',
+      gradient: 'gradient-coral-rose',
+      bg: 'bg-coral-50',
+      border: 'border-coral-200',
+      text: 'text-coral-700',
     },
     {
       icon: Shield,
-      title: 'Safe & Confidential',
-      desc: 'Your health data is protected with the highest standards of privacy and security at every step.',
-    },
-    {
-      icon: TrendingUp,
-      title: 'Continuous Improvement',
-      desc: 'We constantly evolve our practices, technology, and facilities to deliver better outcomes for every patient.',
-    },
-    {
-      icon: Lightbulb,
-      title: 'Innovative Approach',
-      desc: 'Combining modern medical science with compassionate care to create a healthcare experience that truly works.',
+      title: 'Proper Facilities',
+      desc: 'We are committed to providing well-equipped, hygienic, and accessible facilities that meet the highest standards of care.',
+      gradient: 'gradient-teal-cyan',
+      bg: 'bg-teal-50',
+      border: 'border-teal-200',
+      text: 'text-teal-700',
     },
     {
       icon: Globe,
-      title: 'Built for Everyone',
-      desc: 'Designed to be accessible, inclusive, and effective for patients from all walks of life and all corners of the world.',
+      title: 'Global Aspiration',
+      desc: 'Our vision extends beyond borders — we aspire to make quality healthcare accessible to every person on the planet.',
+      gradient: 'gradient-violet-purple',
+      bg: 'bg-violet-50',
+      border: 'border-violet-200',
+      text: 'text-violet-700',
     },
   ];
 
   return (
-    <section id="about" className="py-20 lg:py-28 bg-background">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-14 lg:gap-20 items-center">
-          {/* Left: Image + accent */}
-          <div className="relative">
-            <div className="relative rounded-3xl overflow-hidden shadow-card-xl">
-              <img
-                src="/assets/generated/global-reach.dim_800x800.png"
-                alt="Global healthcare reach"
-                className="w-full h-auto object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-teal-950/60 via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6">
-                <div className="glass-card rounded-2xl p-5">
-                  <p className="font-display font-bold text-white text-lg mb-1">
-                    Our Vision
-                  </p>
-                  <p className="text-teal-200 text-sm leading-relaxed">
-                    "To be the healthcare system the world deserves — pure, proper, and
-                    accessible to every human being."
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Floating accent card */}
-            <div className="absolute -top-5 -right-5 bg-teal-600 rounded-2xl p-5 shadow-teal-lg animate-float hidden xl:block">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                  <Star className="w-5 h-5 text-white fill-white" />
-                </div>
-                <div>
-                  <p className="font-display font-bold text-white text-sm">Our Aspiration</p>
-                  <p className="text-teal-200 text-xs">Global standard in patient care</p>
-                </div>
-              </div>
-            </div>
+    <section id="about" className="py-24 px-4 bg-white relative overflow-hidden">
+      <div className="absolute inset-0 dot-pattern opacity-40" />
+      <div className="relative z-10 max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 bg-teal-50 border border-teal-200 rounded-full px-4 py-2 mb-5 text-teal-700 text-sm font-bold">
+            <Heart className="w-4 h-4 text-coral-500 fill-coral-500" />
+            Our Mission
           </div>
+          <h2 className="text-4xl md:text-5xl font-display font-black text-slate-800 mb-4">
+            Healthcare built on{' '}
+            <span className="text-gradient">three pillars</span>
+          </h2>
+          <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
+            We believe great healthcare starts with the right values, the right tools, and the right people.
+          </p>
+        </div>
 
-          {/* Right: Reasons */}
-          <div>
-            <div className="inline-flex items-center gap-2 bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-700/50 rounded-full px-4 py-2 text-sm font-medium text-teal-700 dark:text-teal-300 mb-6">
-              <Award className="w-4 h-4" />
-              Why VitalsAI
+        <div className="grid md:grid-cols-3 gap-8 stagger-children">
+          {pillars.map((p) => (
+            <div
+              key={p.title}
+              className={`rounded-3xl border-2 ${p.border} ${p.bg} p-8 card-hover-lift text-center`}
+            >
+              <div className={`w-16 h-16 rounded-2xl ${p.gradient} flex items-center justify-center mx-auto mb-5 shadow-card`}>
+                <p.icon className="w-8 h-8 text-white" />
+              </div>
+              <h3 className={`text-xl font-bold ${p.text} mb-3`}>{p.title}</h3>
+              <p className="text-slate-600 text-sm leading-relaxed font-medium">{p.desc}</p>
             </div>
-            <h2 className="font-display text-4xl lg:text-5xl font-black text-foreground mb-5 leading-tight">
-              Healthcare that{' '}
-              <span className="text-gradient">puts you first</span>
-            </h2>
-            <p className="text-muted-foreground text-lg leading-relaxed mb-10">
-              We believe every person deserves access to world-class healthcare. That belief
-              shapes everything we do — from how we train our doctors to how we design our
-              facilities.
-            </p>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 stagger-children">
-              {reasons.map(({ icon: Icon, title, desc }) => (
-                <div key={title} className="animate-fade-in flex gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-teal-100 dark:bg-teal-900/40 flex items-center justify-center shrink-0 mt-0.5">
-                    <Icon className="w-5 h-5 text-teal-600 dark:text-teal-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-display font-semibold text-foreground text-sm mb-1">
-                      {title}
-                    </h4>
-                    <p className="text-muted-foreground text-xs leading-relaxed">{desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-// ─── Section: AI Symptom Checker CTA ─────────────────────────────────────────
-
-function SymptomCheckerCTA() {
-  const navigate = useNavigate();
+// ─── Services Section ──────────────────────────────────────────────────────────
+function ServicesSection() {
+  const services = [
+    { icon: Zap, name: 'Emergency Care', desc: 'Immediate response for life-threatening situations with round-the-clock availability.', gradient: 'gradient-coral-rose', bg: 'bg-coral-50', border: 'border-coral-200', text: 'text-coral-700' },
+    { icon: Heart, name: 'Cardiology', desc: 'Advanced heart care with cutting-edge diagnostic and treatment options.', gradient: 'gradient-teal-cyan', bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700' },
+    { icon: Brain, name: 'Neurology', desc: 'Expert neurological care for brain, spine, and nervous system conditions.', gradient: 'gradient-violet-purple', bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700' },
+    { icon: Baby, name: 'Pediatrics', desc: 'Specialized care for children from newborns to adolescents.', gradient: 'gradient-emerald-teal', bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700' },
+    { icon: Bone, name: 'Orthopedics', desc: 'Comprehensive bone, joint, and muscle care for all ages.', gradient: 'gradient-amber-orange', bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700' },
+    { icon: Pill, name: 'General Medicine', desc: 'Primary care and preventive medicine for your overall health.', gradient: 'gradient-teal-cyan', bg: 'bg-cyan-50', border: 'border-cyan-200', text: 'text-cyan-700' },
+  ];
 
   return (
-    <section className="py-20 lg:py-24 bg-gradient-to-br from-teal-600 via-teal-700 to-emerald-700 relative overflow-hidden">
-      <div className="absolute inset-0 dot-pattern opacity-20 pointer-events-none" />
-      <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-white/5 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-emerald-400/10 blur-3xl pointer-events-none" />
-
-      <div className="relative max-w-4xl mx-auto px-6 lg:px-8 text-center">
-        <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 text-sm font-medium text-teal-100 mb-7">
-          <Zap className="w-4 h-4 text-yellow-300" />
-          AI-Powered Health Tool
+    <section id="services" className="py-24 px-4 bg-gradient-to-br from-slate-50 to-teal-50/30 relative overflow-hidden">
+      <div className="absolute inset-0 grid-pattern opacity-50" />
+      <div className="relative z-10 max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 bg-white border border-teal-200 rounded-full px-4 py-2 mb-5 text-teal-700 text-sm font-bold shadow-teal-sm">
+            <Stethoscope className="w-4 h-4" />
+            Our Services
+          </div>
+          <h2 className="text-4xl md:text-5xl font-display font-black text-slate-800 mb-4">
+            World-class{' '}
+            <span className="text-gradient">medical departments</span>
+          </h2>
+          <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
+            From emergency care to specialized treatments, we cover every aspect of your health journey.
+          </p>
         </div>
-        <h2 className="font-display text-4xl lg:text-5xl font-black text-white mb-5 leading-tight">
-          Not sure what's wrong?{' '}
-          <span className="text-teal-200">Let AI help.</span>
-        </h2>
-        <p className="text-teal-100 text-xl leading-relaxed mb-10 max-w-2xl mx-auto">
-          Describe your symptoms and our intelligent checker will provide guidance on possible
-          conditions and next steps — helping you make informed decisions about your health.
-        </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button
-            size="lg"
-            onClick={() => navigate({ to: '/patient' })}
-            className="bg-white text-teal-700 hover:bg-teal-50 font-semibold px-8 py-4 h-auto text-base shadow-lg hover:shadow-xl transition-all duration-300 gap-2 group"
-          >
-            Try Symptom Checker
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            onClick={() => navigate({ to: '/select-role' })}
-            className="border-white/30 text-white hover:bg-white/10 hover:border-white/50 px-8 py-4 h-auto text-base transition-all duration-300"
-          >
-            Access Patient Portal
-          </Button>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
+          {services.map((s) => (
+            <div
+              key={s.name}
+              className={`rounded-2xl border-2 ${s.border} bg-white p-6 card-hover shadow-card group`}
+            >
+              <div className={`w-14 h-14 rounded-2xl ${s.gradient} flex items-center justify-center mb-4 shadow-card group-hover:scale-110 transition-transform duration-300`}>
+                <s.icon className="w-7 h-7 text-white" />
+              </div>
+              <h3 className={`text-lg font-bold ${s.text} mb-2`}>{s.name}</h3>
+              <p className="text-slate-500 text-sm leading-relaxed font-medium">{s.desc}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-// ─── Section: How It Works ───────────────────────────────────────────────────
+// ─── Doctors Section ───────────────────────────────────────────────────────────
+function DoctorsSection() {
+  const { data: doctors, isLoading } = useGetAllDoctorsPublic();
 
+  const deptColors: Record<string, { gradient: string; bg: string; text: string; border: string }> = {
+    [Department.cardiology]:      { gradient: 'gradient-coral-rose',    bg: 'bg-coral-50',   text: 'text-coral-700',   border: 'border-coral-200' },
+    [Department.neurology]:       { gradient: 'gradient-violet-purple',  bg: 'bg-violet-50',  text: 'text-violet-700',  border: 'border-violet-200' },
+    [Department.emergency]:       { gradient: 'gradient-coral-rose',     bg: 'bg-red-50',     text: 'text-red-700',     border: 'border-red-200' },
+    [Department.pediatrics]:      { gradient: 'gradient-emerald-teal',   bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
+    [Department.orthopedics]:     { gradient: 'gradient-amber-orange',   bg: 'bg-amber-50',   text: 'text-amber-700',   border: 'border-amber-200' },
+    [Department.generalMedicine]: { gradient: 'gradient-teal-cyan',      bg: 'bg-teal-50',    text: 'text-teal-700',    border: 'border-teal-200' },
+  };
+
+  const deptLabel: Record<string, string> = {
+    [Department.cardiology]:      'Cardiology',
+    [Department.neurology]:       'Neurology',
+    [Department.emergency]:       'Emergency',
+    [Department.pediatrics]:      'Pediatrics',
+    [Department.orthopedics]:     'Orthopedics',
+    [Department.generalMedicine]: 'General Medicine',
+  };
+
+  return (
+    <section id="doctors" className="py-24 px-4 bg-white relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-teal-100/40 blur-3xl" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-violet-100/30 blur-3xl" />
+      <div className="relative z-10 max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 bg-teal-50 border border-teal-200 rounded-full px-4 py-2 mb-5 text-teal-700 text-sm font-bold">
+            <Users className="w-4 h-4" />
+            Our Doctors
+          </div>
+          <h2 className="text-4xl md:text-5xl font-display font-black text-slate-800 mb-4">
+            Meet our{' '}
+            <span className="text-gradient">growing team</span>
+          </h2>
+          <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
+            Our dedicated specialists are joining the platform every day — committed to delivering the best possible care.
+          </p>
+        </div>
+
+        {isLoading ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="rounded-2xl border border-slate-200 bg-white p-6 shimmer h-40" />
+            ))}
+          </div>
+        ) : doctors && doctors.length > 0 ? (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
+            {doctors.map((doc) => {
+              const colors = deptColors[doc.department] ?? { gradient: 'gradient-teal-cyan', bg: 'bg-teal-50', text: 'text-teal-700', border: 'border-teal-200' };
+              return (
+                <div key={doc.id.toString()} className={`rounded-2xl border-2 ${colors.border} bg-white p-6 card-hover shadow-card`}>
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className={`w-14 h-14 rounded-2xl ${colors.gradient} flex items-center justify-center shadow-card flex-shrink-0`}>
+                      <Stethoscope className="w-7 h-7 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-slate-800 text-base">Dr. {doc.name}</h3>
+                      <span className={`text-xs font-bold ${colors.text} ${colors.bg} px-2.5 py-1 rounded-full border ${colors.border}`}>
+                        {deptLabel[doc.department] ?? doc.department}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-2.5 h-2.5 rounded-full ${doc.available ? 'bg-emerald-500' : 'bg-slate-300'} animate-pulse`} />
+                    <span className={`text-sm font-semibold ${doc.available ? 'text-emerald-600' : 'text-slate-400'}`}>
+                      {doc.available ? 'Available Now' : 'Currently Busy'}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-16">
+            <div className="w-20 h-20 rounded-3xl gradient-teal-cyan flex items-center justify-center mx-auto mb-5 shadow-teal">
+              <Stethoscope className="w-10 h-10 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-slate-700 mb-2">Be among the first to join</h3>
+            <p className="text-slate-400 font-medium">Doctors will appear here once they register — be a pioneer on our platform.</p>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+// ─── Why Us Section ────────────────────────────────────────────────────────────
+function WhyUsSection() {
+  const reasons = [
+    { icon: Zap, title: 'Instant Emergency Response', desc: 'Our AI-powered triage system is designed to ensure critical cases are handled within minutes.', gradient: 'gradient-coral-rose', text: 'text-coral-700' },
+    { icon: Brain, title: 'AI-Powered Diagnostics', desc: 'Advanced symptom analysis and health insights powered by cutting-edge AI technology.', gradient: 'gradient-violet-purple', text: 'text-violet-700' },
+    { icon: Shield, title: 'Secure & Private', desc: 'Your health data is protected with enterprise-grade security and privacy controls.', gradient: 'gradient-teal-cyan', text: 'text-teal-700' },
+    { icon: Clock, title: '24/7 Availability', desc: 'Round-the-clock access to emergency care and medical consultations — always on, always ready.', gradient: 'gradient-emerald-teal', text: 'text-emerald-700' },
+    { icon: Rocket, title: 'Built to Scale', desc: 'Designed from day one to grow with our community — from first patients to millions worldwide.', gradient: 'gradient-amber-orange', text: 'text-amber-700' },
+    { icon: TrendingUp, title: 'Real-Time Monitoring', desc: 'Live vitals tracking and health trend analysis for proactive, preventive care.', gradient: 'gradient-teal-cyan', text: 'text-cyan-700' },
+  ];
+
+  return (
+    <section className="py-24 px-4 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-teal-50/60 via-white to-violet-50/40" />
+      <div className="absolute inset-0 dot-pattern opacity-30" />
+      <div className="relative z-10 max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 bg-white border border-violet-200 rounded-full px-4 py-2 mb-5 text-violet-700 text-sm font-bold shadow-violet">
+            <Award className="w-4 h-4" />
+            Why Choose Us
+          </div>
+          <h2 className="text-4xl md:text-5xl font-display font-black text-slate-800 mb-4">
+            The smarter way to{' '}
+            <span className="text-gradient-violet">manage health</span>
+          </h2>
+          <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
+            We combine technology and compassion to build healthcare that truly makes a difference.
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
+          {reasons.map((r) => (
+            <div key={r.title} className="bg-white rounded-2xl border border-slate-200 p-6 card-hover shadow-card group">
+              <div className={`w-12 h-12 rounded-xl ${r.gradient} flex items-center justify-center mb-4 shadow-card group-hover:scale-110 transition-transform duration-300`}>
+                <r.icon className="w-6 h-6 text-white" />
+              </div>
+              <h3 className={`font-bold ${r.text} mb-2 text-base`}>{r.title}</h3>
+              <p className="text-slate-500 text-sm leading-relaxed font-medium">{r.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── How It Works Section ──────────────────────────────────────────────────────
 function HowItWorksSection() {
-  const navigate = useNavigate();
-
   const steps = [
     {
       step: '01',
-      icon: Users,
-      title: 'Register & Access',
-      desc: 'Create your patient profile and gain secure access to your personal health portal in minutes.',
-      color: 'from-teal-500 to-teal-600',
+      title: 'Create Your Profile',
+      desc: 'Sign up in seconds and set up your health profile. Your data stays private and secure.',
+      gradient: 'gradient-teal-cyan',
+      border: 'border-teal-200',
+      bg: 'bg-teal-50',
+      text: 'text-teal-700',
     },
     {
       step: '02',
-      icon: Stethoscope,
-      title: 'Consult & Diagnose',
-      desc: 'Use our AI symptom checker or connect with our qualified doctors for professional medical guidance.',
-      color: 'from-emerald-500 to-emerald-600',
+      title: 'Connect with Doctors',
+      desc: 'Browse our growing network of verified specialists and connect with the right expert for your needs.',
+      gradient: 'gradient-coral-rose',
+      border: 'border-coral-200',
+      bg: 'bg-coral-50',
+      text: 'text-coral-700',
     },
     {
       step: '03',
-      icon: Heart,
-      title: 'Heal & Recover',
-      desc: 'Follow your personalized care plan with ongoing support from our dedicated medical team.',
-      color: 'from-cyan-500 to-cyan-600',
+      title: 'Get AI-Powered Insights',
+      desc: 'Our AI analyzes your symptoms and vitals to provide actionable health insights and recommendations.',
+      gradient: 'gradient-violet-purple',
+      border: 'border-violet-200',
+      bg: 'bg-violet-50',
+      text: 'text-violet-700',
+    },
+    {
+      step: '04',
+      title: 'Emergency SOS Anytime',
+      desc: 'Trigger an emergency alert instantly and get connected to the nearest available care team.',
+      gradient: 'gradient-amber-orange',
+      border: 'border-amber-200',
+      bg: 'bg-amber-50',
+      text: 'text-amber-700',
     },
   ];
 
   return (
-    <section className="py-20 lg:py-28 bg-teal-50/50 dark:bg-teal-950/20">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 bg-teal-100 dark:bg-teal-900/40 border border-teal-200 dark:border-teal-700/50 rounded-full px-4 py-2 text-sm font-medium text-teal-700 dark:text-teal-300 mb-5">
-            <CheckCircle className="w-4 h-4" />
-            Simple Process
+    <section id="how-it-works" className="py-24 px-4 bg-white relative overflow-hidden">
+      <div className="absolute inset-0 grid-pattern opacity-30" />
+      <div className="relative z-10 max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-2 mb-5 text-emerald-700 text-sm font-bold">
+            <Activity className="w-4 h-4" />
+            How It Works
           </div>
-          <h2 className="font-display text-4xl lg:text-5xl font-black text-foreground mb-4">
+          <h2 className="text-4xl md:text-5xl font-display font-black text-slate-800 mb-4">
             Your health journey,{' '}
             <span className="text-gradient">simplified</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Getting the care you need should be straightforward. Here's how VitalsAI makes
-            quality healthcare accessible and easy to navigate.
+          <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
+            From sign-up to specialist care — we've designed every step to be effortless.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative stagger-children">
-          {/* Connector line */}
-          <div className="hidden md:block absolute top-16 left-1/3 right-1/3 h-px bg-gradient-to-r from-teal-300 via-emerald-300 to-cyan-300 dark:from-teal-700 dark:via-emerald-700 dark:to-cyan-700" />
-
-          {steps.map(({ step, icon: Icon, title, desc, color }) => (
-            <div key={step} className="animate-fade-in text-center group">
-              <div className="relative inline-flex mb-6">
-                <div
-                  className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center shadow-teal-lg group-hover:shadow-glow transition-shadow duration-300`}
-                >
-                  <Icon className="w-8 h-8 text-white" />
-                </div>
-                <div className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-teal-950 dark:bg-teal-900 border-2 border-teal-400 flex items-center justify-center">
-                  <span className="text-teal-300 text-xs font-bold">{step}</span>
-                </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 stagger-children">
+          {steps.map((s, i) => (
+            <div key={s.step} className={`rounded-2xl border-2 ${s.border} ${s.bg} p-6 card-hover-lift relative`}>
+              <div className={`text-4xl font-black ${s.text} opacity-20 absolute top-4 right-5 font-display`}>{s.step}</div>
+              <div className={`w-12 h-12 rounded-xl ${s.gradient} flex items-center justify-center mb-4 shadow-card`}>
+                <span className="text-white font-black text-lg">{i + 1}</span>
               </div>
-              <h3 className="font-display font-bold text-foreground text-xl mb-3">{title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed max-w-xs mx-auto">{desc}</p>
+              <h3 className={`font-bold ${s.text} mb-2 text-base`}>{s.title}</h3>
+              <p className="text-slate-500 text-sm leading-relaxed font-medium">{s.desc}</p>
             </div>
           ))}
-        </div>
-
-        <div className="text-center mt-12">
-          <Button
-            size="lg"
-            onClick={() => navigate({ to: '/select-role' })}
-            className="bg-teal-600 hover:bg-teal-700 text-white font-semibold px-8 py-4 h-auto text-base shadow-teal hover:shadow-teal-lg transition-all duration-300 gap-2 group"
-          >
-            Begin Your Journey
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
         </div>
       </div>
     </section>
   );
 }
 
-// ─── Section: Contact ────────────────────────────────────────────────────────
+// ─── Vision / Aspirations Section ─────────────────────────────────────────────
+function VisionSection() {
+  const aspirations = [
+    {
+      icon: Target,
+      title: 'Our Goal',
+      value: 'Thousands of Lives',
+      desc: 'We are building toward a future where thousands of patients receive timely, quality care through our platform.',
+      gradient: 'gradient-teal-cyan',
+      bg: 'bg-teal-50',
+      border: 'border-teal-200',
+      text: 'text-teal-700',
+    },
+    {
+      icon: Users,
+      title: 'Our Community',
+      value: 'Growing Every Day',
+      desc: 'Doctors, patients, and caregivers are joining our mission — together we are stronger.',
+      gradient: 'gradient-coral-rose',
+      bg: 'bg-coral-50',
+      border: 'border-coral-200',
+      text: 'text-coral-700',
+    },
+    {
+      icon: Globe,
+      title: 'Our Reach',
+      value: 'Global Vision',
+      desc: 'We dream of a world where geography is never a barrier to receiving excellent healthcare.',
+      gradient: 'gradient-violet-purple',
+      bg: 'bg-violet-50',
+      border: 'border-violet-200',
+      text: 'text-violet-700',
+    },
+    {
+      icon: Rocket,
+      title: 'Our Momentum',
+      value: 'Just Getting Started',
+      desc: 'This is only the beginning. Every feature we ship, every doctor we onboard, brings us closer to our vision.',
+      gradient: 'gradient-emerald-teal',
+      bg: 'bg-emerald-50',
+      border: 'border-emerald-200',
+      text: 'text-emerald-700',
+    },
+  ];
 
-function ContactSection() {
   return (
-    <section id="contact" className="py-20 lg:py-28 bg-background">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="text-center mb-14">
-          <div className="inline-flex items-center gap-2 bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-700/50 rounded-full px-4 py-2 text-sm font-medium text-teal-700 dark:text-teal-300 mb-5">
-            <MapPin className="w-4 h-4" />
-            Find Us
+    <section className="py-24 px-4 bg-gradient-to-br from-slate-50 to-violet-50/30 relative overflow-hidden">
+      <div className="absolute inset-0 dot-pattern opacity-30" />
+      <div className="relative z-10 max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 bg-white border border-teal-200 rounded-full px-4 py-2 mb-5 text-teal-700 text-sm font-bold shadow-teal-sm">
+            <Sparkles className="w-4 h-4 text-coral-500" />
+            Our Aspirations
           </div>
-          <h2 className="font-display text-4xl lg:text-5xl font-black text-foreground mb-4">
-            We're here{' '}
-            <span className="text-gradient">when you need us</span>
+          <h2 className="text-4xl md:text-5xl font-display font-black text-slate-800 mb-4">
+            Where we're{' '}
+            <span className="text-gradient">headed</span>
           </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Whether it's an emergency or a routine consultation, our team is ready to help.
-            Reach out through any of the channels below.
+          <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
+            We don't just dream big — we build with purpose. Here's what we're working toward.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
-          {[
-            {
-              icon: Phone,
-              title: 'Emergency Hotline',
-              value: '1800-000-0000',
-              sub: 'Toll-free, available 24/7',
-              href: 'tel:+911800000000',
-              color: 'bg-red-50 dark:bg-red-950/20 border-red-100 dark:border-red-900/30',
-              iconBg: 'bg-red-100 dark:bg-red-900/30',
-              iconColor: 'text-red-600 dark:text-red-400',
-            },
-            {
-              icon: Mail,
-              title: 'Email Us',
-              value: 'care@vitalsai.health',
-              sub: 'We respond within 24 hours',
-              href: 'mailto:care@vitalsai.health',
-              color: 'bg-teal-50 dark:bg-teal-950/20 border-teal-100 dark:border-teal-900/30',
-              iconBg: 'bg-teal-100 dark:bg-teal-900/30',
-              iconColor: 'text-teal-600 dark:text-teal-400',
-            },
-            {
-              icon: MapPin,
-              title: 'Our Location',
-              value: 'Medical District',
-              sub: 'Healthcare Avenue, City Center',
-              href: '#',
-              color: 'bg-emerald-50 dark:bg-emerald-950/20 border-emerald-100 dark:border-emerald-900/30',
-              iconBg: 'bg-emerald-100 dark:bg-emerald-900/30',
-              iconColor: 'text-emerald-600 dark:text-emerald-400',
-            },
-          ].map(({ icon: Icon, title, value, sub, href, color, iconBg, iconColor }) => (
-            <a
-              key={title}
-              href={href}
-              className={`${color} border rounded-2xl p-7 card-hover flex items-start gap-5 group`}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 stagger-children">
+          {aspirations.map((a) => (
+            <div
+              key={a.title}
+              className={`rounded-2xl border-2 ${a.border} ${a.bg} p-6 card-hover-lift text-center`}
             >
-              <div className={`w-12 h-12 rounded-xl ${iconBg} flex items-center justify-center shrink-0`}>
-                <Icon className={`w-6 h-6 ${iconColor}`} />
+              <div className={`w-14 h-14 rounded-2xl ${a.gradient} flex items-center justify-center mx-auto mb-4 shadow-card`}>
+                <a.icon className="w-7 h-7 text-white" />
               </div>
-              <div>
-                <p className="text-muted-foreground text-sm mb-1">{title}</p>
-                <p className="font-display font-bold text-foreground text-lg leading-tight">{value}</p>
-                <p className="text-muted-foreground text-xs mt-1">{sub}</p>
-              </div>
-            </a>
-          ))}
-        </div>
-
-        {/* Decorative map placeholder */}
-        <div className="relative rounded-3xl overflow-hidden bg-teal-50 dark:bg-teal-950/30 border border-teal-100 dark:border-teal-800/50 h-64 lg:h-80 flex items-center justify-center">
-          <div className="absolute inset-0 grid-pattern opacity-40" />
-          <div className="relative text-center">
-            <div className="w-16 h-16 rounded-2xl bg-teal-600 flex items-center justify-center mx-auto mb-4 shadow-teal-lg animate-pulse-ring">
-              <MapPin className="w-8 h-8 text-white" />
+              <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">{a.title}</div>
+              <div className={`text-lg font-black ${a.text} mb-2`}>{a.value}</div>
+              <p className="text-slate-500 text-xs leading-relaxed font-medium">{a.desc}</p>
             </div>
-            <p className="font-display font-bold text-teal-800 dark:text-teal-200 text-xl mb-1">
-              Medical District
-            </p>
-            <p className="text-teal-600 dark:text-teal-400 text-sm">
-              Healthcare Avenue, City Center
-            </p>
-          </div>
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-// ─── Main Export ─────────────────────────────────────────────────────────────
+// ─── Contact Section ───────────────────────────────────────────────────────────
+function ContactSection() {
+  const navigate = useNavigate();
+  return (
+    <section id="contact" className="py-24 px-4 bg-white relative overflow-hidden">
+      <div className="absolute top-0 left-0 w-96 h-96 rounded-full bg-teal-100/30 blur-3xl" />
+      <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-coral-100/20 blur-3xl" />
+      <div className="relative z-10 max-w-6xl mx-auto">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 bg-coral-50 border border-coral-200 rounded-full px-4 py-2 mb-5 text-coral-700 text-sm font-bold">
+            <Phone className="w-4 h-4" />
+            Get In Touch
+          </div>
+          <h2 className="text-4xl md:text-5xl font-display font-black text-slate-800 mb-4">
+            Ready to{' '}
+            <span className="text-gradient">get started?</span>
+          </h2>
+          <p className="text-slate-500 text-lg max-w-2xl mx-auto font-medium">
+            Join us on this journey to transform healthcare. Whether you're a patient or a doctor, there's a place for you here.
+          </p>
+        </div>
 
+        <div className="grid md:grid-cols-3 gap-8 mb-12 stagger-children">
+          {[
+            { icon: Phone, title: 'Call Us', value: '+1 (800) VITALS-1', gradient: 'gradient-teal-cyan', bg: 'bg-teal-50', border: 'border-teal-200', text: 'text-teal-700' },
+            { icon: Mail, title: 'Email Us', value: 'hello@vitalsai.health', gradient: 'gradient-coral-rose', bg: 'bg-coral-50', border: 'border-coral-200', text: 'text-coral-700' },
+            { icon: MapPin, title: 'Our Reach', value: 'Serving patients globally', gradient: 'gradient-violet-purple', bg: 'bg-violet-50', border: 'border-violet-200', text: 'text-violet-700' },
+          ].map((c) => (
+            <div key={c.title} className={`rounded-2xl border-2 ${c.border} ${c.bg} p-6 text-center card-hover`}>
+              <div className={`w-14 h-14 rounded-2xl ${c.gradient} flex items-center justify-center mx-auto mb-4 shadow-card`}>
+                <c.icon className="w-7 h-7 text-white" />
+              </div>
+              <h3 className={`font-bold ${c.text} mb-1`}>{c.title}</h3>
+              <p className="text-slate-500 text-sm font-medium">{c.value}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center">
+          <button
+            onClick={() => navigate({ to: '/select-role' })}
+            className="gradient-coral-rose text-white font-bold px-12 py-4 rounded-full text-lg transition-all duration-300 shadow-coral hover:shadow-coral-lg hover:-translate-y-1 hover:scale-105 inline-flex items-center gap-2"
+          >
+            Join VitalsAI Today <ArrowRight className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── Main HomePage ─────────────────────────────────────────────────────────────
 export default function HomePage() {
   return (
     <main>
@@ -837,8 +554,8 @@ export default function HomePage() {
       <ServicesSection />
       <DoctorsSection />
       <WhyUsSection />
-      <SymptomCheckerCTA />
       <HowItWorksSection />
+      <VisionSection />
       <ContactSection />
     </main>
   );
