@@ -2,10 +2,31 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-rewrite-the-admindashboard-component-to-prominently-display-three-stat-cards-total-doctors-total-cases-and-total-emergencies-each-card-must-show-the-live-count-fetched-from-the-backend-the-dashboard-must-auto-refresh-all-three-stats-every-5-seconds-using-react-query-s-refetchinterval-so-the-numbers-stay-current-without-manual-page-reload",
-      "featureTitle": "Rewrite the AdminDashboard component to prominently display three stat cards: Total Doctors, Total Cases, and Total Emergencies. Each card must show the live count fetched from the backend. The dashboard must auto-refresh all three stats every 5 seconds using React Query's refetchInterval so the numbers stay current without manual page reload.",
+      "featureId": "feature-after-a-doctor-successfully-completes-registration-display-their-generated-registration-id-and-code-in-a-confirmation-screen-or-modal-so-they-can-save-them-before-proceeding",
+      "featureTitle": "After a doctor successfully completes registration, display their generated Registration ID and Code in a confirmation screen or modal so they can save them before proceeding.",
       "files": [
-        "frontend/src/components/AdminDashboard.tsx"
+        "frontend/src/components/DoctorPortal.tsx"
+      ],
+      "components": [
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0",
+        "qr-code@1.0.0",
+        "camera@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-after-the-doctor-acknowledges-their-credentials-on-the-confirmation-screen-redirect-them-to-the-login-page-not-the-dashboard-remove-any-automatic-post-registration-redirect-to-the-doctor-dashboard",
+      "featureTitle": "After the doctor acknowledges their credentials on the confirmation screen, redirect them to the login page (not the dashboard). Remove any automatic post-registration redirect to the doctor dashboard.",
+      "files": [
+        "frontend/src/components/DoctorPortal.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -23,10 +44,10 @@
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-or-update-react-query-hooks-in-usequeries-ts-to-support-fetching-the-three-admin-stat-counts-total-doctors-total-cases-total-emergencies-with-a-5-second-refetchinterval-these-hooks-must-handle-errors-gracefully-and-return-sensible-defaults-e-g-0-when-data-is-unavailable",
-      "featureTitle": "Add or update React Query hooks in useQueries.ts to support fetching the three admin stat counts (total doctors, total cases, total emergencies) with a 5-second refetchInterval. These hooks must handle errors gracefully and return sensible defaults (e.g., 0) when data is unavailable.",
+      "featureId": "feature-ensure-the-doctorportal-login-form-is-the-only-entry-point-to-the-doctor-dashboard-if-a-doctor-navigates-to-the-doctor-route-without-an-active-login-session-they-must-see-the-login-form-not-the-dashboard",
+      "featureTitle": "Ensure the DoctorPortal login form is the only entry point to the doctor dashboard. If a doctor navigates to the doctor route without an active login session, they must see the login form, not the dashboard.",
       "files": [
-        "frontend/src/hooks/useQueries.ts"
+        "frontend/src/components/DoctorPortal.tsx"
       ],
       "components": [
         "core-infrastructure@1.0.2",
@@ -39,7 +60,7 @@
         "camera@1.0.0"
       ],
       "testIds": [
-        "REQ-4"
+        "REQ-3"
       ],
       "confidence": "high"
     }

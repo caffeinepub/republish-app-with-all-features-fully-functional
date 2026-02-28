@@ -1,59 +1,41 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Healthcare app with an admin portal showing real-time (auto-refreshing) stats: Total Doctors, Total Cases, and Total Emergencies. Existing UI must remain unchanged.",
+  "summary": "Medical app with doctor registration flow. After registration, doctors should see their Registration ID and Code, then be redirected to login page instead of dashboard.",
   "architectural_notes": [
-    "Admin portal stats must auto-refresh every few seconds (no WebSocket support)",
-    "Existing UI must remain unchanged — only the admin portal section is being rebuilt"
+    "Doctor registration flow: after registration, show Registration ID and Code, then redirect to login page (not dashboard)"
   ],
-  "known_issues": [
-    "Admin dashboard (version 37) was completely non-functional — all features broken"
-  ],
+  "known_issues": [],
   "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-rewrite-the-admindashboard-component-to-prominently-display-three-stat-cards-total-doctors-total-cases-and-total-emergencies-each-card-must-show-the-live-count-fetched-from-the-backend-the-dashboard-must-auto-refresh-all-three-stats-every-5-seconds-using-react-query-s-refetchinterval-so-the-numbers-stay-current-without-manual-page-reload",
-      "title": "Rewrite the AdminDashboard component to prominently display three stat cards: Total Doctors, Total Cases, and Total Emergencies. Each card must show the live count fetched from the backend. The dashboard must auto-refresh all three stats every 5 seconds using React Query's refetchInterval so the numbers stay current without manual page reload.",
+      "id": "feature-after-a-doctor-successfully-completes-registration-display-their-generated-registration-id-and-code-in-a-confirmation-screen-or-modal-so-they-can-save-them-before-proceeding",
+      "title": "After a doctor successfully completes registration, display their generated Registration ID and Code in a confirmation screen or modal so they can save them before proceeding.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-after-the-doctor-acknowledges-their-credentials-on-the-confirmation-screen-redirect-them-to-the-login-page-not-the-dashboard-remove-any-automatic-post-registration-redirect-to-the-doctor-dashboard",
+      "title": "After the doctor acknowledges their credentials on the confirmation screen, redirect them to the login page (not the dashboard). Remove any automatic post-registration redirect to the doctor dashboard.",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-or-update-react-query-hooks-in-usequeries-ts-to-support-fetching-the-three-admin-stat-counts-total-doctors-total-cases-total-emergencies-with-a-5-second-refetchinterval-these-hooks-must-handle-errors-gracefully-and-return-sensible-defaults-e-g-0-when-data-is-unavailable",
-      "title": "Add or update React Query hooks in useQueries.ts to support fetching the three admin stat counts (total doctors, total cases, total emergencies) with a 5-second refetchInterval. These hooks must handle errors gracefully and return sensible defaults (e.g., 0) when data is unavailable.",
+      "id": "feature-ensure-the-doctorportal-login-form-is-the-only-entry-point-to-the-doctor-dashboard-if-a-doctor-navigates-to-the-doctor-route-without-an-active-login-session-they-must-see-the-login-form-not-the-dashboard",
+      "title": "Ensure the DoctorPortal login form is the only entry point to the doctor dashboard. If a doctor navigates to the doctor route without an active login session, they must see the login form, not the dashboard.",
       "reqIds": [
-        "REQ-4"
+        "REQ-3"
       ],
       "version": 1
     }
   ],
-  "new_feature_requests": [
-    {
-      "id": "AR-1",
-      "summary": "Working admin portal with auto-refreshing stats: Total Doctors, Total Cases, Total Emergencies",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Expose backend query functions that return accurate counts for: total number of registered doctors, total number of emergency cases, and total number of active/critical emergencies. These must be callable without authentication so the admin dashboard can poll them reliably.",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Ensure the AdminPortal passcode gate (in AdminPortal.tsx) correctly renders AdminDashboard after successful authentication. The passcode login form must function end-to-end: entering the correct passcode grants access and displays the working stats dashboard; the logout button clears the session and returns to the login screen.",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "status": "pending"
-    }
-  ],
+  "new_feature_requests": [],
   "gameProjectType": "none",
-  "projectName": "Vitals AI",
+  "projectName": "Fix doctor registration flow to show credentials before redirecting to login",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

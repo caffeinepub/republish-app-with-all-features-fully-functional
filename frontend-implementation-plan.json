@@ -1,58 +1,57 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix Admin Portal with Working Auto-Refreshing Stats Dashboard",
+  "title": "Fix doctor registration flow to show credentials before redirecting to login",
   "requirements": [
     {
-      "id": "REQ-2",
-      "summary": "Rewrite AdminDashboard to display three auto-refreshing stat cards (Total Doctors, Total Cases, Total Emergencies) that poll backend every 5 seconds using React Query",
+      "id": "REQ-1",
+      "summary": "Display doctor credentials (Registration ID and Code) on a confirmation screen after successful registration before allowing user to proceed",
       "acceptanceCriteria": [
-        "Three stat cards are visible on the admin dashboard: Total Doctors, Total Cases, Total Emergencies",
-        "Each card displays the correct count fetched from the backend",
-        "Stats automatically refresh every 5 seconds without user interaction",
-        "A loading state is shown while data is being fetched on first load",
-        "An error state is shown gracefully if the backend call fails",
-        "The overall page layout, color scheme, typography, and existing UI elements outside the stats section remain visually unchanged"
+        "After submitting the registration form, the doctor sees a confirmation screen showing their Registration ID and Code clearly.",
+        "The confirmation screen includes a copy or 'I have saved these credentials' acknowledgement button.",
+        "The Registration ID and Code are visually prominent and easy to read/copy."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/AdminDashboard.tsx",
+          "path": "frontend/src/components/DoctorCredentialsModal.tsx",
+          "operation": "create",
+          "description": "Create a modal component that displays the doctor's Registration ID and Code in a visually prominent confirmation screen. Include copy-to-clipboard functionality for both credentials, a visual acknowledgement checkbox/button ('I have saved these credentials'), and a primary action button to proceed to login. Use shadcn/ui Dialog component for consistent styling. The modal should not be dismissible until the user explicitly acknowledges."
+        },
+        {
+          "path": "frontend/src/components/DoctorPortal.tsx",
           "operation": "modify",
-          "description": "Replace the existing dashboard implementation with a simplified version that prominently displays three stat cards at the top: Total Doctors (using useTotalDoctorCount), Total Cases (using useTotalCaseCount), and Total Emergencies (using useTotalEmergencyCount). Each stat card must show the live count with appropriate loading and error states. Retain the existing tabs for doctor and case management below the stats section. Keep all existing styling, colors, typography, and layout unchanged outside the stats area. Use the Card component from shadcn-ui for consistency."
+          "description": "Modify the doctor registration flow to show the DoctorCredentialsModal immediately after successful registration instead of auto-redirecting to the dashboard. Store the newly registered doctor's ID and code in component state after registration mutation succeeds, trigger the credentials modal, and only navigate to login after the user acknowledges in the modal. Remove any automatic dashboard navigation after registration. Ensure the registration form is hidden while the credentials modal is displayed."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Redirect doctor to login page after credentials acknowledgement, removing automatic post-registration dashboard access",
+      "acceptanceCriteria": [
+        "After acknowledging credentials, the doctor is redirected to the DoctorPortal login form.",
+        "The doctor dashboard is NOT shown immediately after registration.",
+        "The doctor can only access the dashboard after successfully logging in with their Registration ID and Code."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/DoctorPortal.tsx",
+          "operation": "modify",
+          "description": "Update the credentials modal acknowledgement handler to navigate to the login view (set activeView to 'login') instead of the dashboard. Clear any temporary registration state and ensure loggedInDoctor remains null until explicit login via doctorLogin mutation succeeds. Remove any code that sets loggedInDoctor immediately after registration."
         }
       ]
     },
     {
       "id": "REQ-3",
-      "summary": "Ensure AdminPortal passcode gate correctly renders AdminDashboard after authentication with working login and logout flows",
+      "summary": "Ensure DoctorPortal login form is the only entry point to dashboard; prevent dashboard access without active login session",
       "acceptanceCriteria": [
-        "Entering the correct admin passcode displays the AdminDashboard with stats",
-        "Entering an incorrect passcode shows an error and blocks access",
-        "The Logout button clears sessionStorage and returns to the passcode screen",
-        "No blank screen or silent failure occurs at any step of the admin portal flow"
+        "Accessing the /doctor route without a logged-in doctor session displays the login form.",
+        "The doctor dashboard is only rendered when a valid doctor session (registration ID + code authenticated) is present."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/components/AdminPortal.tsx",
+          "path": "frontend/src/components/DoctorPortal.tsx",
           "operation": "modify",
-          "description": "Review and fix the passcode authentication flow to ensure: (1) the login form correctly validates the passcode and sets sessionStorage on success, (2) failed login attempts show a visible error message, (3) successful authentication immediately renders the AdminDashboard component with no blank screen, (4) the Logout button clears sessionStorage and returns to the login form, (5) the component checks sessionStorage on mount to skip login if already authenticated. Verify the passcode is hardcoded or retrieved correctly. Ensure all state transitions are smooth with no race conditions."
-        }
-      ]
-    },
-    {
-      "id": "REQ-4",
-      "summary": "Add React Query hooks to fetch total doctors, total cases, and total emergencies with 5-second auto-refresh intervals",
-      "acceptanceCriteria": [
-        "Three React Query hooks exist for fetching doctor count, case count, and emergency count",
-        "Each hook uses refetchInterval of 5000ms",
-        "Hooks return 0 as default when data is not yet loaded or an error occurs",
-        "Hooks are consumed correctly by AdminDashboard"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add three new React Query hooks: useTotalDoctorCount (calls getTotalRegisteredDoctorCount), useTotalCaseCount (calls getTotalEmergencyCaseCount), and useTotalEmergencyCount (calls getActiveCriticalEmergencyCounts and returns totalActive + totalCritical + totalOpen). Each hook must use refetchInterval: 5000 to auto-refresh every 5 seconds. Return a default value of 0 (or { totalActive: 0, totalCritical: 0, totalOpen: 0 } for emergencies) when data is undefined or an error occurs. Use the existing useActor hook to get the backend actor. Follow the existing pattern in useQueries.ts for consistency."
+          "description": "Add session validation logic when the component mounts or when navigating to /doctor route. Check if loggedInDoctor state exists; if not, force activeView to 'login'. Ensure the dashboard view is only rendered when loggedInDoctor is not null. Clear loggedInDoctor state on any logout or when leaving the portal. Add defensive checks so that any attempt to render the dashboard without loggedInDoctor falls back to the login view."
         }
       ]
     }

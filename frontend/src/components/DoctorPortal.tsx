@@ -10,9 +10,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import {
   Stethoscope, AlertTriangle, CheckCircle, Clock, User, Building2,
-  LogOut, Bell, Activity, RefreshCw, Shield, Loader2
+  LogOut, Bell, Activity, RefreshCw, Shield, Loader2, Copy, Check,
+  KeyRound, IdCard, ShieldCheck
 } from 'lucide-react';
 
 const DEPARTMENTS: { value: Department; label: string }[] = [
@@ -51,6 +60,159 @@ function getStatusColor(status: string): string {
 
 function isEmergency(c: EmergencyCase): boolean {
   return c.severity === Severity.critical || c.severity === Severity.high;
+}
+
+// ── Credentials Modal ─────────────────────────────────────────────────────────
+
+interface DoctorCredentialsModalProps {
+  open: boolean;
+  doctorId: bigint;
+  registrationCode: string;
+  doctorName: string;
+  onAcknowledge: () => void;
+}
+
+function DoctorCredentialsModal({
+  open,
+  doctorId,
+  registrationCode,
+  doctorName,
+  onAcknowledge,
+}: DoctorCredentialsModalProps) {
+  const [acknowledged, setAcknowledged] = useState(false);
+  const [copiedId, setCopiedId] = useState(false);
+  const [copiedCode, setCopiedCode] = useState(false);
+
+  const handleCopyId = async () => {
+    try {
+      await navigator.clipboard.writeText(String(doctorId));
+      setCopiedId(true);
+      setTimeout(() => setCopiedId(false), 2000);
+    } catch {
+      // fallback: select text
+    }
+  };
+
+  const handleCopyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(registrationCode);
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 2000);
+    } catch {
+      // fallback
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={() => {/* non-dismissible */}}>
+      <DialogContent
+        className="sm:max-w-md"
+        onPointerDownOutside={e => e.preventDefault()}
+        onEscapeKeyDown={e => e.preventDefault()}
+      >
+        <DialogHeader>
+          <div className="flex items-center gap-3 mb-1">
+            <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+              <ShieldCheck className="w-5 h-5 text-green-400" />
+            </div>
+            <DialogTitle className="text-xl text-foreground">Registration Successful!</DialogTitle>
+          </div>
+          <DialogDescription className="text-muted-foreground">
+            Welcome, Dr. <span className="font-semibold text-foreground">{doctorName}</span>! Your account has been created.
+            <br />
+            <span className="text-yellow-500 font-medium">⚠️ Please save your credentials below — you will need them to log in.</span>
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 py-2">
+          {/* Doctor ID */}
+          <div className="rounded-xl border border-primary/30 bg-primary/5 p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <IdCard className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Doctor ID</span>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-3xl font-bold text-foreground font-mono tracking-widest">
+                {String(doctorId)}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopyId}
+                className="gap-2 shrink-0"
+              >
+                {copiedId ? (
+                  <><Check className="w-4 h-4 text-green-400" />Copied!</>
+                ) : (
+                  <><Copy className="w-4 h-4" />Copy</>
+                )}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Use this ID to log in to your account</p>
+          </div>
+
+          {/* Registration Code */}
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <KeyRound className="w-4 h-4 text-amber-500" />
+              <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Registration Code</span>
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-2xl font-bold text-foreground font-mono tracking-widest">
+                {registrationCode}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopyCode}
+                className="gap-2 shrink-0"
+              >
+                {copiedCode ? (
+                  <><Check className="w-4 h-4 text-green-400" />Copied!</>
+                ) : (
+                  <><Copy className="w-4 h-4" />Copy</>
+                )}
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">Keep this code secret — it's your password</p>
+          </div>
+
+          {/* Warning */}
+          <Alert className="border-yellow-500/30 bg-yellow-500/10">
+            <AlertDescription className="text-yellow-600 dark:text-yellow-400 text-sm">
+              🔒 These credentials will not be shown again. Please write them down or save them securely before proceeding.
+            </AlertDescription>
+          </Alert>
+
+          {/* Acknowledgement checkbox */}
+          <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/40 border border-border">
+            <Checkbox
+              id="ack-checkbox"
+              checked={acknowledged}
+              onCheckedChange={val => setAcknowledged(!!val)}
+              className="mt-0.5"
+            />
+            <label
+              htmlFor="ack-checkbox"
+              className="text-sm text-foreground cursor-pointer leading-relaxed"
+            >
+              I have saved my <strong>Doctor ID ({String(doctorId)})</strong> and <strong>Registration Code</strong> in a safe place and understand I will need them to log in.
+            </label>
+          </div>
+
+          {/* Proceed button */}
+          <Button
+            className="w-full"
+            disabled={!acknowledged}
+            onClick={onAcknowledge}
+          >
+            <CheckCircle className="w-4 h-4 mr-2" />
+            Proceed to Login
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
 }
 
 // ── Doctor Dashboard ──────────────────────────────────────────────────────────
@@ -340,11 +502,12 @@ function CaseCard({ emergencyCase: c }: { emergencyCase: EmergencyCase }) {
 
 interface LoginFormProps {
   onSuccess: (doctor: Doctor) => void;
+  prefillDoctorId?: string;
 }
 
-function LoginForm({ onSuccess }: LoginFormProps) {
+function LoginForm({ onSuccess, prefillDoctorId }: LoginFormProps) {
   const doctorLogin = useDoctorLogin();
-  const [doctorIdStr, setDoctorIdStr] = useState('');
+  const [doctorIdStr, setDoctorIdStr] = useState(prefillDoctorId ?? '');
   const [loginCode, setLoginCode] = useState('');
   const [error, setError] = useState('');
 
@@ -364,7 +527,6 @@ function LoginForm({ onSuccess }: LoginFormProps) {
 
     try {
       const result = await doctorLogin.mutateAsync({ doctorId: BigInt(id), registrationCode: loginCode });
-      // Use __kind__ (double underscores) as defined in the backend interface
       if (result.__kind__ === 'success') {
         onSuccess(result.success);
       } else if (result.__kind__ === 'doctorNotFound') {
@@ -421,23 +583,30 @@ function LoginForm({ onSuccess }: LoginFormProps) {
 // ── Register Form ─────────────────────────────────────────────────────────────
 
 interface RegisterFormProps {
-  onSuccess: (doctor: Doctor) => void;
+  onRegistrationComplete: (doctor: Doctor) => void;
 }
 
-function RegisterForm({ onSuccess }: RegisterFormProps) {
+function RegisterForm({ onRegistrationComplete }: RegisterFormProps) {
   const registerDoctor = useRegisterDoctor();
   const [name, setName] = useState('');
   const [department, setDepartment] = useState<Department | ''>('');
   const [contactInfo, setContactInfo] = useState('');
   const [regCode, setRegCode] = useState('');
+  const [yearsExp, setYearsExp] = useState('');
   const [error, setError] = useState('');
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!name.trim() || !department || !regCode.trim()) {
-      setError('Please fill in all required fields.');
+    if (!name.trim()) { setError('Please enter your full name.'); return; }
+    if (!department) { setError('Please select a department.'); return; }
+    if (!contactInfo.trim()) { setError('Please enter your contact information.'); return; }
+    if (!regCode.trim()) { setError('Please enter the registration code.'); return; }
+
+    const yearsExpNum = yearsExp ? parseInt(yearsExp, 10) : undefined;
+    if (yearsExp && (yearsExpNum === undefined || isNaN(yearsExpNum) || yearsExpNum < 0)) {
+      setError('Please enter a valid number of years of experience.');
       return;
     }
 
@@ -446,11 +615,19 @@ function RegisterForm({ onSuccess }: RegisterFormProps) {
         name: name.trim(),
         department: department as Department,
         contactInfo: contactInfo.trim(),
-        registrationCode: regCode,
+        registrationCode: regCode.trim(),
+        yearsOfExperience: yearsExpNum !== undefined ? BigInt(yearsExpNum) : undefined,
+        certifications: undefined,
       });
-      onSuccess(doctor);
+      // Pass the registered doctor up — do NOT navigate to dashboard
+      onRegistrationComplete(doctor);
     } catch (err: any) {
-      setError(err?.message || 'Registration failed. Please check your registration code.');
+      const msg = err?.message || '';
+      if (msg.includes('Invalid registration code')) {
+        setError('Invalid registration code. Please check and try again.');
+      } else {
+        setError(msg || 'Registration failed. Please try again.');
+      }
     }
   };
 
@@ -460,7 +637,7 @@ function RegisterForm({ onSuccess }: RegisterFormProps) {
         <Label htmlFor="regName" className="text-foreground">Full Name</Label>
         <Input
           id="regName"
-          placeholder="Dr. Jane Smith"
+          placeholder="Dr. John Smith"
           value={name}
           onChange={e => setName(e.target.value)}
           className="bg-muted/50 border-border"
@@ -468,7 +645,7 @@ function RegisterForm({ onSuccess }: RegisterFormProps) {
       </div>
       <div className="space-y-2">
         <Label htmlFor="regDept" className="text-foreground">Department</Label>
-        <Select value={department} onValueChange={v => setDepartment(v as Department)}>
+        <Select value={department} onValueChange={val => setDepartment(val as Department)}>
           <SelectTrigger id="regDept" className="bg-muted/50 border-border">
             <SelectValue placeholder="Select department" />
           </SelectTrigger>
@@ -480,12 +657,10 @@ function RegisterForm({ onSuccess }: RegisterFormProps) {
         </Select>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="regContact" className="text-foreground">
-          Contact Info <span className="text-muted-foreground text-xs">(optional)</span>
-        </Label>
+        <Label htmlFor="regContact" className="text-foreground">Contact Information</Label>
         <Input
           id="regContact"
-          placeholder="Phone or email"
+          placeholder="Email or phone number"
           value={contactInfo}
           onChange={e => setContactInfo(e.target.value)}
           className="bg-muted/50 border-border"
@@ -496,10 +671,25 @@ function RegisterForm({ onSuccess }: RegisterFormProps) {
         <Input
           id="regCode"
           type="password"
-          placeholder="Enter registration code"
+          placeholder="Enter the hospital registration code"
           value={regCode}
           onChange={e => setRegCode(e.target.value)}
           className="bg-muted/50 border-border"
+        />
+        <p className="text-xs text-muted-foreground">Contact your hospital administrator for the registration code.</p>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="regYears" className="text-foreground">
+          Years of Experience <span className="text-muted-foreground">(optional)</span>
+        </Label>
+        <Input
+          id="regYears"
+          type="number"
+          placeholder="e.g. 5"
+          value={yearsExp}
+          onChange={e => setYearsExp(e.target.value)}
+          className="bg-muted/50 border-border"
+          min="0"
         />
       </div>
       {error && (
@@ -510,64 +700,116 @@ function RegisterForm({ onSuccess }: RegisterFormProps) {
       <Button type="submit" className="w-full" disabled={registerDoctor.isPending}>
         {registerDoctor.isPending ? (
           <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Registering...</>
-        ) : 'Register'}
+        ) : 'Register as Doctor'}
       </Button>
     </form>
   );
 }
 
-// ── Main DoctorPortal Component ───────────────────────────────────────────────
+// ── Doctor Portal (main) ──────────────────────────────────────────────────────
+
+type ActiveView = 'login' | 'register';
 
 export default function DoctorPortal() {
   const [loggedInDoctor, setLoggedInDoctor] = useState<Doctor | null>(null);
+  const [activeView, setActiveView] = useState<ActiveView>('login');
 
-  if (loggedInDoctor) {
-    return (
-      <DoctorDashboard
-        doctor={loggedInDoctor}
-        onLogout={() => setLoggedInDoctor(null)}
-      />
-    );
+  // Credentials modal state — shown after successful registration
+  const [credentialsDoctor, setCredentialsDoctor] = useState<Doctor | null>(null);
+  const [showCredentials, setShowCredentials] = useState(false);
+
+  // Guard: if no logged-in doctor, always show login/register
+  const showDashboard = loggedInDoctor !== null;
+
+  const handleLoginSuccess = (doctor: Doctor) => {
+    setLoggedInDoctor(doctor);
+  };
+
+  const handleRegistrationComplete = (doctor: Doctor) => {
+    // Show credentials modal — do NOT log in automatically
+    setCredentialsDoctor(doctor);
+    setShowCredentials(true);
+  };
+
+  const handleCredentialsAcknowledged = () => {
+    // Close modal and redirect to login form
+    setShowCredentials(false);
+    setCredentialsDoctor(null);
+    setActiveView('login');
+  };
+
+  const handleLogout = () => {
+    setLoggedInDoctor(null);
+    setActiveView('login');
+  };
+
+  // Show dashboard only when explicitly logged in
+  if (showDashboard) {
+    return <DoctorDashboard doctor={loggedInDoctor!} onLogout={handleLogout} />;
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4">
-            <Stethoscope className="w-8 h-8 text-primary" />
+    <>
+      {/* Credentials modal — shown after registration */}
+      {credentialsDoctor && (
+        <DoctorCredentialsModal
+          open={showCredentials}
+          doctorId={credentialsDoctor.id}
+          registrationCode={credentialsDoctor.registrationCode}
+          doctorName={credentialsDoctor.name}
+          onAcknowledge={handleCredentialsAcknowledged}
+        />
+      )}
+
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center mx-auto mb-4">
+              <Stethoscope className="w-8 h-8 text-primary" />
+            </div>
+            <h1 className="text-2xl font-bold text-foreground">Doctor Portal</h1>
+            <p className="text-muted-foreground mt-1">Access your medical dashboard</p>
           </div>
-          <h1 className="text-3xl font-bold text-foreground">Doctor Portal</h1>
-          <p className="text-muted-foreground mt-2">Login or register to access your dashboard</p>
+
+          <Card className="glass-card border-border/50">
+            <CardHeader className="pb-2">
+              <Tabs value={activeView} onValueChange={val => setActiveView(val as ActiveView)}>
+                <TabsList className="w-full bg-muted/50">
+                  <TabsTrigger value="login" className="flex-1 gap-2">
+                    <User className="w-4 h-4" />
+                    Login
+                  </TabsTrigger>
+                  <TabsTrigger value="register" className="flex-1 gap-2">
+                    <Building2 className="w-4 h-4" />
+                    Register
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="login" className="mt-4">
+                  <CardTitle className="text-lg mb-1">Welcome Back</CardTitle>
+                  <CardDescription className="mb-4">
+                    Enter your Doctor ID and registration code to access your dashboard.
+                  </CardDescription>
+                  <LoginForm
+                    onSuccess={handleLoginSuccess}
+                    prefillDoctorId={credentialsDoctor ? String(credentialsDoctor.id) : undefined}
+                  />
+                </TabsContent>
+
+                <TabsContent value="register" className="mt-4">
+                  <CardTitle className="text-lg mb-1">Create Account</CardTitle>
+                  <CardDescription className="mb-4">
+                    Register as a new doctor. You'll need the hospital registration code from your administrator.
+                  </CardDescription>
+                  <RegisterForm onRegistrationComplete={handleRegistrationComplete} />
+                </TabsContent>
+              </Tabs>
+            </CardHeader>
+            <CardContent />
+          </Card>
         </div>
-
-        <Card className="glass-card border-primary/20">
-          <CardContent className="pt-6">
-            <Tabs defaultValue="login">
-              <TabsList className="w-full mb-6 bg-muted/50">
-                <TabsTrigger value="login" className="flex-1 gap-2">
-                  <User className="w-4 h-4" />
-                  Login
-                </TabsTrigger>
-                <TabsTrigger value="register" className="flex-1 gap-2">
-                  <Building2 className="w-4 h-4" />
-                  Register
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent value="login">
-                <LoginForm onSuccess={setLoggedInDoctor} />
-              </TabsContent>
-              <TabsContent value="register">
-                <RegisterForm onSuccess={setLoggedInDoctor} />
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-
-        <p className="text-center text-xs text-muted-foreground mt-4">
-          Registration code: <span className="font-mono font-semibold">2011</span>
-        </p>
       </div>
-    </div>
+    </>
   );
 }

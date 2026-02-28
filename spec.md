@@ -1,12 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Fix the Admin Portal so it correctly authenticates, displays live stats, and auto-refreshes every 5 seconds.
+**Goal:** Fix the doctor registration flow so that newly registered doctors see their generated credentials before being redirected to the login page, rather than being sent directly to the dashboard.
 
 **Planned changes:**
-- Add backend query functions to return accurate counts for total doctors, total cases, and total active/critical emergencies (no auth required)
-- Add three React Query hooks in `useQueries.ts` for fetching each stat count with a 5-second `refetchInterval`, returning 0 as default on error
-- Rewrite `AdminDashboard` to show three stat cards (Total Doctors, Total Cases, Total Emergencies) populated from those hooks, with loading and error states
-- Fix `AdminPortal.tsx` passcode gate to correctly render `AdminDashboard` after successful login, and return to the login screen on logout
+- After successful doctor registration, display a confirmation screen/modal showing the generated Registration ID and Code prominently.
+- Add a copy button or "I have saved these credentials" acknowledgement button on the confirmation screen.
+- After the doctor acknowledges their credentials, redirect them to the DoctorPortal login form instead of the dashboard.
+- Remove any automatic post-registration redirect to the doctor dashboard.
+- Ensure the doctor dashboard is only accessible when a valid doctor session exists; accessing the doctor route without a session shows the login form.
 
-**User-visible outcome:** The admin can enter the passcode, see a working dashboard with live-updating counts for doctors, cases, and emergencies refreshing every 5 seconds, and log out cleanly — with no blank screens or broken states.
+**User-visible outcome:** After registering, doctors see their Registration ID and Code on a confirmation screen, can copy/save them, and are then taken to the login page where they must explicitly log in to access the dashboard.
